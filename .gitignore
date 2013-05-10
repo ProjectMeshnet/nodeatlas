@@ -4,6 +4,10 @@ backend/backend
 # Editor temporary files
 *~
 
+# Extra files on OS X
+.DS_Store
+._*
+
 # Compiled Object files, Static and Dynamic libs (Shared Objects)
 *.o
 *.a
