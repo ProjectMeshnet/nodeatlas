@@ -1,6 +1,9 @@
 # Particular binaries
 backend/backend
 
+# Configuration files
+conf.json
+
 # Editor temporary files
 *~
 \#*

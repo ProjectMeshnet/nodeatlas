@@ -5,9 +5,9 @@ import (
 	"net/http"
 )
 
-// Atlas is the JAS-required type which is passed to all API-related
+// Api is the JAS-required type which is passed to all API-related
 // functions.
-type Atlas struct{}
+type Api struct{}
 
 // apiStatus is a simple summary of the current NodeAtlas instance
 // status.
@@ -23,7 +23,7 @@ type apiStatus struct {
 // crashes, and returns the error if that occurs.
 func StartAPI(addr string, prefix string) (err error) {
 	// Initialize a JAS router with appropriate attributes.
-	router := jas.NewRouter(new(Atlas))
+	router := jas.NewRouter(new(Api))
 	router.BasePath = prefix
 
 	l.Info("Initialized API\n")
@@ -37,6 +37,8 @@ func StartAPI(addr string, prefix string) (err error) {
 // GetStatus responds with a status summary of the map, including the
 // map name, total number of nodes, number available (pingable), etc.
 // (Not yet implemented.)
-func (*Atlas) GetStatus(ctx *jas.Context) {
-	ctx.Data = apiStatus{}
+func (*Api) GetStatus(ctx *jas.Context) {
+	ctx.Data = apiStatus{
+		Name: Conf.Name,
+	}
 }
