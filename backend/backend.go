@@ -17,7 +17,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	err = StartAPI()
+	err = StartAPI(":8081", "/")
 	if err != nil {
 		l.Fatal("API crashed:", err)
 	}
