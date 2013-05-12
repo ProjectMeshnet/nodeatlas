@@ -8,10 +8,11 @@ import (
 	"os"
 )
 
+var Version = "0"
+
 var (
 	Conf *Config
-
-	l *log.Logger
+	l    *log.Logger
 )
 
 var (
@@ -39,6 +40,7 @@ func main() {
 		fmt.Printf("Could start logger: %s", err)
 		os.Exit(1)
 	}
+	l.Infof("Starting NodeAtlas v%s\n", Version)
 
 	// Start the HTTP server.
 	err = StartServer(Conf.Addr, Conf.Prefix)
@@ -54,7 +56,9 @@ func main() {
 func StartServer(addr, prefix string) error {
 	// Register any handlers.
 	RegisterAPI(prefix)
+	l.Debug("Registered API handler\n")
 
 	// Start the HTTP server and return any errors if it crashes.
+	l.Infof("Starting HTTP server on %q\n", addr)
 	return http.ListenAndServe(addr, nil)
 }
