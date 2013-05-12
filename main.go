@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/inhies/go-utils/log"
+	"net/http"
 	"os"
 )
 
@@ -39,10 +40,21 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Begin the API.
-	err = StartAPI(Conf.APIAddr, Conf.Prefix)
+	// Start the HTTP server.
+	err = StartServer(Conf.Addr, Conf.Prefix)
 	if err != nil {
-		l.Fatal("API crashed:", err)
+		l.Fatal("Server crashed:", err)
 	}
-	
+
+}
+
+// StartServer is a simple helper function to register any handlers
+// (such as the API) and start the HTTP server on the given
+// address. If it crashes, it returns the error.
+func StartServer(addr, prefix string) error {
+	// Register any handlers.
+	RegisterAPI(prefix)
+
+	// Start the HTTP server and return any errors if it crashes.
+	return http.ListenAndServe(addr, nil)
 }

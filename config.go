@@ -16,17 +16,12 @@ type Config struct {
 	// would be able to respond to http://example.com/nodeatlas.
 	Prefix string
 
-	// Addr is the network interface and port to which the NodeAtlas
-	// front end should bind. This of the form "0.0.0.0:8080" (for
-	// global binding on port 8080) or "127.0.0.1:8080" (for only
-	// localhost binding on port 8080) or ":8080" (which is equivalent
-	// to "0.0.0.0:8080".)
+	// Addr is the network interface and port to which NodeAtlas
+	// should bind. This of the form "0.0.0.0:8077" (for global
+	// binding on port 8077) or "127.0.0.1:8077" (for only localhost
+	// binding on port 8077) or ":8077" (which is equivalent to
+	// "0.0.0.0:8077".)
 	Addr string
-
-	// APIAddr is the network interface and port to which the
-	// NodeAtlas API should bind. It conforms to the same syntax as
-	// Addr.
-	APIAddr string
 }
 
 // ReadConfig uses os and encoding/json to read a configuration from
