@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
 	"fmt"
 	"github.com/inhies/go-utils/log"
@@ -42,12 +43,19 @@ func main() {
 	}
 	l.Infof("Starting NodeAtlas v%s\n", Version)
 
+	// Connect to the database with configured parameters.
+	DB, err = sql.Open(Conf.Database.DriverName,
+		Conf.Database.Resource)
+	if err != nil {
+		l.Fatalf("Could not connect to database: %s", err)
+	}
+	l.Debug("Connected to database\n")
+
 	// Start the HTTP server.
 	err = StartServer(Conf.Addr, Conf.Prefix)
 	if err != nil {
 		l.Fatal("Server crashed:", err)
 	}
-
 }
 
 // StartServer is a simple helper function to register any handlers

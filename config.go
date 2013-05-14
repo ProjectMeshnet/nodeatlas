@@ -22,6 +22,14 @@ type Config struct {
 	// binding on port 8077) or ":8077" (which is equivalent to
 	// "0.0.0.0:8077".)
 	Addr string
+
+	// Database is the structure which contains the database driver
+	// name, such as "sqlite3" or "mysql", and the database resource,
+	// such as a path to .db file, or username, password, and name.
+	Database struct {
+		DriverName string
+		Resource   string
+	}
 }
 
 // ReadConfig uses os and encoding/json to read a configuration from
