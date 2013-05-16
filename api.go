@@ -33,6 +33,7 @@ func RegisterAPI(prefix string) {
 // (Not yet implemented.)
 func (*Api) GetStatus(ctx *jas.Context) {
 	ctx.Data = apiStatus{
-		Name: Conf.Name,
+		Name:  Conf.Name,
+		Nodes: Db.LenNodes(),
 	}
 }

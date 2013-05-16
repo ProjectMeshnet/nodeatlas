@@ -44,17 +44,25 @@ func main() {
 	l.Infof("Starting NodeAtlas v%s\n", Version)
 
 	// Connect to the database with configured parameters.
-	DB, err = sql.Open(Conf.Database.DriverName,
+	db, err := sql.Open(Conf.Database.DriverName,
 		Conf.Database.Resource)
 	if err != nil {
 		l.Fatalf("Could not connect to database: %s", err)
 	}
+	Db = DB{db} // Wrap the *sql.DB type.
 	l.Debug("Connected to database\n")
+
+	// Initialize the database with all of its tables.
+	err = Db.InitializeTables()
+	if err != nil {
+		l.Fatalf("Could not initialize database: %s", err)
+	}
+	l.Debug("Initialized database\n")
 
 	// Start the HTTP server.
 	err = StartServer(Conf.Addr, Conf.Prefix)
 	if err != nil {
-		l.Fatal("Server crashed:", err)
+		l.Fatalf("Server crashed: %s", err)
 	}
 }
 
