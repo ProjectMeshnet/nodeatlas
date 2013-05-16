@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/coocood/jas"
 	"net/http"
+	"path"
 )
 
 // Api is the JAS-required type which is passed to all API-related
@@ -24,8 +25,8 @@ func RegisterAPI(prefix string) {
 	router := jas.NewRouter(new(Api))
 	router.BasePath = prefix
 
-	// Handle "<prefix>/api".
-	http.Handle(prefix, router)
+	// Handle "<prefix>/api/". Note that it must begin and end with /.
+	http.Handle(path.Join(prefix, "api")+"/", router)
 }
 
 // GetStatus responds with a status summary of the map, including the
