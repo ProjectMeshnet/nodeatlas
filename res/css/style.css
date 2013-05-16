@@ -1,0 +1,31 @@
+@charset "UTF-8";
+
+body {
+	margin: 0;
+	font-family: "Helvetica Neue", Helvetica;
+	font-size: 14px;
+	color: #333;
+	background-size: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	color: #333;
+}
+
+/*
+==============================
+        TRANSITION
+==============================
+*/
+
+a {
+	-webkit-transition: all .2s linear;
+	-moz-transition: all .2s linear;
+	-o-transition: all .2s linear;
+	-ms-transition: all .2s linear;
+	transition: all .2s linear;
+}
