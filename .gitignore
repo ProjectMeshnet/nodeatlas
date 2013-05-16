@@ -4,6 +4,9 @@ nodeatlas
 # Configuration files
 conf.json
 
+# Sqlite3 databases
+*.db
+
 # Editor temporary files
 *~
 \#*
