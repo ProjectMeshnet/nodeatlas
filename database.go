@@ -45,3 +45,16 @@ func (db DB) LenNodes() (n int) {
 	return
 }
 
+// AddNode
+func (db DB) AddNode(node *Node) (err error) {
+	// Inserts a new node into the database
+	stmt, err := db.Prepare(`INSERT INTO nodes
+(address, owner, lat, lon, status)
+VALUES(?, ?, ?, ?, ?)`)
+	if err != nil {
+		return err
+	}
+	stmt.Exec(node.Addr, node.OwnerName, node.Latitude, node.Longitude, node.Status)
+	stmt.Close()
+	return nil
+}
