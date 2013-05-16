@@ -14,8 +14,8 @@ type DB struct {
 }
 
 // InitializeTables issues the commands to create all tables and
-// columns. It does *not* check if the tables exist beforehand. If it
-// encounters an error, it is returned.
+// columns. Will not create the tables if they exist already. If
+// it encounters an error, it is returned.
 func (db DB) InitializeTables() (err error) {
 	// First, create the 'nodes' table.
 	_, err = db.Query(`CREATE TABLE IF NOT EXISTS nodes (
@@ -23,7 +23,7 @@ address BINARY(16) PRIMARY KEY,
 owner VARCHAR(255) NOT NULL,
 lat FLOAT NOT NULL,
 lon FLOAT NOT NULL,
-status ENUM('POSSIBLE', 'PLANNED', 'ACTIVE') NOT NULL,
+status INT NOT NULL,
 updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP);`)
 	if err != nil {
 		return
