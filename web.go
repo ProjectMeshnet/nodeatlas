@@ -27,5 +27,14 @@ func RegisterTemplates() (err error) {
 
 // HandleRoot serves the "index.html" template.
 func HandleRoot(w http.ResponseWriter, req *http.Request) {
-	LogError(t.Execute(w, "index.html"), req)
+	data := make(map[string]string, 1)
+	data["Name"] = Conf.Name
+	LogError(t.ExecuteTemplate(w, "index.html", data), req)
+}
+
+// HandleRes serves static files from the resources directory (*fRes).
+func HandleRes(w http.ResponseWriter, req *http.Request) {
+	// Serve the file within the resources directory, but slice off
+	// len("/res") from the req.URL.Path first.
+	http.ServeFile(w, req, path.Join(*fRes, req.URL.Path[4:]))
 }

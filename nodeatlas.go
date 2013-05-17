@@ -80,6 +80,7 @@ func StartServer(addr, prefix string) (err error) {
 		return
 	}
 	http.HandleFunc("/", HandleRoot)
+	http.HandleFunc("/res/", HandleRes)
 
 	// Start the HTTP server and return any errors if it crashes.
 	l.Infof("Starting HTTP server on %q\n", addr)
