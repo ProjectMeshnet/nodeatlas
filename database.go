@@ -21,6 +21,7 @@ func (db DB) InitializeTables() (err error) {
 	_, err = db.Query(`CREATE TABLE IF NOT EXISTS nodes (
 address BINARY(16) PRIMARY KEY,
 owner VARCHAR(255) NOT NULL,
+email VARCHAR(255) NOT NULL,
 lat FLOAT NOT NULL,
 lon FLOAT NOT NULL,
 status INT NOT NULL,
@@ -50,11 +51,11 @@ func (db DB) AddNode(node *Node) (err error) {
 	// Inserts a new node into the database
 	stmt, err := db.Prepare(`INSERT INTO nodes
 (address, owner, lat, lon, status)
-VALUES(?, ?, ?, ?, ?)`)
+VALUES(?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		return err
 	}
-	stmt.Exec(node.Addr, node.OwnerName, node.Latitude, node.Longitude, node.Status)
+	stmt.Exec(node.Addr, node.OwnerName, node.OwnerEmail, node.Latitude, node.Longitude, node.Status)
 	stmt.Close()
 	return nil
 }

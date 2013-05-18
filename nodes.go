@@ -37,7 +37,6 @@ type Node struct {
 	// OwnerName is the node's owner's real or screen name.
 	OwnerName string
 
-	// ContactInfo is the node's owner's contact information, such as
-	// an email address.
-	ContactInfo string
+	// OwnerEmail is the node's owner's email address.
+	OwnerEmail string
 }
