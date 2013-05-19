@@ -30,7 +30,7 @@ type Node struct {
 
 	// Addr is the network address (for the meshnet protocol) of the
 	// node.
-	Addr net.Addr
+	Addr net.IP
 
 	/* Optional Fields */
 

@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/inhies/go-utils/log"
+	"net"
 	"net/http"
 	"os"
 )
@@ -53,6 +54,8 @@ func main() {
 	Db = DB{db} // Wrap the *sql.DB type.
 	l.Debug("Connected to database\n")
 
+	TestDatabase(&Db)
+
 	// Initialize the database with all of its tables.
 	err = Db.InitializeTables()
 	if err != nil {
@@ -85,4 +88,57 @@ func StartServer(addr, prefix string) (err error) {
 	// Start the HTTP server and return any errors if it crashes.
 	l.Infof("Starting HTTP server on %q\n", addr)
 	return http.ListenAndServe(addr, nil)
+}
+
+func TestDatabase(db *DB) {
+	err := db.InitializeTables()
+	if err != nil {
+		l.Fatalf("Could not initialize tables: %s", err)
+	}
+	l.Debug("Successfully initialized tables")
+
+	nLocal := db.LenNodes(false)
+	nTotal := db.LenNodes(true)
+	nCached := nTotal - nTotal
+	l.Debugf("Nodes: %d (%d local, %d cached)", nTotal, nLocal, nCached)
+
+	node := Node{
+		Addr:      net.ParseIP("ff00::1"),
+		OwnerName: "dylwhich",
+		Latitude:  39.25735,
+		Longitude: -76.70950,
+		Status:    StatusActive,
+	}
+	err = db.AddNode(&node)
+
+	if err != nil {
+		l.Errf("Error adding node: %s", err)
+	} else {
+		l.Debug("Successfully added node")
+	}
+
+	l.Debugf("Nodes: %d", db.LenNodes(false))
+
+	node.OwnerName = "DuoNoxSol"
+	err = db.UpdateNode(&node)
+	if err != nil {
+		l.Errf("Error updating node: %s", err)
+	} else {
+		l.Debug("Successfully updated node")
+	}
+
+	ip := net.ParseIP("ff00::1")
+	newNode := db.GetNode(&ip)
+	if newNode != nil {
+		l.Debug("Successfully got node")
+	} else {
+		l.Errf("Error retrieving node")
+	}
+
+	err = db.DeleteNode(&node)
+	if err != nil {
+		l.Errf("Error deleting node: %s", err)
+	} else {
+		l.Debug("Successfully deleted node")
+	}
 }

@@ -3,6 +3,7 @@ package main
 import (
 	_ "code.google.com/p/go-sqlite/go1/sqlite3"
 	"database/sql"
+	"net"
 )
 
 var (
@@ -44,7 +45,7 @@ expiration DATETIME);`)
 }
 
 // LenNodes returns the number of nodes in the database. If there is
-// an error, it returns zero and logs the incident.
+// an error, it returns -1 and logs the incident.
 func (db DB) LenNodes(useCached bool) (n int) {
 	// Count the number of rows in the 'nodes' table.
 	var row *sql.Row
@@ -57,7 +58,7 @@ func (db DB) LenNodes(useCached bool) (n int) {
 	// error. Otherwise, log it and return zero.
 	if err := row.Scan(&n); err != nil {
 		l.Errf("Error counting the number of nodes: %s", err)
-		n = 0
+		n = -1
 	}
 	return
 }
@@ -103,7 +104,7 @@ func (db DB) DeleteNode(node *Node) (err error) {
 	return
 }
 
-func (db DB) GetNode(addr string) (node *Node) {
+func (db DB) GetNode(addr *net.IP) (node *Node) {
 	// Retrieves the node with the given address from the database
 	stmt, err := db.Prepare(`SELECT address, owner, lat, lon, status
 FROM nodes
