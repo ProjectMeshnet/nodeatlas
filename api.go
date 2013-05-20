@@ -35,6 +35,6 @@ func RegisterAPI(prefix string) {
 func (*Api) GetStatus(ctx *jas.Context) {
 	ctx.Data = apiStatus{
 		Name:  Conf.Name,
-		Nodes: Db.LenNodes(),
+		Nodes: Db.LenNodes(false),
 	}
 }
