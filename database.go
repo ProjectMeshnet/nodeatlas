@@ -70,10 +70,9 @@ func (db DB) AddNode(node *Node) (err error) {
 (address, owner, lat, lon, status)
 VALUES(?, ?, ?, ?, ?)`)
 	if err != nil {
-		stmt.Close()
 		return
 	}
-	stmt.Exec(node.Addr, node.OwnerName, node.Latitude, node.Longitude, node.Status)
+	_, err = stmt.Exec([]byte(node.Addr), node.OwnerName, node.Latitude, node.Longitude, node.Status)
 	stmt.Close()
 	return
 }
@@ -84,27 +83,26 @@ func (db DB) UpdateNode(node *Node) (err error) {
 owner = ?, lat = ?, lon = ?, status = ?
 WHERE address = ?`)
 	if err != nil {
-		stmt.Close()
 		return
 	}
-	stmt.Exec(node.OwnerName, node.Latitude, node.Longitude, node.Status, node.Addr)
+	_, err = stmt.Exec(node.OwnerName, node.Latitude, node.Longitude, node.Status, []byte(node.Addr))
 	stmt.Close()
 	return
 }
 
 func (db DB) DeleteNode(node *Node) (err error) {
 	// Deletes the given node from the database
-	stmt, err := db.Prepare("DELETE FROM nodes WHERE address = ? LIMIT 1")
+	stmt, err := db.Prepare("DELETE FROM nodes WHERE address = ?")
 	if err != nil {
-		stmt.Close()
 		return
 	}
-	stmt.Exec(node.Addr)
+	_, err = stmt.Exec([]byte(node.Addr))
+
 	stmt.Close()
 	return
 }
 
-func (db DB) GetNode(addr *net.IP) (node *Node) {
+func (db DB) GetNode(addr *net.IP) (node *Node, err error) {
 	// Retrieves the node with the given address from the database
 	stmt, err := db.Prepare(`SELECT address, owner, lat, lon, status
 FROM nodes
@@ -115,12 +113,11 @@ FROM nodes_cached
 WHERE address = ?
 LIMIT 1`)
 	if err != nil {
-		stmt.Close()
 		node = nil
 		return
 	}
 	row := stmt.QueryRow(addr, addr)
-	row.Scan(&node.Addr, &node.OwnerName, &node.Latitude, &node.Longitude, &node.Status)
+	err = row.Scan(&node.Addr, &node.OwnerName, &node.Latitude, &node.Longitude, &node.Status)
 	stmt.Close()
 	return
 }
@@ -130,10 +127,9 @@ func (db DB) CacheNode(node *Node, source string, expiry int) (err error) {
 (address, owner, lat, lon, status, source, expiration)
 VALUES(?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
-		stmt.Close()
 		return
 	}
-	stmt.Exec(node.Addr, node.OwnerName, node.Latitude, node.Longitude, node.Status, source, expiry)
+	_, err = stmt.Exec(node.Addr, node.OwnerName, node.Latitude, node.Longitude, node.Status, source, expiry)
 	stmt.Close()
 	return
 }

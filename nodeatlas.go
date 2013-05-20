@@ -128,11 +128,11 @@ func TestDatabase(db *DB) {
 	}
 
 	ip := net.ParseIP("ff00::1")
-	newNode := db.GetNode(&ip)
-	if newNode != nil {
-		l.Debug("Successfully got node")
+	_, err = db.GetNode(&ip)
+	if err != nil {
+		l.Errf("Error retrieving node: %s", err)
 	} else {
-		l.Errf("Error retrieving node")
+		l.Debug("Successfully got node")
 	}
 
 	err = db.DeleteNode(&node)
