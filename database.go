@@ -117,7 +117,9 @@ LIMIT 1`)
 		return
 	}
 	row := stmt.QueryRow(addr, addr)
-	err = row.Scan(&node.Addr, &node.OwnerName, &node.Latitude, &node.Longitude, &node.Status)
+	var ip []byte
+	err = row.Scan(&ip, &node.OwnerName, &node.Latitude, &node.Longitude, &node.Status)
+	node.Addr = net.IP(ip)
 	stmt.Close()
 	return
 }
