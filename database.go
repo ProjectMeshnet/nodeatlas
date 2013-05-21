@@ -104,6 +104,9 @@ func (db DB) DeleteNode(node *Node) (err error) {
 	return
 }
 
+// GetNode retrieves a single node from the database using the given
+// address. If there is a database error, it will be returned. If no
+// node matches, however, both return values will be nil.
 func (db DB) GetNode(addr net.IP) (node *Node, err error) {
 	// Retrieves the node with the given address from the database
 	stmt, err := db.Prepare(`SELECT owner, email, lat, lon, status
@@ -117,12 +120,22 @@ LIMIT 1`)
 	if err != nil {
 		return
 	}
+
+	// Initialize the node and temporary variable.
 	node = &Node{Addr: addr}
 	baddr := []byte(addr)
 
+	// Perform the actual query.
 	row := stmt.QueryRow(baddr, baddr)
 	err = row.Scan(&node.OwnerName, &node.OwnerEmail, &node.Latitude, &node.Longitude, &node.Status)
 	stmt.Close()
+
+	// If the error is of the particular type sql.ErrNoRows, it simply
+	// means that the node does not exist. In that case, return (nil,
+	// nil).
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
 
 	return
 }

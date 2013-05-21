@@ -38,5 +38,5 @@ type Node struct {
 	OwnerName string
 
 	// OwnerEmail is the node's owner's email address.
-	OwnerEmail string
+	OwnerEmail string `json:",omitempty"`
 }
