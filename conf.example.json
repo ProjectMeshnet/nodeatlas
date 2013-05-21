@@ -1,7 +1,7 @@
 {
 	"Name": "Meshnet",
 	"Prefix": "",
-	"Addr": "0.0.0.0:8077",
+	"Addr": "localhost:8077",
 	"Database": {
 		"DriverName": "sqlite3",
 		"Resource": "example.db"

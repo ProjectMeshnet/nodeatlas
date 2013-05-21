@@ -49,14 +49,14 @@ func (*Api) GetNode(ctx *jas.Context) {
 	if ip == nil {
 		// If this is encountered, the address was incorrectly
 		// formatted.
-		// TODO: report an actual error
+		ctx.Error = jas.NewRequestError("addressInvalid")
 		return
 	}
 	node, err := Db.GetNode(ip)
 	if err != nil {
-		// If there has been a database error, we should not return
-		// it. Instead, log it.
-		// TODO: report an ambiguous "server error"
+		// If there has been a database error, log it and report the
+		// failure.
+		ctx.Error = jas.NewInternalError(err)
 		l.Err(err)
 		return
 	}
@@ -72,4 +72,37 @@ func (*Api) GetNode(ctx *jas.Context) {
 
 	// Finally, set the data and exit.
 	ctx.Data = node
+}
+
+// PostNode creates a *Node from the submitted form and queues it for
+// addition.
+func (*Api) PostNode(ctx *jas.Context) {
+	// Initialize the node and retrieve fields.
+	node := new(Node)
+
+	ip := net.ParseIP(ctx.RequireString("address"))
+	if ip == nil {
+		// If the address is invalid, return that error.
+		ctx.Error = jas.NewRequestError("addressInvalid")
+		return
+	}
+	node.Addr = ip
+	node.Latitude = ctx.RequireFloat("latitude")
+	node.Longitude = ctx.RequireFloat("longitude")
+	node.OwnerName = ctx.RequireString("name")
+	node.OwnerEmail = ctx.RequireString("email")
+	status, _ := ctx.FindInt("status")
+	node.Status = int(status)
+
+	// TODO(DuoNoxSol): Authenticate/limit node registration.
+
+	err := Db.AddNode(node)
+	if err != nil {
+		// If there was an error, log it and report the failure.
+		ctx.Error = jas.NewInternalError(err)
+		l.Err(err)
+		return
+	}
+	ctx.Data = "successful"
+	l.Debugf("Node %q registered\n", ip)
 }
