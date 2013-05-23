@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-var Version = "0"
+var Version = "0.1"
 
 var (
 	Conf *Config
