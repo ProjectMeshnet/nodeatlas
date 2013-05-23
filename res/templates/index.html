@@ -4,8 +4,8 @@
     <link rel="shortcut icon" href="/res/img/favicon.png">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootswatch/2.3.1/flatly/bootstrap.min.css">
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.min.css" rel="stylesheet">
-     <link rel="stylesheet" href="/res/css/leaflet.css" />
-    <!--Temporary CDN during initial mockup and before this gets committed <link rel="stylesheet" href="/res/css/style.css"> -->
+    <link rel="stylesheet" href="/res/css/custom.css" />
+    <link rel="stylesheet" href="/res/css/leaflet.css" />
     <script src="/res/js/leaflet.js"></script>
     <script src="/res/js/angular.min.js"></script>
     <script src="/res/js/angular-leaflet-directive.js"></script>
@@ -28,45 +28,10 @@
             });
         };
     </script>
-    <style type="text/css">
-      body {
-        padding-top: 20px;
-        padding-bottom: 40px;
-      }
-
-      /* Custom container */
-      .container-narrow {
-        margin: 0 auto;
-        max-width: 700px;
-      }
-      .container-narrow > hr {
-        margin: 30px 0;
-      }
-
-      /* Supporting marketing content */
-      .marketing {
-        margin: 60px 0;
-      }
-      .marketing p + h4 {
-        margin-top: 28px;
-      }
-      .angular-leaflet-map {
-        width: 660px;
-        height: 480px;
-      }
-      .brand {
-        margin-top: 16px;
-      }
-      .navbar-search {
-        margin-top: 16px;
-      }  
-    </style>
- </head>
+   </head>
 
   <body ng-controller="MapCrtl">
-
-    <div class="container-narrow">
-
+   <div class="container-narrow">
       <div class="masthead">
         <div class="navbar">
           <div class="navbar-inner">
@@ -75,8 +40,7 @@
               <li><a href="#about"><i class="icon-sitemap icon-muted icon-2x"></i><br><small>about</small></span></a></li>
               <li><a href="#"><i class="icon-location-arrow icon-muted icon-2x"></i><br><small>near me</small></span></a></li>
               <li><a href="#"><i class="icon-dashboard icon-muted icon-2x"></i><br><small>tools</small></span></a></li>
-      </ul>
-          
+      </ul>    
         <form class="navbar-search pull-right">
         <input type="text" class="search-query" placeholder="Search"><br><br>
         </form>
@@ -85,7 +49,7 @@
       </div>
       <div class="page-header">
       	  <div class="btn-group pull-right">
-  <a class="btn btn-primary" href="#"><i class="icon-user"></i> fcbf:7bbc:32e4:716:bd00:e936:c927:fc14</a>
+  <a class="btn btn-primary" href="#"><i class="icon-user"></i> ipv6</a>
   <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
     <span class="icon-caret-down"></span></a>
   <ul class="dropdown-menu">
@@ -101,7 +65,7 @@
 
       <div class="row-fluid marketing">
         <div class="well">
-    <leaflet center="london" markers="markers"></leaflet>
+    		<leaflet center="london" markers="markers"></leaflet>
         </div>
       </div>
 
