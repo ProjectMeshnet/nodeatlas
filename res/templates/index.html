@@ -1,6 +1,6 @@
-<html ng-app="nodeatlas">
+<html ng-app="NodeAtlas">
   <head>
-    <title>meshmap</title>
+    <title>{{.Name}}</title>
     <link rel="shortcut icon" href="/res/img/favicon.png">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootswatch/2.3.1/flatly/bootstrap.min.css">
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.min.css" rel="stylesheet">
@@ -10,7 +10,7 @@
     <script src="/res/js/angular.min.js"></script>
     <script src="/res/js/angular-leaflet-directive.js"></script>
    <script>
-        angular.module("nodeatlas", ["leaflet-directive"]);
+        angular.module("NodeAtlas", ["leaflet-directive"]);
         function MapCrtl($scope) {
             angular.extend($scope, {
                 london: {
@@ -35,7 +35,7 @@
       <div class="masthead">
         <div class="navbar">
           <div class="navbar-inner">
-            <a href="/" class="brand">nodeatlas</a>
+            <a href="/" class="brand">NodeAtlas</a>
             <ul class="nav">
               <li><a href="#about"><i class="icon-sitemap icon-muted icon-2x"></i><br><small>about</small></span></a></li>
               <li><a href="#"><i class="icon-location-arrow icon-muted icon-2x"></i><br><small>near me</small></span></a></li>
@@ -72,7 +72,7 @@
       <hr>
 
       <div class="footer">
-        <p class="muted">powered by <a href="https://github.com/ProjectMeshnet/nodeatlas">nodeatlas</a></p>
+        <p class="muted"><a href="https://github.com/ProjectMeshnet/nodeatlas">NodeAtlas {{.Version}}</a></p>
       </div>
 
     </div> 

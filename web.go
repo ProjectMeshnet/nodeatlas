@@ -29,6 +29,7 @@ func RegisterTemplates() (err error) {
 func HandleRoot(w http.ResponseWriter, req *http.Request) {
 	data := make(map[string]string, 1)
 	data["Name"] = Conf.Name
+	data["Version"] = Version
 	LogError(t.ExecuteTemplate(w, "index.html", data), req)
 }
 
