@@ -43,7 +43,7 @@ func main() {
 		fmt.Printf("Could start logger: %s", err)
 		os.Exit(1)
 	}
-	l.Infof("Starting NodeAtlas v%s\n", Version)
+	l.Infof("Starting NodeAtlas %s\n", Version)
 
 	// Connect to the database with configured parameters.
 	db, err := sql.Open(Conf.Database.DriverName,
