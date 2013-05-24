@@ -3,6 +3,7 @@ package main
 import (
 	_ "code.google.com/p/go-sqlite/go1/sqlite3"
 	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
 	"net"
 )
 
