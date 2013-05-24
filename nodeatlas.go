@@ -13,6 +13,10 @@ import (
 
 var Version = "0.1"
 
+const (
+	DefaultLogLevel = log.INFO
+)
+
 var (
 	Conf *Config
 	l    *log.Logger
@@ -21,6 +25,8 @@ var (
 var (
 	fConf = flag.String("conf", "conf.json", "path to configuration file")
 	fRes  = flag.String("res", "res/", "path to resource directory")
+
+	fDebug = flag.Bool("debug", false, "maximize verbosity")
 
 	fTestDB = flag.Bool("testdb", false, "test the database")
 )
@@ -40,12 +46,24 @@ func main() {
 		Conf.Prefix = "/"
 	}
 
-	l, err = log.NewLevel(log.DEBUG, true, os.Stdout, "",
-		log.Ldate|log.Ltime)
-	if err != nil {
-		fmt.Printf("Could start logger: %s", err)
-		os.Exit(1)
+	// Initialize the log with an appropriate log level. Do this
+	// inside a separate scope so that variables can be garbage
+	// collected.
+	{
+		var level log.LogLevel
+		if *fDebug {
+			level = log.DEBUG
+		} else {
+			level = DefaultLogLevel
+		}
+		l, err = log.NewLevel(level, true, os.Stdout, "",
+			log.Ldate|log.Ltime)
+		if err != nil {
+			fmt.Printf("Could start logger: %s", err)
+			os.Exit(1)
+		}
 	}
+
 	l.Infof("Starting NodeAtlas %s\n", Version)
 
 	if *fTestDB {
@@ -88,7 +106,7 @@ func main() {
 		l.Fatalf("Could not initialize database: %s", err)
 	}
 	l.Debug("Initialized database\n")
-	l.Debugf("Nodes: %d (%d local)\n", Db.LenNodes(true), Db.LenNodes(false))
+	l.Infof("Nodes: %d (%d local)\n", Db.LenNodes(true), Db.LenNodes(false))
 
 	// Start the HTTP server.
 	err = StartServer(Conf.Addr, Conf.Prefix)
