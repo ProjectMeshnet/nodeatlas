@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"path"
 )
 
 var Version = "0.1"
@@ -19,7 +20,9 @@ var (
 
 var (
 	fConf = flag.String("conf", "conf.json", "path to configuration file")
-	fRes  = flag.String("res", "res/", "path to template and image directory")
+	fRes  = flag.String("res", "res/", "path to resource directory")
+
+	fTestDB = flag.Bool("testdb", false, "test the database")
 )
 
 func main() {
@@ -45,6 +48,31 @@ func main() {
 	}
 	l.Infof("Starting NodeAtlas %s\n", Version)
 
+	if *fTestDB {
+		// Open up a temporary database using sqlite3.
+		tempDB := path.Join(os.TempDir(), "nodeatlas-test.db")
+
+		db, err := sql.Open("sqlite3", tempDB)
+		if err != nil {
+			l.Fatalf("Could not connect to temporary database: %s", err)
+		}
+
+		// Perform all of the tests in sequence.
+		TestDatabase(DB{db})
+		err = db.Close()
+		if err != nil {
+			l.Emergf("Could not close temporary database: %s", err)
+		}
+
+		// Finally, remove the database file and exit.
+		err = os.Remove(tempDB)
+		if err != nil {
+			l.Emergf("Could not remove temporary database %q: %s",
+				tempDB, err)
+		}
+		return
+	}
+
 	// Connect to the database with configured parameters.
 	db, err := sql.Open(Conf.Database.DriverName,
 		Conf.Database.Resource)
@@ -54,14 +82,13 @@ func main() {
 	Db = DB{db} // Wrap the *sql.DB type.
 	l.Debug("Connected to database\n")
 
-	TestDatabase(&Db)
-
 	// Initialize the database with all of its tables.
 	err = Db.InitializeTables()
 	if err != nil {
 		l.Fatalf("Could not initialize database: %s", err)
 	}
 	l.Debug("Initialized database\n")
+	l.Debugf("Nodes: %d (%d local)\n", Db.LenNodes(true), Db.LenNodes(false))
 
 	// Start the HTTP server.
 	err = StartServer(Conf.Addr, Conf.Prefix)
@@ -90,38 +117,33 @@ func StartServer(addr, prefix string) (err error) {
 	return http.ListenAndServe(addr, nil)
 }
 
-func TestDatabase(db *DB) {
+func TestDatabase(db DB) {
 	err := db.InitializeTables()
 	if err != nil {
 		l.Fatalf("Could not initialize tables: %s", err)
 	}
-	l.Debug("Successfully initialized tables")
+	l.Debug("Successfully initialized tables\n")
 
-	nLocal := db.LenNodes(false)
-	nTotal := db.LenNodes(true)
-	nCached := nTotal - nTotal
-	l.Debugf("Nodes: %d (%d local, %d cached)", nTotal, nLocal, nCached)
-
-	node := Node{
+	node := &Node{
 		Addr:       net.ParseIP("ff00::1"),
 		OwnerName:  "nodeatlas",
 		OwnerEmail: "admin@example.org",
 		Latitude:   80.01010,
 		Longitude:  -80.10101,
-		Status:     StatusActive,
+		Status:     StatusPossible,
 	}
-	err = db.AddNode(&node)
+	err = db.AddNode(node)
 
 	if err != nil {
 		l.Errf("Error adding node: %s", err)
 	} else {
-		l.Debug("Successfully added node")
+		l.Debug("Successfully added node\n")
 	}
 
 	l.Debugf("Nodes: %d", db.LenNodes(false))
 
-	node.OwnerName = "DuoNoxSol"
-	err = db.UpdateNode(&node)
+	node.Status = StatusActive
+	err = db.UpdateNode(node)
 	if err != nil {
 		l.Errf("Error updating node: %s", err)
 	} else {
