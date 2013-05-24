@@ -29,6 +29,7 @@ type Config struct {
 	Database struct {
 		DriverName string
 		Resource   string
+		ReadOnly   bool
 	}
 }
 

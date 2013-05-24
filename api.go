@@ -11,6 +11,10 @@ import (
 // functions.
 type Api struct{}
 
+var (
+	ReadOnlyError = jas.NewRequestError("database in readonly mode")
+)
+
 // apiStatus is a simple summary of the current NodeAtlas instance
 // status.
 type apiStatus struct {
@@ -77,6 +81,13 @@ func (*Api) GetNode(ctx *jas.Context) {
 // PostNode creates a *Node from the submitted form and queues it for
 // addition.
 func (*Api) PostNode(ctx *jas.Context) {
+	if Db.ReadOnly {
+		// If the database is readonly, set that as the error and
+		// return.
+		ctx.Error = ReadOnlyError
+		return
+	}
+
 	// Initialize the node and retrieve fields.
 	node := new(Node)
 
@@ -104,5 +115,5 @@ func (*Api) PostNode(ctx *jas.Context) {
 		return
 	}
 	ctx.Data = "successful"
-	l.Debugf("Node %q registered\n", ip)
+	l.Infof("Node %q registered\n", ip)
 }

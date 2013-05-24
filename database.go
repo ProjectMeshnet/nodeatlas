@@ -12,6 +12,7 @@ var (
 
 type DB struct {
 	*sql.DB
+	ReadOnly bool
 }
 
 // InitializeTables issues the commands to create all tables and

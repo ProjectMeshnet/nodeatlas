@@ -26,7 +26,8 @@ var (
 	fConf = flag.String("conf", "conf.json", "path to configuration file")
 	fRes  = flag.String("res", "res/", "path to resource directory")
 
-	fDebug = flag.Bool("debug", false, "maximize verbosity")
+	fDebug    = flag.Bool("debug", false, "maximize verbosity")
+	fReadOnly = flag.Bool("readonly", false, "disallow database changes")
 
 	fTestDB = flag.Bool("testdb", false, "test the database")
 )
@@ -76,7 +77,7 @@ func main() {
 		}
 
 		// Perform all of the tests in sequence.
-		TestDatabase(DB{db})
+		TestDatabase(DB{db, false})
 		err = db.Close()
 		if err != nil {
 			l.Emergf("Could not close temporary database: %s", err)
@@ -97,8 +98,15 @@ func main() {
 	if err != nil {
 		l.Fatalf("Could not connect to database: %s", err)
 	}
-	Db = DB{db} // Wrap the *sql.DB type.
+	// Wrap the *sql.DB type.
+	Db = DB{
+		DB:       db,
+		ReadOnly: (*fReadOnly || Conf.Database.ReadOnly),
+	}
 	l.Debug("Connected to database\n")
+	if Db.ReadOnly {
+		l.Debug("Database is read only\n")
+	}
 
 	// Initialize the database with all of its tables.
 	err = Db.InitializeTables()
