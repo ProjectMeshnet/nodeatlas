@@ -136,7 +136,7 @@ func TestDatabase(db *DB) {
 		l.Debug("Successfully got node")
 	}
 
-	err = db.DeleteNode(&node)
+	err = db.DeleteNode(node.Addr)
 	if err != nil {
 		l.Errf("Error deleting node: %s", err)
 	} else {

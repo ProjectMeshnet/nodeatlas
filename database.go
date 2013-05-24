@@ -65,7 +65,8 @@ func (db DB) LenNodes(useCached bool) (n int) {
 	return
 }
 
-// AddNode
+// AddNode inserts a node into the 'nodes' table with the current
+// timestamp.
 func (db DB) AddNode(node *Node) (err error) {
 	// Inserts a new node into the database
 	stmt, err := db.Prepare(`INSERT INTO nodes
@@ -79,6 +80,8 @@ VALUES(?, ?, ?, ?, ?, ?)`)
 	return
 }
 
+// UpdateNode replaces the node in the database with the IP matching
+// the given node.
 func (db DB) UpdateNode(node *Node) (err error) {
 	// Updates an existing node in the database
 	stmt, err := db.Prepare(`UPDATE nodes SET
@@ -92,13 +95,14 @@ WHERE address = ?`)
 	return
 }
 
-func (db DB) DeleteNode(node *Node) (err error) {
+// DeleteNode removes the node with the matching IP from the database.
+func (db DB) DeleteNode(addr net.IP) (err error) {
 	// Deletes the given node from the database
 	stmt, err := db.Prepare("DELETE FROM nodes WHERE address = ?")
 	if err != nil {
 		return
 	}
-	_, err = stmt.Exec([]byte(node.Addr))
+	_, err = stmt.Exec([]byte(addr))
 
 	stmt.Close()
 	return
