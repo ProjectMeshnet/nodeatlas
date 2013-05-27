@@ -157,11 +157,11 @@
       }
 
       function getUsers() {
-        $.getJSON("api/status", function (data) {
+        $.getJSON("api/all", function (data) {
           for (var i = 0; i < data.length; i++) {
-            var location = new L.LatLng(data[i].lat, data[i].lng);
+            var location = new L.LatLng(data[i].latitude, data[i].longitude);
             var name = data[i].name;
-            var website = data[i].website;
+            var address = data[i].address;
             if (data[i].website.length > 7) {
               var title = "<div style='font-size: 18px; color: #0078A8;'><a href='"+ data[i].website +"' target='_blank'>"+ data[i].name + "</a></div>";
             }
@@ -169,7 +169,7 @@
               var title = "<div style='font-size: 18px; color: #0078A8;'>"+ data[i].name +"</div>";
             }
             if (data[i].city.length > 0) {
-              var city = "<div style='font-size: 14px;'>"+ data[i].city +"</div><br><span class='label label-success'>online</span>";
+              var city = "<div style='font-size: 14px;'>"+ data[i].address +"</div>";
             }
             else {
               var city = "";
@@ -191,11 +191,10 @@
       function insertUser() {
         $("#loading-mask").show();
         $("#loading").show();
-        var addr = $("#address").val();
+        var address = $("#address").val();
         var name = $("#name").val();
-        var email = $("#email").val();
-        var lat = $("#latitude").val();
-        var lng = $("#longitude").val();
+        var latitude = $("#latitude").val();
+        var longitude = $("#longitude").val();
         if (name.length == 0) {
           alert("Name is required!");
           return false;
@@ -204,10 +203,10 @@
           alert("Email is required!");
           return false;
         }
-        var dataString = 'name='+ name + '&email=' + email + '&address=' + addr + '&city=' + city + '&latitude=' + lat + '&longitude=' + lng;
+        var dataString = 'name='+ name + '&email=' + email + '&address=' + addr + '&city=' + city + '&latitude=' + latitude + '&longitude=' + longitude;
         $.ajax({
           type: "POST",
-          url: "api/node",
+          url: "api/add",
           data: dataString,
           success: function() {
             cancelRegistration();
