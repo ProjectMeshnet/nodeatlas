@@ -162,22 +162,10 @@
             var location = new L.LatLng(data[i].latitude, data[i].longitude);
             var name = data[i].name;
             var address = data[i].address;
-            if (data[i].website.length > 7) {
-              var title = "<div style='font-size: 18px; color: #0078A8;'><a href='"+ data[i].website +"' target='_blank'>"+ data[i].name + "</a></div>";
-            }
-            else {
-              var title = "<div style='font-size: 18px; color: #0078A8;'>"+ data[i].name +"</div>";
-            }
-            if (data[i].city.length > 0) {
-              var city = "<div style='font-size: 14px;'>"+ data[i].address +"</div>";
-            }
-            else {
-              var city = "";
-            }
             var marker = new L.Marker(location, {
               title: name
             });
-            marker.bindPopup("<div style='text-align: center; margin-left: auto; margin-right: auto;'>"+ title + city +"</div>", {maxWidth: '400'});
+            marker.bindPopup("<div style='text-align: center; margin-left: auto; margin-right: auto;'><h1>"+ title +" </h1><br><p>"+ address +"</p></div>", {maxWidth: '400'});
             users.addLayer(marker);
           }
         }).complete(function() {
