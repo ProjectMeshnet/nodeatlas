@@ -3,6 +3,7 @@ package main
 import (
 	_ "code.google.com/p/go-sqlite/go1/sqlite3"
 	"database/sql"
+	"errors"
 	_ "github.com/go-sql-driver/mysql"
 	"net"
 )
@@ -63,6 +64,44 @@ func (db DB) LenNodes(useCached bool) (n int) {
 	if err := row.Scan(&n); err != nil {
 		l.Errf("Error counting the number of nodes: %s", err)
 		n = -1
+	}
+	return
+}
+
+// DumpNodes returns an array containing all nodes in the database,
+// including both local and cached nodes.
+func (db DB) DumpNodes() (nodes []*Node, err error) {
+	// Begin by getting the required length of the array. If we get
+	// -1, then there has been an error.
+	if n := db.LenNodes(true); n != -1 {
+		// If successful, initialize the array with the length.
+		nodes = make([]*Node, n)
+	} else {
+		// Otherwise, error out.
+		return nil, errors.New("Could not count number of nodes")
+	}
+
+	// Perform the query.
+	rows, err := db.Query("SELECT address,owner,lat,lon,status FROM nodes UNION SELECT address,owner,lat,lon,status FROM nodes_cached;")
+	if err != nil {
+		l.Errf("Error dumping database: %s", err)
+		return
+	}
+	defer rows.Close()
+
+	// Now, loop through, initialize the nodes, and fill them out
+	// using only the selected columns.
+	for i := 0; rows.Next(); i++ {
+		// Initialize the node and put it in the table.
+		node := new(Node)
+		nodes[i] = node
+
+		// Scan all of the values into it.
+		err = rows.Scan(&node.Addr, &node.OwnerName, &node.Latitude,
+			&node.Longitude, &node.Status)
+		if err != nil {
+			return
+		}
 	}
 	return
 }

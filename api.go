@@ -29,6 +29,8 @@ func RegisterAPI(prefix string) {
 	// Initialize a JAS router with appropriate attributes.
 	router := jas.NewRouter(new(Api))
 	router.BasePath = prefix
+	// Disable automatic internal error logging.
+	router.InternalErrorLogger = nil
 
 	l.Debug("API paths:\n", router.HandledPaths(true))
 
@@ -116,4 +118,15 @@ func (*Api) PostNode(ctx *jas.Context) {
 	}
 	ctx.Data = "successful"
 	l.Infof("Node %q registered\n", ip)
+}
+
+// GetAll dumps the entire database of nodes, including cached ones.
+func (*Api) GetAll(ctx *jas.Context) {
+	nodes, err := Db.DumpNodes()
+	if err != nil {
+		ctx.Error = jas.NewInternalError(err)
+		l.Err(err)
+		return
+	}
+	ctx.Data = nodes
 }
