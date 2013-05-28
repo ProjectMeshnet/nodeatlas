@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	_ "github.com/go-sql-driver/mysql"
-	"net"
 )
 
 var (
@@ -137,7 +136,7 @@ WHERE address = ?`)
 }
 
 // DeleteNode removes the node with the matching IP from the database.
-func (db DB) DeleteNode(addr net.IP) (err error) {
+func (db DB) DeleteNode(addr IP) (err error) {
 	// Deletes the given node from the database
 	stmt, err := db.Prepare("DELETE FROM nodes WHERE address = ?")
 	if err != nil {
@@ -152,7 +151,7 @@ func (db DB) DeleteNode(addr net.IP) (err error) {
 // GetNode retrieves a single node from the database using the given
 // address. If there is a database error, it will be returned. If no
 // node matches, however, both return values will be nil.
-func (db DB) GetNode(addr net.IP) (node *Node, err error) {
+func (db DB) GetNode(addr IP) (node *Node, err error) {
 	// Retrieves the node with the given address from the database
 	stmt, err := db.Prepare(`SELECT owner, email, lat, lon, status
 FROM nodes

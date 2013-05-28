@@ -51,7 +51,7 @@ func (*Api) GetStatus(ctx *jas.Context) {
 // GetNode retrieves a single node from the database, removes
 // sensitive data (such as an email address) and sets ctx.Data to it.
 func (*Api) GetNode(ctx *jas.Context) {
-	ip := net.ParseIP(ctx.RequireString("address"))
+	ip := IP(net.ParseIP(ctx.RequireString("address")))
 	if ip == nil {
 		// If this is encountered, the address was incorrectly
 		// formatted.
@@ -93,7 +93,7 @@ func (*Api) PostNode(ctx *jas.Context) {
 	// Initialize the node and retrieve fields.
 	node := new(Node)
 
-	ip := net.ParseIP(ctx.RequireString("address"))
+	ip := IP(net.ParseIP(ctx.RequireString("address")))
 	if ip == nil {
 		// If the address is invalid, return that error.
 		ctx.Error = jas.NewRequestError("addressInvalid")

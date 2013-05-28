@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
 	"net"
 )
 
@@ -30,7 +32,7 @@ type Node struct {
 
 	// Addr is the network address (for the meshnet protocol) of the
 	// node.
-	Addr net.IP
+	Addr IP
 
 	/* Optional Fields */
 
@@ -39,4 +41,22 @@ type Node struct {
 
 	// OwnerEmail is the node's owner's email address.
 	OwnerEmail string `json:",omitempty"`
+}
+
+// IP is a wrapper for net.IP which implements the json.Marshaler and
+// json.Unmarshaler.
+type IP net.IP
+
+var IncorrectlyFormattedIP = errors.New("incorrectly formatted ip address")
+
+func (ip IP) MarshalJSON() ([]byte, error) {
+	return json.Marshal(net.IP(ip).String())
+}
+
+func (ip IP) UnmarshalJSON(b []byte) error {
+	ip = IP(net.ParseIP(string(b)))
+	if ip == nil {
+		return IncorrectlyFormattedIP
+	}
+	return nil
 }

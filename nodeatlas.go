@@ -151,7 +151,7 @@ func TestDatabase(db DB) {
 	l.Debug("Successfully initialized tables\n")
 
 	node := &Node{
-		Addr:       net.ParseIP("ff00::1"),
+		Addr:       IP(net.ParseIP("ff00::1")),
 		OwnerName:  "nodeatlas",
 		OwnerEmail: "admin@example.org",
 		Latitude:   80.01010,
@@ -176,7 +176,7 @@ func TestDatabase(db DB) {
 		l.Debug("Successfully updated node")
 	}
 
-	ip := net.ParseIP("ff00::1")
+	ip := IP(net.ParseIP("ff00::1"))
 	_, err = db.GetNode(ip)
 	if err != nil {
 		l.Errf("Error retrieving node: %s", err)
