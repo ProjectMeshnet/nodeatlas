@@ -137,6 +137,7 @@ func StartServer(addr, prefix string) (err error) {
 	}
 	http.HandleFunc("/", HandleRoot)
 	http.HandleFunc("/res/", HandleRes)
+	http.HandleFunc("/favicon.ico", HandleIcon)
 
 	// Start the HTTP server and return any errors if it crashes.
 	l.Infof("Starting HTTP server on %q\n", addr)
