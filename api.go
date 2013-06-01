@@ -28,14 +28,14 @@ type apiStatus struct {
 func RegisterAPI(prefix string) {
 	// Initialize a JAS router with appropriate attributes.
 	router := jas.NewRouter(new(Api))
-	router.BasePath = prefix
+	router.BasePath = path.Join("/", prefix)
 	// Disable automatic internal error logging.
 	router.InternalErrorLogger = nil
 
 	l.Debug("API paths:\n", router.HandledPaths(true))
 
 	// Handle "<prefix>/api/". Note that it must begin and end with /.
-	http.Handle(path.Join(prefix, "api")+"/", router)
+	http.Handle(path.Join("/", prefix, "api")+"/", router)
 }
 
 // GetStatus responds with a status summary of the map, including the

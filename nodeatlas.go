@@ -44,10 +44,6 @@ func main() {
 		fmt.Printf("Could not read conf: %s", err)
 		os.Exit(1)
 	}
-	// Touch up any fields if they're in common but unusable forms.
-	if len(Conf.Prefix) == 0 {
-		Conf.Prefix = "/"
-	}
 
 	// Initialize the log with an appropriate log level. Do this
 	// inside a separate scope so that variables can be garbage
