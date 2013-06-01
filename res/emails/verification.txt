@@ -1,3 +1,12 @@
-Subject: Node Registration
+Subject: {{.InstanceName}} Node Registration
 MIME-version: 1.0;\nContent-Type: text/plain; charset=\"UTF-8\";
 
+To verify your node at the below link. If you didn't place this node,
+your email address was entered by mistake, then please ignore this
+email. Our apologies.
+
+{{.Link}}/api/verify?id={{.VerificationID}}
+
+--
+Automated email by {{.InstanceName}} NodeAtlas
+https://github.com/ProjectMeshnet/nodeatlas

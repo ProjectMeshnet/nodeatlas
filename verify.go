@@ -51,7 +51,7 @@ func ConnectSMTP() (c *smtp.Client, err error) {
 // templated email (verification.txt) to the email address specified
 // by the given node. If the email could not be sent, it returns an
 // error.
-func SendVerificationEmail(id string, n *Node) (err error) {
+func SendVerificationEmail(id int64, n *Node) (err error) {
 	// Connect to the SMTP server and authenticate.
 	c, err := ConnectSMTP()
 	if err != nil {

@@ -1,7 +1,9 @@
 package main
 
 import (
+	"database/sql"
 	"github.com/coocood/jas"
+	"math/rand"
 	"net"
 	"net/http"
 	"path"
@@ -81,7 +83,7 @@ func (*Api) GetNode(ctx *jas.Context) {
 }
 
 // PostNode creates a *Node from the submitted form and queues it for
-// addition.
+// addition with a positive 64 bit integer as an ID.
 func (*Api) PostNode(ctx *jas.Context) {
 	if Db.ReadOnly {
 		// If the database is readonly, set that as the error and
@@ -113,25 +115,63 @@ func (*Api) PostNode(ctx *jas.Context) {
 	// versions, SMTP will be required to verify nodes, unless
 	// explicitly set.
 	if Conf.SMTP != nil {
-		err := SendVerificationEmail("testid", node)
-		if err != nil {
-			// If the sending of the email fails, set the internal error
-			// and log it.
+		id := rand.Int63() // Pseudo-random positive int64
+		if err := Db.QueueNode(id, node); err != nil {
+			// If there is a database failure, report it as an
+			// internal error.
 			ctx.Error = jas.NewInternalError(err)
 			l.Err(err)
 			return
 		}
+		if err := SendVerificationEmail(id, node); err != nil {
+			// If the sending of the email fails, set the internal
+			// error, log it, and remove the node from the database.
+			ctx.Error = jas.NewInternalError(err)
+			l.Err(err)
+			err = Db.DeleteQueuedNode(id)
+			if err != nil {
+				// Well, that's not good.
+				l.Err("Could not remove cached node:", err)
+			}
+			return
+		}
+		ctx.Data = "verification email sent"
+		l.Infof("Node %q entered, waiting for verification", ip)
+	} else {
+		err := Db.AddNode(node)
+		if err != nil {
+			// If there was an error, log it and report the failure.
+			ctx.Error = jas.NewInternalError(err)
+			l.Err(err)
+			return
+		}
+		ctx.Data = "node registered"
+		l.Infof("Node %q registered\n", ip)
 	}
+}
 
-	err := Db.AddNode(node)
-	if err != nil {
-		// If there was an error, log it and report the failure.
+// GetVerify moves a node from the verification queue to the normal
+// database, as identified by its long random ID.
+func (*Api) GetVerify(ctx *jas.Context) {
+	id := ctx.RequireInt("id")
+	ip, err := Db.VerifyQueuedNode(id)
+	if err == sql.ErrNoRows {
+		// If we encounter a ErrNoRows, then there was no node with
+		// that ID. Report it.
+		ctx.Error = jas.NewRequestError("invalid id")
+		l.Noticef("%q attempted to verify invalid ID\n", ctx.RemoteAddr)
+		return
+	} else if err != nil {
+		// If we encounter any other database error, it is an internal
+		// error and needs to be logged.
 		ctx.Error = jas.NewInternalError(err)
 		l.Err(err)
 		return
 	}
+	// If there was no error, inform the user that it was successful,
+	// and log it.
 	ctx.Data = "successful"
-	l.Infof("Node %q registered\n", ip)
+	l.Infof("Node %q verified", ip)
 }
 
 // GetAll dumps the entire database of nodes, including cached ones.
