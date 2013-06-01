@@ -1,10 +1,18 @@
 {
 	"Name": "Meshnet",
+	"Hostname": "localhost",
 	"Prefix": "",
 	"Addr": "0.0.0.0:8077",
 	"Database": {
 		"DriverName": "sqlite3",
 		"Resource": "example.db",
 		"ReadOnly": true
+	},
+	"SMTP": {
+		"EmailAddress": "nodeatlas@example.com",
+		"Username": "nodeatlas",
+		"Password": "password123",
+		"NoAuthenticate": false,
+		"ServerAddress": "mail.example.com:587"
 	}
 }

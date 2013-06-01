@@ -149,12 +149,11 @@ func StartServer(addr, prefix string) (err error) {
 // RegisterTemplates loads templates from <*fRes>/webpages/*.html and
 // <*fRes>/emails/*.txt into the global variable t.
 func RegisterTemplates() (err error) {
-	t = new(template.Template)
-	_, err = template.ParseGlob(path.Join(*fRes, "webpages/*html"))
+	t, err = template.ParseGlob(path.Join(*fRes, "webpages/*html"))
 	if err != nil {
 		return
 	}
-	_, err = template.ParseGlob(path.Join(*fRes, "emails/*.txt"))
+	_, err = t.ParseGlob(path.Join(*fRes, "emails/*.txt"))
 	return
 }
 

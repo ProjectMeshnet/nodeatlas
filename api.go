@@ -109,6 +109,20 @@ func (*Api) PostNode(ctx *jas.Context) {
 
 	// TODO(DuoNoxSol): Authenticate/limit node registration.
 
+	// If SMTP is not disabled, send an email to verify. In future
+	// versions, SMTP will be required to verify nodes, unless
+	// explicitly set.
+	if Conf.SMTP != nil {
+		err := SendVerificationEmail("testid", node)
+		if err != nil {
+			// If the sending of the email fails, set the internal error
+			// and log it.
+			ctx.Error = jas.NewInternalError(err)
+			l.Err(err)
+			return
+		}
+	}
+
 	err := Db.AddNode(node)
 	if err != nil {
 		// If there was an error, log it and report the failure.

@@ -11,6 +11,12 @@ type Config struct {
 	// the region about which it focuses.
 	Name string
 
+	// Hostname is the address which NodeAtlas should identify itself
+	// as. For example, in a verification email, NodeAtlas would give
+	// the verification link as
+	// http://<hostname><prefix>/<long-random-id>
+	Hostname string
+
 	// Prefix is the URL prefix which is required to access the front
 	// end. For example, with a prefix of "/nodeatlas", NodeAtlas
 	// would be able to respond to http://example.com/nodeatlas.
@@ -30,6 +36,28 @@ type Config struct {
 		DriverName string
 		Resource   string
 		ReadOnly   bool
+	}
+
+	// SMTP contains the information necessary to connect to a mail
+	// relay, so as to send verification email to registered nodes. If
+	// it is nil, then node registration will be disabled.
+	SMTP *struct {
+		// EmailAddress will be given as the "From" address when
+		// sending email.
+		EmailAddress string
+
+		// NoAuthenticate determines whether NodeAtlas should attempt to
+		// authenticate with the SMTP relay or not. Unless the relay
+		// is local, leave this false.
+		NoAuthenticate bool
+
+		// Username and Password are the credentials required by the
+		// server to log in.
+		Username, Password string
+
+		// ServerAddress is the address of the SMTP relay, including
+		// the port.
+		ServerAddress string
 	}
 }
 
