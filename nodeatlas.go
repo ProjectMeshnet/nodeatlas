@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/inhies/go-utils/log"
+	"html/template"
 	"net"
 	"net/http"
 	"os"
@@ -19,6 +20,7 @@ const (
 
 var (
 	Conf *Config
+	t    *template.Template
 	l    *log.Logger
 )
 
@@ -142,6 +144,18 @@ func StartServer(addr, prefix string) (err error) {
 	// Start the HTTP server and return any errors if it crashes.
 	l.Infof("Starting HTTP server on %q\n", addr)
 	return http.ListenAndServe(addr, nil)
+}
+
+// RegisterTemplates loads templates from <*fRes>/webpages/*.html and
+// <*fRes>/emails/*.txt into the global variable t.
+func RegisterTemplates() (err error) {
+	t = new(template.Template)
+	_, err = template.ParseGlob(path.Join(*fRes, "webpages/*html"))
+	if err != nil {
+		return
+	}
+	_, err = template.ParseGlob(path.Join(*fRes, "emails/*.txt"))
+	return
 }
 
 func TestDatabase(db DB) {
