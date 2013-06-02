@@ -62,3 +62,7 @@ func (ip IP) UnmarshalJSON(b []byte) error {
 	}
 	return nil
 }
+
+func (ip IP) String() string {
+	return net.IP(ip).String()
+}
