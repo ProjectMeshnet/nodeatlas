@@ -52,6 +52,10 @@ type Config struct {
 		// sending email.
 		EmailAddress string
 
+		// DoNotRequireTLS allows the sending of an email to continue
+		// even if STARTTLS cannot be used to connect to the relay.
+		DoNotRequireTLS bool
+
 		// NoAuthenticate determines whether NodeAtlas should attempt to
 		// authenticate with the SMTP relay or not. Unless the relay
 		// is local, leave this false.

@@ -129,7 +129,8 @@ func (*Api) PostNode(ctx *jas.Context) {
 			l.Err(err)
 			return
 		}
-		if err := SendVerificationEmail(id, node); err != nil {
+		if err := SendVerificationEmail(id, node,
+			Conf.SMTP.DoNotRequireTLS); err != nil {
 			// If the sending of the email fails, set the internal
 			// error, log it, and remove the node from the database.
 			ctx.Error = jas.NewInternalError(err)
