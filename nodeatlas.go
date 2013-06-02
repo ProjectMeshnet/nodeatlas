@@ -9,7 +9,9 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/signal"
 	"path"
+	"syscall"
 )
 
 var Version = "0.1"
@@ -62,6 +64,9 @@ func main() {
 			os.Exit(1)
 		}
 	}
+
+	// Listen for OS signals.
+	go ListenSignal()
 
 	l.Infof("Starting NodeAtlas %s\n", Version)
 
@@ -151,6 +156,28 @@ func RegisterTemplates() (err error) {
 	}
 	_, err = t.ParseGlob(path.Join(*fRes, "emails/*.txt"))
 	return
+}
+
+// ListenSignal uses os/signal to wait for OS signals, such as SIGHUP
+// and SIGINT, and perform the appropriate actions as listed below.
+//     SIGHUP: reload configuration file
+func ListenSignal() {
+	// Create the channel and use signal.Notify to listen for any
+	// specified signals.
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, syscall.SIGHUP)
+	for sig := range c {
+		switch sig {
+		case syscall.SIGHUP:
+			l.Info("Caught SIGHUP; reloading config\n")
+			conf, err := ReadConfig(*fConf)
+			if err != nil {
+				l.Errf("Could not read conf; using old one: %s", err)
+				continue
+			}
+			Conf = conf
+		}
+	}
 }
 
 func TestDatabase(db DB) {
