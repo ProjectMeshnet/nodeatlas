@@ -5,14 +5,18 @@ import (
 	"net/smtp"
 )
 
-var SMTPDisabledError = errors.New("SMTP not specified in the configuration")
+var (
+	SMTPDisabledError     = errors.New("SMTP not specified in the configuration")
+	STARTTLSDisabledError = errors.New("Could not connect to SMTP relay with TLS")
+)
 
 // ConnectSMTP uses the global Conf to connect to the SMTP server and,
-// unless disabled in the configuration, authenticates with STARTTLS
-// if possible. Unless an error is returned, t is the caller's
-// responsibility to close the client. If the Conf.SMTP is nil,
-// STMPDisabledError will be returned.
-func ConnectSMTP() (c *smtp.Client, err error) {
+// unless disabled in the configuration, unless doNotRequireTLS is
+// true, it will either authenticate with STARTTLS or fail. Unless an
+// error is returned, t is the caller's responsibility to close the
+// client. If the Conf.SMTP is nil, STMPDisabledError will be
+// returned.
+func ConnectSMTP(doNotRequireTLS bool) (c *smtp.Client, err error) {
 	if Conf.SMTP == nil {
 		return nil, SMTPDisabledError
 	}
@@ -25,12 +29,19 @@ func ConnectSMTP() (c *smtp.Client, err error) {
 
 	// If NoAuthenticate is true, then skip the authentication step.
 	if !Conf.SMTP.NoAuthenticate {
-		// Upgrade to STARTTLS if supported.
+		// Upgrade to STARTTLS if supported. If it is not supported,
+		// unless doNotRequireTLS is true, then abort.
 		if ok, _ := c.Extension("STARTTLS"); ok {
 			if err = c.StartTLS(nil); err != nil {
+				// If TLS is enabled, but the connection fails, quit
+				// and return the rror.
 				c.Quit()
 				return
 			}
+		} else if !doNotRequireTLS {
+			err = STARTTLSDisabledError
+			c.Quit()
+			return
 		}
 
 		// Authenticate using the password via CRAM-MD5. (Wait, we still
@@ -51,9 +62,9 @@ func ConnectSMTP() (c *smtp.Client, err error) {
 // templated email (verification.txt) to the email address specified
 // by the given node. If the email could not be sent, it returns an
 // error.
-func SendVerificationEmail(id int64, n *Node) (err error) {
+func SendVerificationEmail(id int64, n *Node, doNotRequireTLS bool) (err error) {
 	// Connect to the SMTP server and authenticate.
-	c, err := ConnectSMTP()
+	c, err := ConnectSMTP(doNotRequireTLS)
 	if err != nil {
 		return
 	}
