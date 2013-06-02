@@ -34,6 +34,12 @@ type Node struct {
 	// node.
 	Addr IP
 
+	// RetrieveTime is only used if the node is cached, and comes from
+	// another map. It is the Unix time (in seconds) at which the node
+	// was retrieved from its home instance. If it is zero, the node
+	// is not cached.
+	RetrieveTime int64 `json:",omitempty"`
+
 	/* Optional Fields */
 
 	// OwnerName is the node's owner's real or screen name.
