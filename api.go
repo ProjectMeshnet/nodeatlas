@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/http"
 	"path"
+	"time"
 )
 
 // Api is the JAS-required type which is passed to all API-related
@@ -35,6 +36,10 @@ func RegisterAPI(prefix string) {
 	router.InternalErrorLogger = nil
 
 	l.Debug("API paths:\n", router.HandledPaths(true))
+
+	// Seed the random number generator with the current Unix
+	// time. This is not random, but it should be Good Enough.
+	rand.Seed(time.Now().Unix())
 
 	// Handle "<prefix>/api/". Note that it must begin and end with /.
 	http.Handle(path.Join("/", prefix, "api")+"/", router)
