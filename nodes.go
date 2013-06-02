@@ -54,6 +54,8 @@ func (ip IP) MarshalJSON() ([]byte, error) {
 }
 
 func (ip IP) UnmarshalJSON(b []byte) error {
+	// TODO(DuoNoxSol): This function is untested and may not work. If
+	// b retains its quotes, then net.ParseIP() may fail.
 	ip = IP(net.ParseIP(string(b)))
 	if ip == nil {
 		return IncorrectlyFormattedIP

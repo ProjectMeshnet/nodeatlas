@@ -209,7 +209,7 @@ VALUES(?, ?, ?, ?, ?, ?, ?, ?)`)
 	return
 }
 
-func (db DB) QueueNode(id int64, node *Node) (err error) {
+func (db DB) QueueNode(id int64, expire Duration, node *Node) (err error) {
 	// Insert the node into the table with the expiration time set to
 	// the current time plus the grace period.
 	_, err = db.Exec(`INSERT INTO nodes_verify_queue
@@ -217,7 +217,7 @@ func (db DB) QueueNode(id int64, node *Node) (err error) {
 VALUES(?, ?, ?, ?, ?, ?, ?, ?)`,
 		id, []byte(node.Addr), node.OwnerName, node.OwnerEmail,
 		node.Latitude, node.Longitude, node.Status,
-		time.Now().Add(48*time.Hour))
+		time.Now().Add(time.Duration(expire)))
 	return
 }
 

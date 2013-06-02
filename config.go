@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"os"
+	"time"
 )
 
 type Config struct {
@@ -37,6 +38,11 @@ type Config struct {
 		Resource   string
 		ReadOnly   bool
 	}
+
+	// VerificationExpiration is the amount of time to allow users to
+	// verify nodes by email after initially placing them. See the
+	// documentation for time.ParseDuration for format information.
+	VerificationExpiration Duration
 
 	// SMTP contains the information necessary to connect to a mail
 	// relay, so as to send verification email to registered nodes. If
@@ -87,4 +93,25 @@ func WriteConfig(conf *Config, path string) (err error) {
 
 	err = json.NewEncoder(f).Encode(conf)
 	return
+}
+
+type Duration time.Duration
+
+func (d Duration) MarshalJSON() ([]byte, error) {
+	return json.Marshal(time.Duration(d).String())
+}
+
+func (d Duration) UnmarshalJSON(b []byte) error {
+	if b[0] != '"' {
+		// If the duration is not a string, then consider it to be the
+		// zero duration.
+		d = 0
+		return nil
+	}
+	dur, err := time.ParseDuration(string(b[1 : len(b)-1]))
+	if err != nil {
+		return err
+	}
+	d = Duration(dur)
+	return nil
 }

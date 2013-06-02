@@ -116,7 +116,8 @@ func (*Api) PostNode(ctx *jas.Context) {
 	// explicitly set.
 	if Conf.SMTP != nil {
 		id := rand.Int63() // Pseudo-random positive int64
-		if err := Db.QueueNode(id, node); err != nil {
+		if err := Db.QueueNode(id, Conf.VerificationExpiration,
+			node); err != nil {
 			// If there is a database failure, report it as an
 			// internal error.
 			ctx.Error = jas.NewInternalError(err)
