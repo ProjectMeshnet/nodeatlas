@@ -191,7 +191,7 @@
           alert("Email is required!");
           return false;
         }
-        var dataString = 'name='+ name + '&email=' + email + '&address=' + addr + '&city=' + city + '&latitude=' + latitude + '&longitude=' + longitude;
+        var dataString = 'name='+ name + '&email=' + email + '&address=' + addr + '&latitude=' + latitude + '&longitude=' + longitude;
         $.ajax({
           type: "POST",
           url: "api/add",
