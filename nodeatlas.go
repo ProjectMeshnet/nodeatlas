@@ -53,13 +53,14 @@ func main() {
 	// collected.
 	{
 		var level log.LogLevel
+		flags := log.Ldate | log.Ltime // Logging flags
 		if *fDebug {
 			level = log.DEBUG
+			flags |= log.Lshortfile // Include the filename and line
 		} else {
 			level = DefaultLogLevel
 		}
-		l, err = log.NewLevel(level, true, os.Stdout, "",
-			log.Ldate|log.Ltime)
+		l, err = log.NewLevel(level, true, os.Stdout, "", flags)
 		if err != nil {
 			fmt.Printf("Could start logger: %s", err)
 			os.Exit(1)
