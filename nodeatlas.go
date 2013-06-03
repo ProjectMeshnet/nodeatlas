@@ -31,7 +31,9 @@ var (
 	fConf = flag.String("conf", "conf.json", "path to configuration file")
 	fRes  = flag.String("res", "res/", "path to resource directory")
 
-	fDebug    = flag.Bool("debug", false, "maximize verbosity")
+	fDebug = flag.Bool("debug", false, "maximize verbosity")
+	fQuiet = flag.Bool("q", false, "only output errors")
+
 	fReadOnly = flag.Bool("readonly", false, "disallow database changes")
 
 	fTestDB = flag.Bool("testdb", false, "test the database")
@@ -57,6 +59,8 @@ func main() {
 		if *fDebug {
 			level = log.DEBUG
 			flags |= log.Lshortfile // Include the filename and line
+		} else if *fQuiet {
+			level = log.ERR
 		} else {
 			level = DefaultLogLevel
 		}
