@@ -8,6 +8,7 @@
 		"Resource": "example.db",
 		"ReadOnly": true
 	},
+	"CacheExpiration": "168h",
 	"VerificationExpiration": "48h",
 	"SMTP": {
 		"EmailAddress": "nodeatlas@example.com",

@@ -39,6 +39,10 @@ type Config struct {
 		ReadOnly   bool
 	}
 
+	// CacheExpiration is the amount of time for which to store cached
+	// nodes before considering them outdated, and removing them.
+	CacheExpiration Duration
+
 	// VerificationExpiration is the amount of time to allow users to
 	// verify nodes by email after initially placing them. See the
 	// documentation for time.ParseDuration for format information.
