@@ -55,7 +55,7 @@
         <p>Navigate to your desired location and click on the map to drop a marker and submit your information.</p>
       </div>
       <div class="modal-footer">
-        <a href="#" onclick="$('#me').modal('hide'); initRegistration(); return false;"class="btn btn-primary">Go!</a>
+        <a href="#" onClick="$('#me').modal('hide'); initRegistration(); return false;"class="btn btn-primary">Go!</a>
       </div>
     </div>
 
@@ -191,7 +191,7 @@
           alert("Email is required!");
           return false;
         }
-        var dataString = 'name='+ name + '&email=' + email + '&address=' + addr + '&city=' + city + '&latitude=' + latitude + '&longitude=' + longitude;
+        var dataString = 'name='+ name + '&email=' + email + '&address=' + addr + '&latitude=' + latitude + '&longitude=' + longitude;
         $.ajax({
           type: "POST",
           url: "api/add",
@@ -218,15 +218,13 @@
               '<input type="text" class="input-medium" placeholder="Required" id="name" name="name" />'+
               '<label><strong>Email:</strong> <i>never shared</i></label>'+
               '<input type="text" class="input-medium" placeholder="Required" id="email" name="email" />'+
-              '<label><strong>City:</strong></label>'+
-              '<input type="text" class="input-medium" placeholder="Optional" id="city" name="city" />'+
               '<label><strong>IPv6:</strong></label>'+
-              '<input type="text" class="input-medium" placeholder="Optional" id="addr" name="addr" value="[ipv6]" />'+
+              '<input type="text" class="input-medium" id="addr" name="addr" placeholder="Optional" />'+
               '<input style="display: none;" type="text" id="lat" name="lat" value="'+e.latlng.lat.toFixed(6)+'" />'+
               '<input style="display: none;" type="text" id="lng" name="lng" value="'+e.latlng.lng.toFixed(6)+'" /><br><br>'+
               '<div class="row-fluid">'+
-                '<div class="span6" style="text-align:center;"><button type="button" class="btn" onclick="cancelRegistration()">Cancel</button></div>'+
-                '<div class="span6" style="text-align:center;"><button type="button" class="btn btn-primary" onclick="insertUser()">Submit</button></div>'+
+                '<div class="span6" style="text-align:center;"><button type="button" class="btn btn-small" onclick="cancelRegistration()">Cancel</button></div>'+
+                '<div class="span6" style="text-align:center;"><button type="button" class="btn btn-small btn-primary" onclick="insertUser()">Submit</button></div>'+
               '</div>'+
               '</form>';
         marker.bindPopup(form).openPopup();
