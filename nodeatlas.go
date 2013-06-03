@@ -12,6 +12,7 @@ import (
 	"os/signal"
 	"path"
 	"syscall"
+	"time"
 )
 
 var Version = "0.1"
@@ -195,6 +196,17 @@ func TestDatabase(db DB) {
 		Longitude:  -80.10101,
 		Status:     StatusPossible,
 	}
+
+	nodeCached := &Node{
+		Addr:         IP(net.ParseIP("ff00::2")),
+		OwnerName:    "test",
+		OwnerEmail:   "nothing@example.com",
+		Latitude:     34.14523,
+		Longitude:    5.3635,
+		Status:       StatusPossible,
+		RetrieveTime: time.Now().Unix(),
+	}
+
 	err = db.AddNode(node)
 
 	if err != nil {
@@ -226,5 +238,14 @@ func TestDatabase(db DB) {
 		l.Errf("Error deleting node: %s", err)
 	} else {
 		l.Debug("Successfully deleted node")
+	}
+
+	nodes := []*Node{node, nodeCached}
+
+	err = db.CacheNodes(nodes, "example.com")
+	if err != nil {
+		l.Errf("Error caching nodes: %s", err)
+	} else {
+		l.Debug("Successfully cached nodes")
 	}
 }

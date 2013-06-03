@@ -213,6 +213,28 @@ VALUES(?, ?, ?, ?, ?, ?, ?, ?)`)
 	return
 }
 
+func (db DB) CacheNodes(nodes []*Node, source string) (err error) {
+	stmt, err := db.Prepare(`INSERT INTO nodes_cached
+(address, owner, email, lat, lon, status, source, retrieved)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
+	if err != nil {
+		return
+	}
+
+	for _, node := range nodes {
+		retrieved := node.RetrieveTime
+		if retrieved == 0 {
+			retrieved = time.Now().Unix()
+		}
+		_, err = stmt.Exec([]byte(node.Addr), node.OwnerName, node.OwnerEmail, node.Latitude, node.Longitude, node.Status, source, retrieved)
+		if err != nil {
+			return
+		}
+	}
+	stmt.Close()
+	return
+}
+
 func (db DB) QueueNode(id int64, expire Duration, node *Node) (err error) {
 	// Insert the node into the table with the expiration time set to
 	// the current time plus the grace period.
