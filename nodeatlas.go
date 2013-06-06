@@ -167,11 +167,12 @@ func RegisterTemplates() (err error) {
 // ListenSignal uses os/signal to wait for OS signals, such as SIGHUP
 // and SIGINT, and perform the appropriate actions as listed below.
 //     SIGHUP: reload configuration file
+//     SIGINT: gracefully shut down
 func ListenSignal() {
 	// Create the channel and use signal.Notify to listen for any
 	// specified signals.
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, syscall.SIGHUP)
+	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT)
 	for sig := range c {
 		switch sig {
 		case syscall.SIGHUP:
@@ -182,6 +183,17 @@ func ListenSignal() {
 				continue
 			}
 			Conf = conf
+		case syscall.SIGINT:
+			l.Info("Caught SIGINT; NodeAtlas over and out\n")
+			err := Db.Close()
+			if err != nil {
+				// If closing the database gave an error, report it
+				// and close with exit code 1.
+				l.Errf("Database could not be closed: %s", err)
+				os.Exit(1)
+			}
+			// If all went well, close with exit code 0.
+			os.Exit(0)
 		}
 	}
 }
