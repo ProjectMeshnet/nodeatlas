@@ -17,8 +17,10 @@ import (
 
 var Version = "0.1"
 
-const (
-	DefaultLogLevel = log.INFO
+var (
+	LogLevel = log.LogLevel(log.INFO)
+	LogFlags = log.Ldate | log.Ltime // 2006/01/02 15:04:05
+	LogFile  = os.Stdout             // *os.File type
 )
 
 var (
@@ -31,6 +33,7 @@ var (
 	fConf = flag.String("conf", "conf.json", "path to configuration file")
 	fRes  = flag.String("res", "res/", "path to resource directory")
 
+	fLog   = flag.String("file", "", "Logfile (defaults to stdout)")
 	fDebug = flag.Bool("debug", false, "maximize verbosity")
 	fQuiet = flag.Bool("q", false, "only output errors")
 
@@ -50,25 +53,32 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Initialize the log with an appropriate log level. Do this
-	// inside a separate scope so that variables can be garbage
-	// collected.
-	{
-		var level log.LogLevel
-		flags := log.Ldate | log.Ltime // Logging flags
-		if *fDebug {
-			level = log.DEBUG
-			flags |= log.Lshortfile // Include the filename and line
-		} else if *fQuiet {
-			level = log.ERR
-		} else {
-			level = DefaultLogLevel
-		}
-		l, err = log.NewLevel(level, true, os.Stdout, "", flags)
+	// Set logging parameters based on flags.
+	if *fDebug {
+		LogLevel = log.DEBUG
+		LogFlags |= log.Lshortfile // Include the filename and line
+	} else if *fQuiet {
+		LogLevel = log.ERR
+	}
+
+	if len(*fLog) > 0 {
+		// If a file is specified, open it with the appropriate flags,
+		// which will cause it to be created if not existent, and only
+		// append data when writing to it. It will inherit all
+		// permissions from its parent directory.
+		LogFile, err = os.OpenFile(*fLog,
+			os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 		if err != nil {
-			fmt.Printf("Could start logger: %s", err)
+			fmt.Printf("Could not open logfile: %s", err)
 			os.Exit(1)
 		}
+		defer LogFile.Close()
+	} // Otherwise, default to os.Stdout.
+
+	l, err = log.NewLevel(LogLevel, true, LogFile, "", LogFlags)
+	if err != nil {
+		fmt.Printf("Could start logger: %s", err)
+		os.Exit(1)
 	}
 
 	// Listen for OS signals.
