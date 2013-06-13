@@ -180,7 +180,9 @@ func (*Api) GetVerify(ctx *jas.Context) {
 	l.Infof("Node %q verified", ip)
 }
 
-// GetAll dumps the entire database of nodes, including cached ones.
+// GetAll dumps the entire database of nodes, including cached
+// ones. If the form value 'geojson' is present, then the "data" field
+// contains the dump in GeoJSON compliant form.
 func (*Api) GetAll(ctx *jas.Context) {
 	nodes, err := Db.DumpNodes()
 	if err != nil {
@@ -188,5 +190,15 @@ func (*Api) GetAll(ctx *jas.Context) {
 		l.Err(err)
 		return
 	}
-	ctx.Data = nodes
+
+	// We must invoke ParseForm() so that we can access ctx.Form.
+	ctx.ParseForm()
+
+	// If the form value 'geojson' is included, dump in GeoJSON
+	// form. Otherwise, just dump with normal marhshalling.
+	if _, ok := ctx.Form["geojson"]; ok {
+		ctx.Data = MultiPointNodes(nodes)
+	} else {
+		ctx.Data = nodes
+	}
 }

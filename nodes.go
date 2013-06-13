@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"github.com/kpawlik/geojson"
 	"net"
 )
 
@@ -71,4 +72,16 @@ func (ip IP) UnmarshalJSON(b []byte) error {
 
 func (ip IP) String() string {
 	return net.IP(ip).String()
+}
+
+// MultiPointNodes returns a geojson.MultiPoint type from the
+// coordinates of the given nodes, in order.
+func MultiPointNodes(nodes []*Node) *geojson.MultiPoint {
+	//
+	c := make(geojson.Coordinates, len(nodes))
+	for i, n := range nodes {
+		c[i] = geojson.Coordinate{
+			geojson.CoordType(n.Longitude), geojson.CoordType(n.Latitude)}
+	}
+	return geojson.NewMultiPoint(c)
 }
