@@ -1,20 +1,20 @@
-var map, newUser, cloudmade, cloudmadeAttribution, cloudmadeUrl, users, firstLoad;
+var map, newUser, tilelayer, attribution, tileUrl, users, firstLoad;
 
 firstLoad = true;
 
-cloudmadeAttribution = 'Map data &copy; 2011 OpenStreetMap contributors, Imagery &copy; 2011  CloudMade'; 
-cloudmadeUrl = 'http://{s}.tile.cloudmade.com/64022233ce4f40c6acb6473ccdaec5b3/{styleId}/256/{z}/{x}/{y}.png',
+attribution = 'Map data &copy; 2011 OpenStreetMap contributors';
+tileUrl = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
 
 users = new L.FeatureGroup();
 users = new L.MarkerClusterGroup({spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true});
 newUser = new L.LayerGroup();
 
-cloudmade = L.tileLayer(cloudmadeUrl, {styleId: 22677, attribution: cloudmadeAttribution});
+tilelayer = L.tileLayer(tileUrl, {styleId: 22677, attribution: attribution});
 
 map = new L.Map('map', {
 	center: new L.LatLng(39.90973623453719, -93.69140625),
 	zoom: 6,
-	layers: [cloudmade, users, newUser]
+	layers: [tilelayer, users, newUser]
 });
 
 // GeoLocation Control
