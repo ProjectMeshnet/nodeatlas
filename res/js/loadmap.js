@@ -74,8 +74,13 @@ function addNodes() {
 
 function onEachNode(feature, layer) {
 	// If the Feature properties include popupContent, display it.
-	if (feature.properties && feature.properties.popupContent) {
-		layer.bindPopup(feature.properties.popupContent);
+	if (feature.properties) {
+		var html =  '<strong>Name:</strong> '+feature.properties.OwnerName+
+					'<br/>'+
+					'<strong>Address:</strong> '+feature.properties.Address;
+		
+		
+		layer.bindPopup(html);
 	}
 }
 
