@@ -69,7 +69,7 @@ function cancelRegistration() {
 function addNodes() {
 	$.getJSON("/api/all?geojson", function (response) {
 		// TODO: Check for errors here (response.error)
-		L.geoJSON(response.data, {
+		L.geoJson(response.data, {
 			onEachFeature: onEachNode
 		}).addTo(map);
 	});
