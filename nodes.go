@@ -74,10 +74,9 @@ func (ip IP) String() string {
 	return net.IP(ip).String()
 }
 
-// MultiPointNodes returns a geojson.MultiPoint type from the
-// coordinates of the given nodes, in order.
-func MultiPointNodes(nodes []*Node) *geojson.FeatureCollection {
-	//
+// FeatureCollectionNodes returns a *geojson.Featurecollection type
+// from the given nodes, in order.
+func FeatureCollectionNodes(nodes []*Node) *geojson.FeatureCollection {
 	features := make([]*geojson.Feature, len(nodes))
 	for i, n := range nodes {
 		properties := make(map[string]interface{}, 1)
