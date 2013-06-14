@@ -10,14 +10,14 @@ users = new L.MarkerClusterGroup({spiderfyOnMaxZoom: true, showCoverageOnHover: 
 newUser = new L.LayerGroup();
 
 // GeoJSON layer
-geojson = new L.GeoJSON();
+//geojson = new L.GeoJSON();
 
 cloudmade = L.tileLayer(cloudmadeUrl, {styleId: 22677, attribution: cloudmadeAttribution});
 
 map = new L.Map('map', {
     center: new L.LatLng(39.90973623453719, -93.69140625),
     zoom: 6,
-    layers: [cloudmade, users, newUser, geojson]
+    layers: [cloudmade, users, newUser]
 });
 
 // GeoLocation Control
@@ -41,6 +41,8 @@ map.addControl(new L.Control.Scale());
 $(document).ready(function() {
     $.ajaxSetup({cache:true});
     $('#map').css('height', ($(window).height() - 40));
+
+    // Populate the map with nodes from /api/all.
     addNodes();
 });
 
@@ -67,8 +69,17 @@ function cancelRegistration() {
 function addNodes() {
 	$.getJSON("/api/all?geojson", function (response) {
 		// TODO: Check for errors here (response.error)
-		geojson.addData(response.data);
+		L.geoJSON(response.data, {
+			onEachFeature: onEachNode
+		}).addTo(map);
 	});
+}
+
+function onEachNode(feature, layer) {
+    // If the Feature properties include popupContent, display it.
+    if (feature.properties && feature.properties.popupContent) {
+        layer.bindPopup(feature.properties.popupContent);
+    }
 }
 
 //not working yet as we're still finalizing the api - ds
