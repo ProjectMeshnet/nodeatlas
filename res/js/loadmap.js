@@ -1,19 +1,28 @@
-var map, newUser, tilelayer, attribution, tileUrl, users, firstLoad;
+var map, newUser, tilelayer, attribution, users, firstLoad;
+
+var options = {
+/*	"tileserver": "{{.Map.Tileserver}}",
+	"center": [{{.Map.Center[0]}}, {{.Map.Center[1]}}],
+	"zoom": {{.Map.Zoom}}*/
+	"tileserver": "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
+	"center": [40, -100],
+	"zoom": 4
+}
 
 firstLoad = true;
 
 attribution = 'Map data &copy; 2011 OpenStreetMap contributors';
-tileUrl = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+
 
 users = new L.FeatureGroup();
 users = new L.MarkerClusterGroup({spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true});
 newUser = new L.LayerGroup();
 
-tilelayer = L.tileLayer(tileUrl, {styleId: 22677, attribution: attribution});
+tilelayer = L.tileLayer(options.tileserver, {styleId: 22677, attribution: attribution});
 
 map = new L.Map('map', {
-	center: new L.LatLng(39.90973623453719, -93.69140625),
-	zoom: 6,
+	center: new L.LatLng(options.center[0], options.center[1]),
+	zoom: options.zoom,
 	layers: [tilelayer, users, newUser]
 });
 
@@ -30,6 +39,9 @@ geolocControl.onAdd = function (map) {
 	return div;
 };
 
+// Populate the map with nodes from /api/all.
+addNodes();
+
 map.addControl(geolocControl);
 map.addControl(new L.Control.Scale());
 
@@ -38,9 +50,6 @@ map.addControl(new L.Control.Scale());
 $(document).ready(function() {
 	$.ajaxSetup({cache:true});
 	$('#map').css('height', ($(window).height() - 40));
-
-	// Populate the map with nodes from /api/all.
-	addNodes();
 });
 
 $(window).resize(function () {
