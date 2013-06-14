@@ -22,7 +22,7 @@
 			<a href="/" class="brand">nodeatlas</a>
 			<ul class="nav">
 			  <li><a href="#about" data-toggle="modal"><i class="icon-sitemap icon-muted icon-2x"></i><br><small>about</small></span></a></li>
-<li><a href="#"><i class="icon-dashboard icon-muted icon-2x"></i><br><small>tools</small></span></a></li>
+<li><a href="#tools" data-toggle="modal"><i class="icon-dashboard icon-muted icon-2x"></i><br><small>tools</small></span></a></li>
 
 </ul>
 
@@ -40,6 +40,18 @@
   <div class="modal-body">
 	<p>How do you make sense of a meshnet? You map it.</p>
 	<p>This is an early release of the NodeAtlas meshnet map, proudly built with bootstrap, go and leaflet.</p>
+  </div>
+  <div class="modal-footer">
+	<a href="https://github.com/ProjectMeshnet/nodeatlas"class="btn btn-primary">View Github</a>
+  </div>
+</div>
+<div class="modal hide fade" id="tools">
+  <div class="modal-header">
+	<a class="close" data-dismiss="modal">×</a>
+	<h3>About the MeshMap</h3>
+  </div>
+  <div class="modal-body">
+	<h1><i class="icon-wrench"></i> Tools</h1>
   </div>
   <div class="modal-footer">
 	<a href="https://github.com/ProjectMeshnet/nodeatlas"class="btn btn-primary">View Github</a>
@@ -70,7 +82,6 @@
   </div>
 </div>
 <div class="row-fluid marketing">
-  <div class="well">
 	<div id="map"></div>
 	<div id="loading-mask" class="modal-backdrop" style="display:none;"></div>
 	<div id="loading" style="display:none;">
@@ -78,7 +89,6 @@
 		<img src="res/img/ajax-loader.gif">
 	  </div>
 	</div>
-  </div>
 </div>
 
 <hr>
