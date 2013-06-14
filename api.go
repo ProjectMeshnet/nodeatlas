@@ -197,7 +197,7 @@ func (*Api) GetAll(ctx *jas.Context) {
 	// If the form value 'geojson' is included, dump in GeoJSON
 	// form. Otherwise, just dump with normal marhshalling.
 	if _, ok := ctx.Form["geojson"]; ok {
-		ctx.Data = MultiPointNodes(nodes)
+		ctx.Data = FeatureCollectionNodes(nodes)
 	} else {
 		ctx.Data = nodes
 	}
