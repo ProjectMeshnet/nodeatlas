@@ -69,6 +69,22 @@ type Config struct {
 		// the port.
 		ServerAddress string
 	}
+
+	// Map contains the information used by NodeAtlas to power the
+	// Leaflet.js map.
+	Map struct {
+		// Tileserver is the URL used for loading tiles. It is of the
+		// form "http://{s}.tile.osm.org/{z}/{x}/{y}.png", so that
+		// Leaflet.js can use it.
+		Tileserver string
+
+		// Center contains the coordinates on which to center the map
+		// in [latitude, longitude] format.
+		Center [2]float64
+
+		// Zoom is the Leaflet.js zoom level to start the map at.
+		Zoom int
+	}
 }
 
 // ReadConfig uses os and encoding/json to read a configuration from

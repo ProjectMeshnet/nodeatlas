@@ -16,5 +16,10 @@
 		"Password": "password123",
 		"NoAuthenticate": false,
 		"ServerAddress": "mail.example.com:587"
+	},
+	"Map": {
+		"Tileserver": "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
+		"Center": [40, -100],
+		"Zoom": 4
 	}
 }

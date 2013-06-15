@@ -24,9 +24,11 @@ var (
 )
 
 var (
-	Conf *Config
-	t    *template.Template
-	l    *log.Logger
+	Conf      *Config
+	StaticDir string // Directory for compiled files.
+
+	t *template.Template
+	l *log.Logger
 )
 
 var (
@@ -85,6 +87,21 @@ func main() {
 	go ListenSignal()
 
 	l.Infof("Starting NodeAtlas %s\n", Version)
+
+	// Compile and template the static directory.
+	StaticDir, err = CompileStatic(*fRes, Conf)
+	if err != nil {
+		if len(StaticDir) > 0 {
+			// Try to remove the directory if it was created.
+			err := os.RemoveAll(StaticDir)
+			if err != nil {
+				l.Emergf("Could not remove static directory %q: %s",
+					StaticDir, err)
+			}
+		}
+		l.Fatalf("Could not compile static files: %s", err)
+	}
+	l.Debugf("Compiled static files to %q\n", StaticDir)
 
 	if *fTestDB {
 		// Open up a temporary database using sqlite3.
@@ -166,10 +183,6 @@ func StartServer(addr, prefix string) (err error) {
 // RegisterTemplates loads templates from <*fRes>/webpages/*.html and
 // <*fRes>/emails/*.txt into the global variable t.
 func RegisterTemplates() (err error) {
-	t, err = template.ParseGlob(path.Join(*fRes, "webpages/*.html"))
-	if err != nil {
-		return
-	}
 	_, err = t.ParseGlob(path.Join(*fRes, "emails/*.txt"))
 	return
 }
@@ -195,15 +208,31 @@ func ListenSignal() {
 			Conf = conf
 		case syscall.SIGINT:
 			l.Info("Caught SIGINT; NodeAtlas over and out\n")
+			var exitCode int
+
+			// Close the database connection.
 			err := Db.Close()
 			if err != nil {
 				// If closing the database gave an error, report it
-				// and close with exit code 1.
+				// and set the exit code.
 				l.Errf("Database could not be closed: %s", err)
-				os.Exit(1)
+				exitCode = 1
 			}
-			// If all went well, close with exit code 0.
-			os.Exit(0)
+
+			// Delete the directory of static files.
+			err = os.RemoveAll(StaticDir)
+			if err != nil {
+				// If the static directory coldn't be removed, report
+				// it, give the location of the directory, and set the
+				// exit code.
+				l.Errf("Static directory %q could not be removed: %s",
+					StaticDir, err)
+				exitCode = 1
+			}
+
+			// If all went well, close with exit code 0. Otherwise, it
+			// will be set to 1.
+			os.Exit(exitCode)
 		}
 	}
 }

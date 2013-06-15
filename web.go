@@ -15,21 +15,18 @@ func LogError(err error, req *http.Request) {
 
 // HandleRoot serves the "index.html" template.
 func HandleRoot(w http.ResponseWriter, req *http.Request) {
-	data := make(map[string]string, 1)
-	data["Name"] = Conf.Name
-	data["Version"] = Version
-	LogError(t.ExecuteTemplate(w, "index.html", data), req)
+	http.ServeFile(w, req, path.Join(StaticDir, "webpages/index.html"))
 }
 
 // HandleRes serves static files from the resources directory (*fRes).
 func HandleRes(w http.ResponseWriter, req *http.Request) {
 	// Serve the file within the resources directory, but slice off
 	// len("/res") from the req.URL.Path first.
-	http.ServeFile(w, req, path.Join(*fRes, req.URL.Path[4:]))
+	http.ServeFile(w, req, path.Join(StaticDir, req.URL.Path[4:]))
 }
 
 // HandleIcon responds to requests for favicon.ico by serving icon.png
 // from the resources directory.
 func HandleIcon(w http.ResponseWriter, req *http.Request) {
-	http.ServeFile(w, req, path.Join(*fRes, "icon.png"))
+	http.ServeFile(w, req, path.Join(StaticDir, "icon.png"))
 }

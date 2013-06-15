@@ -1,12 +1,9 @@
 var map, newUser, tilelayer, attribution, users, firstLoad;
 
 var options = {
-/*	"tileserver": "{{.Map.Tileserver}}",
-	"center": [{{.Map.Center[0]}}, {{.Map.Center[1]}}],
-	"zoom": {{.Map.Zoom}}*/
-	"tileserver": "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
-	"center": [40, -100],
-	"zoom": 4
+	"tileserver": "{{.Map.Tileserver}}",
+	"center": {{.Map.Center}},
+	"zoom": {{.Map.Zoom}}
 }
 
 firstLoad = true;
