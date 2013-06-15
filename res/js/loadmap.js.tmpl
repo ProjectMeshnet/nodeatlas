@@ -2,7 +2,7 @@ var map, newUser, tilelayer, attribution, users, firstLoad;
 
 var options = {
 	"tileserver": "{{.Map.Tileserver}}",
-	"center": {{.Map.Center}},
+	"center": [{{.Map.Center.Latitude}}, {{.Map.Center.Longitude}}],
 	"zoom": {{.Map.Zoom}}
 }
 

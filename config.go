@@ -78,9 +78,10 @@ type Config struct {
 		// Leaflet.js can use it.
 		Tileserver string
 
-		// Center contains the coordinates on which to center the map
-		// in [latitude, longitude] format.
-		Center [2]float64
+		// Center contains the coordinates on which to center the map.
+		Center struct {
+			Latitude, Longitude float64
+		}
 
 		// Zoom is the Leaflet.js zoom level to start the map at.
 		Zoom int
