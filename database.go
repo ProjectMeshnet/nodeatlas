@@ -40,7 +40,7 @@ email VARCHAR(255) NOT NULL,
 lat FLOAT NOT NULL,
 lon FLOAT NOT NULL,
 status INT NOT NULL,
-source VARCHAR(255) NOT NULL,
+source INT NOT NULL,
 retrieved DATETIME DEFAULT CURRENT_TIMESTAMP,
 expiration DATETIME);`)
 	if err != nil {
@@ -55,6 +55,14 @@ lat FLOAT NOT NULL,
 lon FLOAT NOT NULL,
 status INT NOT NULL,
 expiration DATETIME);`)
+	if err != nil {
+		return
+	}
+
+	_, err = db.Query(`CREATE TABLE IF NOT EXISTS cached_maps (
+id INT PRIMARY KEY AUTO_INCREMENT,
+hostname VARCHAR(255) NOT NULL,
+name VARCHAR(255) NOT NULL);`)
 	if err != nil {
 		return
 	}
