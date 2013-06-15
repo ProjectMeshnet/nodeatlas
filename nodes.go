@@ -48,6 +48,9 @@ type Node struct {
 
 	// OwnerEmail is the node's owner's email address.
 	OwnerEmail string `json:",omitempty"`
+
+	// Local ID of the source map from which this came
+	SourceId int
 }
 
 // IP is a wrapper for net.IP which implements the json.Marshaler and
