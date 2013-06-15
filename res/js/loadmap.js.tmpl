@@ -1,4 +1,4 @@
-var map, newUser, tilelayer, attribution, users, firstLoad;
+var map, newUser, tilelayer, nodelayer, attribution, firstLoad;
 
 var options = {
 	"tileserver": "{{.Map.Tileserver}}",
@@ -11,8 +11,7 @@ firstLoad = true;
 attribution = 'Map data &copy; 2011 OpenStreetMap contributors';
 
 
-users = new L.FeatureGroup();
-users = new L.MarkerClusterGroup({spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true});
+nodelayer = new L.MarkerClusterGroup({spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true});
 newUser = new L.LayerGroup();
 
 tilelayer = L.tileLayer(options.tileserver, {styleId: 22677, attribution: attribution});
@@ -20,7 +19,7 @@ tilelayer = L.tileLayer(options.tileserver, {styleId: 22677, attribution: attrib
 map = new L.Map('map', {
 	center: new L.LatLng(options.center[0], options.center[1]),
 	zoom: options.zoom,
-	layers: [tilelayer, users, newUser]
+	layers: [tilelayer, nodelayer, newUser]
 });
 
 // GeoLocation Control
@@ -74,7 +73,7 @@ function addNodes() {
 		// TODO: Check for errors here (response.error)
 		L.geoJson(response.data, {
 			onEachFeature: onEachNode
-		}).addTo(map);
+		}).addTo(nodelayer);
 	});
 }
 
@@ -112,8 +111,8 @@ function insertUser() {
 		data: dataString,
 		success: function() {
 			cancelRegistration();
-			users.clearLayers();
-			getUsers();
+			nodelayer.clearLayers();
+//			getNodes();
 			$("#loading-mask").hide();
 			$("#loading").hide();
 			$('#insertSuccessModal').modal('show');
