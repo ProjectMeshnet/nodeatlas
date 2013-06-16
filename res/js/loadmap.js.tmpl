@@ -2,7 +2,8 @@ var map, newUser, tilelayer, nodelayer, attribution, firstLoad;
 
 var options = {
 	"tileserver": "{{.Map.Tileserver}}",
-	"center": [{{.Map.Center.Latitude}}, {{.Map.Center.Longitude}}],
+	"center": new L.LatLng({{.Map.Center.Latitude}},
+						   {{.Map.Center.Longitude}}),
 	"zoom": {{.Map.Zoom}}
 }
 
@@ -17,14 +18,16 @@ newUser = new L.LayerGroup();
 tilelayer = L.tileLayer(options.tileserver, {styleId: 22677, attribution: attribution});
 
 map = new L.Map('map', {
-	center: new L.LatLng(options.center[0], options.center[1]),
+	center: options.center,
 	zoom: options.zoom,
+	maxZoom: 16,
+	minZoom: 2,
 	layers: [tilelayer, nodelayer, newUser]
 });
 
 // GeoLocation Control
 function geoLocate() {
-	map.locate({setView: true, maxZoom: 14});
+	map.locate({setView: true});
 }
 var geolocControl = new L.control({
 	position: 'topright'

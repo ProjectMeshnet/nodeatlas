@@ -199,6 +199,12 @@ func (*Api) GetAll(ctx *jas.Context) {
 	if _, ok := ctx.Form["geojson"]; ok {
 		ctx.Data = FeatureCollectionNodes(nodes)
 	} else {
-		ctx.Data = nodes
+		mappedNodes, err := Db.CacheFormatNodes(nodes)
+		if err != nil {
+			ctx.Error = jas.NewInternalError(err)
+			l.Err(err)
+			return
+		}
+		ctx.Data = mappedNodes
 	}
 }
