@@ -88,14 +88,16 @@ function onEachNode(feature, layer) {
 	}
 }
 
-//not working yet as we're still finalizing the api - ds
 function insertUser() {
 	$("#loading-mask").show();
 	$("#loading").show();
+	
 	var address = $("#address").val();
 	var name = $("#name").val();
+	var email = $("#email").val();
 	var latitude = $("#latitude").val();
 	var longitude = $("#longitude").val();
+
 	if (name.length == 0) {
 		alert("Name is required!");
 		return false;
@@ -104,18 +106,29 @@ function insertUser() {
 		alert("Email is required!");
 		return false;
 	}
-	var dataString = 'name='+ name + '&email=' + email + '&address=' + addr + '&latitude=' + latitude + '&longitude=' + longitude;
+	
+	var dataString = 'name='+ name + '&email=' + email + '&address=' + address + '&latitude=' + latitude + '&longitude=' + longitude;	
 	$.ajax({
 		type: "POST",
-		url: "api/add",
+		url: "/api/node",
 		data: dataString,
-		success: function() {
-			cancelRegistration();
+		success: function(response) {
+			if (response.error == null)
+				cancelRegistration();
+
 			nodelayer.clearLayers();
 //			getNodes();
 			$("#loading-mask").hide();
 			$("#loading").hide();
-			$('#insertSuccessModal').modal('show');
+
+			if (response.error == null)
+				$('#insertSuccessModal').modal('show');
+		},
+		error: function(data) {
+			nodelayer.clearLayers();
+			alert("Registration unsuccessful.");
+			$("#loading-mask").hide();
+			$("#loading").hide();
 		}
 	});
 	return false;
@@ -132,9 +145,9 @@ function onMapClick(e) {
 		'<label><strong>Email:</strong> <i>never shared</i></label>'+
 		'<input type="text" class="input-medium" placeholder="Required" id="email" name="email" />'+
 		'<label><strong>IPv6:</strong></label>'+
-		'<input type="text" class="input-medium" id="addr" name="addr" placeholder="Optional" />'+
-		'<input style="display: none;" type="text" id="lat" name="lat" value="'+e.latlng.lat.toFixed(6)+'" />'+
-		'<input style="display: none;" type="text" id="lng" name="lng" value="'+e.latlng.lng.toFixed(6)+'" /><br><br>'+
+		'<input type="text" class="input-medium" id="address" name="address" placeholder="Optional" />'+
+		'<input style="display: none;" type="text" id="latitude" name="latitude" value="'+e.latlng.lat.toFixed(6)+'" />'+
+		'<input style="display: none;" type="text" id="longitude" name="longitude" value="'+e.latlng.lng.toFixed(6)+'" /><br><br>'+
 		'<div class="row-fluid">'+
 		'<div class="span6" style="text-align:center;"><button type="button" class="btn btn-small" onclick="cancelRegistration()">Cancel</button></div>'+
 		'<div class="span6" style="text-align:center;"><button type="button" class="btn btn-small btn-primary" onclick="insertUser()">Submit</button></div>'+
