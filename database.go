@@ -60,7 +60,7 @@ expiration DATETIME);`)
 	}
 
 	_, err = db.Query(`CREATE TABLE IF NOT EXISTS cached_maps (
-id INT PRIMARY KEY AUTO_INCREMENT,
+id INTEGER PRIMARY KEY AUTOINCREMENT,
 hostname VARCHAR(255) NOT NULL,
 name VARCHAR(255) NOT NULL);`)
 	if err != nil {
@@ -209,7 +209,7 @@ LIMIT 1`)
 	return
 }
 
-func (db DB) CacheNode(node *Node, source string, expiry int) (err error) {
+func (db DB) CacheNode(node *Node, source int, expiry int) (err error) {
 	stmt, err := db.Prepare(`INSERT INTO nodes_cached
 (address, owner, email, lat, lon, status, source, expiration)
 VALUES(?, ?, ?, ?, ?, ?, ?, ?)`)
@@ -240,6 +240,31 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
 		}
 	}
 	stmt.Close()
+	return
+}
+
+func (db DB) FindSourceMap(id int) (source string, err error) {
+	row := db.QueryRow(`SELECT address
+FROM cached_maps
+WHERE id=?`, id)
+
+	err = row.Scan(&source)
+	return
+}
+
+func (db DB) CacheFormatNodes(nodes []*Node) (sourceMaps map[string][]*Node) {
+	sourceMaps = make(map[string][]*Node)
+	for _, node := range nodes {
+		hostname, err := db.FindSourceMap(node.SourceId)
+		if err != nil {
+			return
+		}
+		if sourceMaps[hostname] == nil {
+			sourceMaps[hostname] = make([]*Node, 0, 5)
+		}
+
+		sourceMaps[hostname] = append(sourceMaps[hostname], node)
+	}
 	return
 }
 
