@@ -244,7 +244,10 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
 }
 
 func (db DB) FindSourceMap(id int) (source string, err error) {
-	row := db.QueryRow(`SELECT address
+	if id == 0 {
+		return "local", nil
+	}
+	row := db.QueryRow(`SELECT hostname
 FROM cached_maps
 WHERE id=?`, id)
 
@@ -252,18 +255,19 @@ WHERE id=?`, id)
 	return
 }
 
-func (db DB) CacheFormatNodes(nodes []*Node) (sourceMaps map[string][]*Node) {
+func (db DB) CacheFormatNodes(nodes []*Node) (sourceMaps map[string][]*Node, err error) {
 	sourceMaps = make(map[string][]*Node)
 	for _, node := range nodes {
-		hostname, err := db.FindSourceMap(node.SourceId)
+		hostname, err := db.FindSourceMap(node.SourceID)
 		if err != nil {
-			return
+			return nil, err
 		}
-		if sourceMaps[hostname] == nil {
-			sourceMaps[hostname] = make([]*Node, 0, 5)
+		sourcemapNodes := sourceMaps[hostname]
+		if sourcemapNodes == nil {
+			sourcemapNodes = make([]*Node, 0, 5)
 		}
 
-		sourceMaps[hostname] = append(sourceMaps[hostname], node)
+		sourceMaps[hostname] = append(sourcemapNodes, node)
 	}
 	return
 }
