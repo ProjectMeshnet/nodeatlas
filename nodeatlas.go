@@ -180,10 +180,10 @@ func StartServer(addr, prefix string) (err error) {
 	return http.ListenAndServe(addr, nil)
 }
 
-// RegisterTemplates loads templates from <*fRes>/webpages/*.html and
-// <*fRes>/emails/*.txt into the global variable t.
+// RegisterTemplates loads templates from StaticDir>/emails/*.txt
+// into the global variable t.
 func RegisterTemplates() (err error) {
-	_, err = t.ParseGlob(path.Join(*fRes, "emails/*.txt"))
+	t, err = template.ParseGlob(path.Join(StaticDir, "emails/*.txt"))
 	return
 }
 
