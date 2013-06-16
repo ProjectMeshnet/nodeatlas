@@ -271,37 +271,3 @@ func (db DB) CacheFormatNodes(nodes []*Node) (sourceMaps map[string][]*Node, err
 	}
 	return
 }
-
-func (db DB) QueueNode(id int64, expire Duration, node *Node) (err error) {
-	// Insert the node into the table with the expiration time set to
-	// the current time plus the grace period.
-	_, err = db.Exec(`INSERT INTO nodes_verify_queue
-(id, address, owner, email, lat, lon, status, expiration)
-VALUES(?, ?, ?, ?, ?, ?, ?, ?)`,
-		id, []byte(node.Addr), node.OwnerName, node.OwnerEmail,
-		node.Latitude, node.Longitude, node.Status,
-		time.Now().Add(time.Duration(expire)))
-	return
-}
-
-func (db DB) DeleteQueuedNode(id int64) (err error) {
-	_, err = db.Exec(`DELETE FROM nodes_verify_queue WHERE id = ?`, id)
-	return
-}
-
-// VerifyQueuedNode removes a node (as identified by the id) from the
-// queue and inserts it into the nodes table.
-func (db DB) VerifyQueuedNode(id int64) (addr IP, err error) {
-	// Get the node via the id.
-	var node = new(Node)
-	err = db.QueryRow(`SELECT address,owner,email,lat,lon,status
-FROM nodes_verify_queue WHERE id = ?`, id).Scan(
-		&node.Addr, &node.OwnerName, &node.OwnerEmail,
-		&node.Latitude, &node.Longitude, &node.Status)
-	if err != nil {
-		return
-	}
-
-	// Add the node to the regular database.
-	return node.Addr, db.AddNode(node)
-}

@@ -3,9 +3,10 @@ package main
 import (
 	"errors"
 	"net/smtp"
+	"time"
 )
 
-var SMTPDisabledError = errors.New("SMTP not specified in the configuration")
+var SMTPDisabledError = errors.New("SMTP disabled in the configuration")
 
 // ConnectSMTP uses the global Conf to connect to the SMTP server and,
 // unless disabled in the configuration, authenticates with STARTTLS
@@ -84,4 +85,47 @@ func SendVerificationEmail(id int64, n *Node) (err error) {
 	// Execute the template verification.txt and write directly to the
 	// connection.
 	return t.ExecuteTemplate(w, "verification.txt", data)
+}
+
+// QueueNode inserts the given node into the verify queue with its
+// expiration time set to the current time plus the grace period, and
+// identified by the given ID.
+func (db DB) QueueNode(id int64, grace Duration, node *Node) (err error) {
+	_, err = db.Exec(`INSERT INTO nodes_verify_queue
+(id, address, owner, email, lat, lon, status, expiration)
+VALUES(?, ?, ?, ?, ?, ?, ?, ?)`,
+		id, []byte(node.Addr), node.OwnerName, node.OwnerEmail,
+		node.Latitude, node.Longitude, node.Status,
+		time.Now().Add(time.Duration(grace)))
+	return
+}
+
+// DeleteExpiredFromQueue removes expired nodes from the verify queue
+// by checking if their expiration stamp is past the current time.
+func (db DB) DeleteExpiredFromQueue() (err error) {
+	_, err = db.Exec(`DELETE FROM nodes_verify_queue
+WHERE expiration <= DATETIME('now');`)
+	return
+}
+
+// VerifyQueuedNode removes a node (as identified by the id) from the
+// queue and inserts it into the nodes table.
+func (db DB) VerifyQueuedNode(id int64) (addr IP, err error) {
+	// Get the node via the id.
+	var node = new(Node)
+	err = db.QueryRow(`SELECT address,owner,email,lat,lon,status
+FROM nodes_verify_queue WHERE id = ?;`, id).Scan(
+		&node.Addr, &node.OwnerName, &node.OwnerEmail,
+		&node.Latitude, &node.Longitude, &node.Status)
+	if err != nil {
+		return
+	}
+	_, err = db.Exec(`DELETE FROM nodes_verify_queue
+WHERE id = ?;`, id)
+	if err != nil {
+		l.Errf("Could not clear verified node %d: %s", id, err)
+	}
+
+	// Add the node to the regular database.
+	return node.Addr, db.AddNode(node)
 }

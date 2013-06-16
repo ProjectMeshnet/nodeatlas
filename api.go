@@ -129,16 +129,14 @@ func (*Api) PostNode(ctx *jas.Context) {
 			l.Err(err)
 			return
 		}
+
 		if err := SendVerificationEmail(id, node); err != nil {
 			// If the sending of the email fails, set the internal
 			// error, log it, and remove the node from the database.
 			ctx.Error = jas.NewInternalError(err)
 			l.Err(err)
-			err = Db.DeleteQueuedNode(id)
-			if err != nil {
-				// Well, that's not good.
-				l.Err("Could not remove cached node:", err)
-			}
+			// The cached node will be removed when it expires, so it
+			// may not be worth it to do it here.
 			return
 		}
 		ctx.Data = "verification email sent"
