@@ -26,6 +26,7 @@ var (
 var (
 	Conf      *Config
 	StaticDir string // Directory for compiled files.
+	Beat      *time.Ticker
 
 	t *template.Template
 	l *log.Logger
@@ -141,7 +142,7 @@ func main() {
 	}
 	l.Debug("Connected to database\n")
 	if Db.ReadOnly {
-		l.Debug("Database is read only\n")
+		l.Warning("Database is read only\n")
 	}
 
 	// Initialize the database with all of its tables.
@@ -151,6 +152,9 @@ func main() {
 	}
 	l.Debug("Initialized database\n")
 	l.Infof("Nodes: %d (%d local)\n", Db.LenNodes(true), Db.LenNodes(false))
+
+	Heartbeat()
+	l.Debug("Heartbeat started\n")
 
 	// Start the HTTP server.
 	err = StartServer(Conf.Addr, Conf.Prefix)
@@ -180,6 +184,38 @@ func StartServer(addr, prefix string) (err error) {
 	return http.ListenAndServe(addr, nil)
 }
 
+// Heartbeat starts a time.Ticker to perform tasks on a regular
+// schedule, as set by Conf.HeartbeatRate, which are documented
+// below. The global variable Beat is its ticker. To restart the
+// timer, invoke Heartbeat() again.
+//
+// Tasks:
+// - Call Db.DeleteExpiredFromQueue()
+func Heartbeat() {
+	// If the timer was not nil, then the timer must restart.
+	if Beat != nil {
+		// If we are resetting, stop the existing timer before
+		// replacing it.
+		Beat.Stop()
+	}
+
+	// Otherwise, create the Ticker and spawn a goroutine to check it.
+	Beat = time.NewTicker(time.Duration(Conf.HeartbeatRate))
+	go func() {
+		for {
+			if _, ok := <-Beat.C; !ok {
+				// If the channel closes, warn that the heartbeat has
+				// stopped.
+				l.Warning("Heartbeat stopped\n")
+				return
+			}
+			// Otherwise, perform scheduled tasks.
+			l.Debug("Heartbeat\n")
+			Db.DeleteExpiredFromQueue()
+		}
+	}()
+}
+
 // RegisterTemplates loads templates from StaticDir>/emails/*.txt
 // into the global variable t.
 func RegisterTemplates() (err error) {
@@ -206,6 +242,9 @@ func ListenSignal() {
 				continue
 			}
 			Conf = conf
+
+			// Restart the heartbeat ticker.
+			Heartbeat()
 		case syscall.SIGINT:
 			l.Info("Caught SIGINT; NodeAtlas over and out\n")
 			var exitCode int

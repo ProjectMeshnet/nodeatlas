@@ -8,6 +8,7 @@
 		"Resource": "example.db",
 		"ReadOnly": true
 	},
+	"HeartbeatRate": "10m",
 	"CacheExpiration": "168h",
 	"VerificationExpiration": "48h",
 	"SMTP": {

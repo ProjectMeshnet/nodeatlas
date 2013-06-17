@@ -39,6 +39,11 @@ type Config struct {
 		ReadOnly   bool
 	}
 
+	// HeartbeatRate is the amount of time to wait between performing
+	// regular tasks, such as clearing expired nodes from the queue
+	// and cache.
+	HeartbeatRate Duration
+
 	// CacheExpiration is the amount of time for which to store cached
 	// nodes before considering them outdated, and removing them.
 	CacheExpiration Duration
@@ -122,17 +127,16 @@ func (d Duration) MarshalJSON() ([]byte, error) {
 	return json.Marshal(time.Duration(d).String())
 }
 
-func (d Duration) UnmarshalJSON(b []byte) error {
+func (d *Duration) UnmarshalJSON(b []byte) error {
 	if b[0] != '"' {
 		// If the duration is not a string, then consider it to be the
-		// zero duration.
-		d = 0
+		// zero duration, so we do not have to set it.
 		return nil
 	}
 	dur, err := time.ParseDuration(string(b[1 : len(b)-1]))
 	if err != nil {
 		return err
 	}
-	d = Duration(dur)
+	*d = *(*Duration)(&dur)
 	return nil
 }
