@@ -20,7 +20,7 @@
 	  <div class="masthead">
 		<div class="navbar">
 		  <div class="navbar-inner">
-			<a href="/" class="brand">nodeatlas</a>
+			<a href="/" class="brand">{{.Name}}</a>
 			<ul class="nav">
 			  <li><a href="#about" data-toggle="modal"><i class="icon-sitemap icon-muted icon-2x"></i><br><small>about</small></span></a></li>
 <li><a href="#tools" data-toggle="modal"><i class="icon-dashboard icon-muted icon-2x"></i><br><small>tools</small></span></a></li>
@@ -36,7 +36,7 @@
 <div class="modal hide fade" id="about">
   <div class="modal-header">
 	<a class="close" data-dismiss="modal">×</a>
-	<h3>About the MeshMap</h3>
+	<h3>About NodeAtlas</h3>
   </div>
   <div class="modal-body">
 	<p>How do you make sense of a meshnet? You map it.</p>
@@ -49,7 +49,7 @@
 <div class="modal hide fade" id="tools">
   <div class="modal-header">
 	<a class="close" data-dismiss="modal">×</a>
-	<h3>About the MeshMap</h3>
+	<h3>About NodeAtlas</h3>
   </div>
   <div class="modal-body">
 	<h1><i class="icon-wrench"></i> Tools</h1>
@@ -78,8 +78,18 @@
 	<h3>Success!</h3>
   </div>
   <div class="modal-body">
-	<p>Thanks for joining MeshMap!</p>
-	<p>You should receive an email shortly with instructions on how to edit your information.</p>
+	<p>Thanks for joining {{.Name}}!</p>
+	<p>You should receive an email shortly with a verification link.</p>
+  </div>
+</div>
+<div class="modal hide fade" id="insertSuccessModalNoVerify">
+  <div class="modal-header">
+	<a class="close" data-dismiss="modal">×</a>
+	<h3>Success!</h3>
+  </div>
+  <div class="modal-body">
+	<p>Thanks for joining {{.Name}}!</p>
+	<p>Your node has been added to the map.</p>
   </div>
 </div>
 <div class="row-fluid marketing">

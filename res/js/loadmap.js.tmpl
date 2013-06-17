@@ -116,19 +116,19 @@ function insertUser() {
 		url: "/api/node",
 		data: dataString,
 		success: function(response) {
-			if (response.error == null)
+			if (response.error == null) {
 				cancelRegistration();
-
-			nodelayer.clearLayers();
-//			getNodes();
+				nodelayer.clearLayers();
+				addNodes();
+				if (response.data == 'node registered')
+					$('#insertSuccessModalNoVerify').modal('show');
+				else
+					$('#insertSuccessModal').modal('show');
+			}
 			$("#loading-mask").hide();
 			$("#loading").hide();
-
-			if (response.error == null)
-				$('#insertSuccessModal').modal('show');
 		},
 		error: function(data) {
-			nodelayer.clearLayers();
 			alert("Registration unsuccessful.");
 			$("#loading-mask").hide();
 			$("#loading").hide();
