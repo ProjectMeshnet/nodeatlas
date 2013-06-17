@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	_ "github.com/go-sql-driver/mysql"
-	"time"
 )
 
 var (
@@ -206,68 +205,5 @@ LIMIT 1`)
 		return nil, nil
 	}
 
-	return
-}
-
-func (db DB) CacheNode(node *Node, source int, expiry int) (err error) {
-	stmt, err := db.Prepare(`INSERT INTO nodes_cached
-(address, owner, email, lat, lon, status, source, expiration)
-VALUES(?, ?, ?, ?, ?, ?, ?, ?)`)
-	if err != nil {
-		return
-	}
-	_, err = stmt.Exec(node.Addr, node.OwnerName, node.OwnerEmail, node.Latitude, node.Longitude, node.Status)
-	stmt.Close()
-	return
-}
-
-func (db DB) CacheNodes(nodes []*Node, source string) (err error) {
-	stmt, err := db.Prepare(`INSERT INTO nodes_cached
-(address, owner, email, lat, lon, status, source, retrieved)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
-	if err != nil {
-		return
-	}
-
-	for _, node := range nodes {
-		retrieved := node.RetrieveTime
-		if retrieved == 0 {
-			retrieved = time.Now().Unix()
-		}
-		_, err = stmt.Exec([]byte(node.Addr), node.OwnerName, node.OwnerEmail, node.Latitude, node.Longitude, node.Status, source, retrieved)
-		if err != nil {
-			return
-		}
-	}
-	stmt.Close()
-	return
-}
-
-func (db DB) FindSourceMap(id int) (source string, err error) {
-	if id == 0 {
-		return "local", nil
-	}
-	row := db.QueryRow(`SELECT hostname
-FROM cached_maps
-WHERE id=?`, id)
-
-	err = row.Scan(&source)
-	return
-}
-
-func (db DB) CacheFormatNodes(nodes []*Node) (sourceMaps map[string][]*Node, err error) {
-	sourceMaps = make(map[string][]*Node)
-	for _, node := range nodes {
-		hostname, err := db.FindSourceMap(node.SourceID)
-		if err != nil {
-			return nil, err
-		}
-		sourcemapNodes := sourceMaps[hostname]
-		if sourcemapNodes == nil {
-			sourcemapNodes = make([]*Node, 0, 5)
-		}
-
-		sourceMaps[hostname] = append(sourcemapNodes, node)
-	}
 	return
 }
