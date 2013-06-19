@@ -63,13 +63,18 @@ func (ip IP) MarshalJSON() ([]byte, error) {
 	return json.Marshal(net.IP(ip).String())
 }
 
-func (ip IP) UnmarshalJSON(b []byte) error {
-	// TODO(DuoNoxSol): This function is untested and may not work. If
-	// b retains its quotes, then net.ParseIP() may fail.
-	ip = IP(net.ParseIP(string(b)))
-	if ip == nil {
+func (ip *IP) UnmarshalJSON(b []byte) error {
+	if b[0] != '"' {
+		// If a quote is not the first character, the next bit will
+		// segfault, so we should return an error.
 		return IncorrectlyFormattedIP
 	}
+	tip := net.ParseIP(string(b[1 : len(b)-1]))
+	if tip == nil {
+		return IncorrectlyFormattedIP
+	}
+	// Don't think too hard about this part.
+	*ip = *(*IP)(&tip)
 	return nil
 }
 
