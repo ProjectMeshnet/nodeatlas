@@ -2,6 +2,10 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
+	"net/http"
+	"strings"
+	"sync"
 	"time"
 )
 
@@ -126,6 +130,86 @@ func (db DB) CacheFormatNodes(nodes []*Node) (sourceMaps map[string][]*Node, err
 		}
 
 		sourceMaps[hostname] = append(sourcemapNodes, node)
+	}
+	return
+}
+
+// nodeDumpWrapper is a structure which wraps a response from /api/all
+// in which the Data field is a map[string][]*Node.
+type nodeDumpWrapper struct {
+	Data  map[string][]*Node `json:"data"`
+	Error interface{}        `json:"error"`
+}
+
+// GetAllFromChildMap retrieves a list of nodes from a single remote
+// address, and localizes them. If it encounters a remote address that
+// is not already known, it safely adds it to the sourceToID map. It
+// is safe for concurrent use. If it encounters an error, it will log
+// it and return nil.
+func GetAllFromChildMap(address string, sourceToID *map[string]int,
+	sourceMutex *sync.RWMutex) (nodes []*Node) {
+	// Try to get all nodes via the API.
+	resp, err := http.Get("http://" +
+		strings.TrimRight(address, "/") + "/api/all")
+	if err != nil {
+		l.Errf("Caching %q produced: %s", address, err)
+		return nil
+	}
+
+	// Read the data into a the nodeDumpWrapper type, so that it
+	// decodes properly.
+	var jresp nodeDumpWrapper
+	err = json.NewDecoder(resp.Body).Decode(&jresp)
+	if err != nil {
+		l.Errf("Caching %q produced: %s", address, err)
+		return nil
+	} else if jresp.Error != nil {
+		l.Errf("Caching %q produced remote error: %s",
+			address, jresp.Error)
+		return nil
+	}
+
+	// Prepare an initial slice so that it can be appended to, then
+	// loop through and convert sources to IDs.
+	//
+	// Additionally, use a boolean to keep track of whether we've
+	// replaced "local" with the actual address already, to save some
+	// needless compares.
+	nodes = make([]*Node, 0)
+	var replacedLocal bool
+	for source, remoteNodes := range jresp.Data {
+		// If we come across "local", then replace it with the address
+		// we're retrieving from.
+		if !replacedLocal && source == "local" {
+			source = address
+		}
+
+		// First, check if the source is known. If not, then we need
+		// to add it and refresh our map. Make sure all reads and
+		// writes to sourceToID are threadsafe.
+		sourceMutex.RLock()
+		id, ok := (*sourceToID)[source]
+		sourceMutex.RUnlock()
+		if !ok {
+			// Add the new ID as the len(sourceToID), because that
+			// should be unique, under our ID scheme.
+			sourceMutex.Lock()
+			id = len(*sourceToID) + 1
+			(*sourceToID)[source] = id
+			sourceMutex.Unlock()
+
+			l.Debugf("Discoverd new source map %q, ID %d\n",
+				source, id)
+		}
+
+		// Once the ID is set, proceed on to add it in all the
+		// remoteNodes.
+		for _, n := range remoteNodes {
+			n.SourceID = id
+		}
+
+		// Finally, append remoteNodes to the slice we're returning.
+		nodes = append(nodes, remoteNodes...)
 	}
 	return
 }
