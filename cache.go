@@ -9,6 +9,30 @@ import (
 	"time"
 )
 
+// UpdateMapCache updates the node cache intelligently using
+// Conf.ChildMaps. Any unknown map addresses are added to the database
+// automatically, and errors are logged.
+func UpdateMapCache() {
+	// If there are no addresses to retrieve from, do nothing.
+	if len(Conf.ChildMaps) == 0 {
+		return
+	}
+
+	// Because we are refreshing the entire cache, delete all cached
+	// nodes.
+	err := Db.ClearCache()
+	if err != nil {
+		l.Errf("Error clearing cache: %s", err)
+		return
+	}
+
+	// Get a full database dump from all child maps and cache it.
+	err = GetAllFromChildMaps(Conf.ChildMaps)
+	if err != nil {
+		l.Errf("Error updating map cache: %s", err)
+	}
+}
+
 func (db DB) CacheNode(node *Node, expiry int) (err error) {
 	stmt, err := db.Prepare(`INSERT INTO nodes_cached
 (address, owner, lat, lon, status, expiration)
@@ -44,6 +68,11 @@ VALUES (?, ?, ?, ?, ?, ?, ?)`)
 	}
 	stmt.Close()
 	return
+}
+
+func (db DB) ClearCache() (err error) {
+	_, err = db.Exec(`DELETE FROM nodes_cached;`)
+	return err
 }
 
 // GetMapSourceToID returns a mapping of child map hostnames to their

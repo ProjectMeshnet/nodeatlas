@@ -30,6 +30,12 @@ type Config struct {
 	// "0.0.0.0:8077".)
 	Addr string
 
+	// ChildMaps is a list of addresses from which to pull lists of
+	// nodes every heartbeat. Please note that these maps are trusted
+	// fully, and they could easily introduce false nodes to the
+	// database temporarily (until cleared by the CacheExpiration.
+	ChildMaps []string
+
 	// Database is the structure which contains the database driver
 	// name, such as "sqlite3" or "mysql", and the database resource,
 	// such as a path to .db file, or username, password, and name.

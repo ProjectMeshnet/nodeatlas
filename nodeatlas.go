@@ -190,7 +190,8 @@ func StartServer(addr, prefix string) (err error) {
 // timer, invoke Heartbeat() again.
 //
 // Tasks:
-// - Call Db.DeleteExpiredFromQueue()
+// - Db.DeleteExpiredFromQueue()
+// - UpdateMapCache()
 func Heartbeat() {
 	// If the timer was not nil, then the timer must restart.
 	if Beat != nil {
@@ -212,6 +213,7 @@ func Heartbeat() {
 			// Otherwise, perform scheduled tasks.
 			l.Debug("Heartbeat\n")
 			Db.DeleteExpiredFromQueue()
+			UpdateMapCache()
 		}
 	}()
 }
@@ -337,7 +339,7 @@ func TestDatabase(db DB) {
 
 	nodes := []*Node{node, nodeCached}
 
-	err = db.CacheNodes(nodes, "example.com")
+	err = db.CacheNodes(nodes)
 	if err != nil {
 		l.Errf("Error caching nodes: %s", err)
 	} else {
