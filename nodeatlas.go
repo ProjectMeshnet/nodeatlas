@@ -26,7 +26,7 @@ var (
 var (
 	Conf      *Config
 	StaticDir string // Directory for compiled files.
-	Beat      *time.Ticker
+	Pulse     *time.Ticker
 
 	t *template.Template
 	l *log.Logger
@@ -186,7 +186,7 @@ func StartServer(addr, prefix string) (err error) {
 
 // Heartbeat starts a time.Ticker to perform tasks on a regular
 // schedule, as set by Conf.HeartbeatRate, which are documented
-// below. The global variable Beat is its ticker. To restart the
+// below. The global variable Pulse is its ticker. To restart the
 // timer, invoke Heartbeat() again.
 //
 // Tasks:
@@ -194,17 +194,17 @@ func StartServer(addr, prefix string) (err error) {
 // - UpdateMapCache()
 func Heartbeat() {
 	// If the timer was not nil, then the timer must restart.
-	if Beat != nil {
+	if Pulse != nil {
 		// If we are resetting, stop the existing timer before
 		// replacing it.
-		Beat.Stop()
+		Pulse.Stop()
 	}
 
 	// Otherwise, create the Ticker and spawn a goroutine to check it.
-	Beat = time.NewTicker(time.Duration(Conf.HeartbeatRate))
+	Pulse = time.NewTicker(time.Duration(Conf.HeartbeatRate))
 	go func() {
 		for {
-			if _, ok := <-Beat.C; !ok {
+			if _, ok := <-Pulse.C; !ok {
 				// If the channel closes, warn that the heartbeat has
 				// stopped.
 				l.Warning("Heartbeat stopped\n")
