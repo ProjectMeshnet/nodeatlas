@@ -9,22 +9,23 @@ import (
 	"time"
 )
 
-func (db DB) CacheNode(node *Node, source int, expiry int) (err error) {
+func (db DB) CacheNode(node *Node, expiry int) (err error) {
 	stmt, err := db.Prepare(`INSERT INTO nodes_cached
-(address, owner, email, lat, lon, status, source, expiration)
-VALUES(?, ?, ?, ?, ?, ?, ?, ?)`)
+(address, owner, lat, lon, status, expiration)
+VALUES(?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		return
 	}
-	_, err = stmt.Exec(node.Addr, node.OwnerName, node.OwnerEmail, node.Latitude, node.Longitude, node.Status)
+	_, err = stmt.Exec(node.Addr, node.OwnerName,
+		node.Latitude, node.Longitude, node.SourceID, node.Status)
 	stmt.Close()
 	return
 }
 
-func (db DB) CacheNodes(nodes []*Node, source string) (err error) {
+func (db DB) CacheNodes(nodes []*Node) (err error) {
 	stmt, err := db.Prepare(`INSERT INTO nodes_cached
-(address, owner, email, lat, lon, status, source, retrieved)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
+(address, owner, lat, lon, status, source, retrieved)
+VALUES (?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		return
 	}
@@ -34,7 +35,9 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
 		if retrieved == 0 {
 			retrieved = time.Now().Unix()
 		}
-		_, err = stmt.Exec([]byte(node.Addr), node.OwnerName, node.OwnerEmail, node.Latitude, node.Longitude, node.Status, source, retrieved)
+		_, err = stmt.Exec([]byte(node.Addr), node.OwnerName,
+			node.Latitude, node.Longitude,
+			node.Status, node.SourceID, retrieved)
 		if err != nil {
 			return
 		}
