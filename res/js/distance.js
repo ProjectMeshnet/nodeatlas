@@ -19,6 +19,8 @@ function onDistanceClick(e) {
 		loc2 = loc;
 		map.off('popupopen', onDistanceClick);
 		alertDistance(findDistance(loc1, loc2));
+		loc1 = undefined;
+		loc2 = undefined;
 	} 
 }
 
