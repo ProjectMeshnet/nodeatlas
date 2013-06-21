@@ -44,3 +44,9 @@ a.close {
 	-webkit-border-radius: 5px 5px 5px 5px;
 	border-radius: 5px 5px 5px 5px;
 }
+
+.leaflet-control-distance {
+	background-image: url(/res/img/ruler.png);
+	-webkit-border-radius: 5px 5px 5px 5px;
+	border-radius: 5px 5px 5px 5px;
+}
