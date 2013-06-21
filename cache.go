@@ -195,50 +195,46 @@ func GetAllFromChildMaps(addresses []string) (err error) {
 	}
 	sourceMutex := new(sync.RWMutex)
 
-	// Next, we'll need a channel to wait for requests to complete,
-	// and a mutex to control appending to nodes.
-	finishChan := make(chan interface{})
+	// Next, we'll need a WaitGroup so we can block until all requests
+	// complete and a mutex to control appending to nodes.
+	waiter := new(sync.WaitGroup)
 	nodesMutex := new(sync.Mutex)
+
+	// We'll need to wait for len(addresses) goroutines to finish, so
+	// put that number in the WaitGroup.
+	waiter.Add(len(addresses))
 
 	// Now, start a separate goroutine for every address to
 	// concurrently retrieve nodes and append them (thread-safely) to
-	// nodes.
+	// nodes. Whenever appendNodesFromChildMap() finishes, it calls
+	// waiter.Done().
 	for _, address := range addresses {
-		go func() {
-			appendNodesFromChildMap(&nodes, address,
-				&sourceToID, sourceMutex, nodesMutex)
-			finishChan <- nil
-		}()
+		go appendNodesFromChildMap(&nodes, address,
+			&sourceToID, sourceMutex, nodesMutex, waiter)
 	}
 
-	// Wait until all goroutines are finished. This loop declares
-	// workers as the number of addreses to get through (and therefore
-	// the number of goroutines started), checks that it's greater
-	// than zero, waits for a worker to finish by reading from
-	// finishChan (which blocks), then decrements the worker count.
-	//
-	// Even if a worker finishes immediately, its write to finishChan
-	// will block until this for loop starts, because it has a buffer
-	// size of 0.
-	for workers := len(addresses); workers > 0; workers-- {
-		<-finishChan
-	}
+	// Block until all goroutines are finished. This is simple to do
+	// with the WaitGroup, which keeps track of the number we're
+	// waiting for.
+	waiter.Wait()
 
 	return Db.CacheNodes(nodes)
 }
 
 // appendNodesFromChildMap is a helper function used by
 // GetAllFromChildMaps() which calls GetAllFromChildMap() and
-// thread-safely appends the result to the given slice.
+// thread-safely appends the result to the given slice. At the end of
+// the function, it calls wg.Done().
 func appendNodesFromChildMap(dst *[]*Node, address string,
 	sourceToID *map[string]int, sourceMutex *sync.RWMutex,
-	dstMutex *sync.Mutex) {
+	dstMutex *sync.Mutex, wg *sync.WaitGroup) {
 
 	// First, retrieve the nodes if possible. If there was an error,
 	// it will be logged, and if there were no nodes, we can stop
 	// here.
 	nodes := GetAllFromChildMap(address, sourceToID, sourceMutex)
 	if nodes == nil {
+		wg.Done()
 		return
 	}
 
@@ -247,6 +243,7 @@ func appendNodesFromChildMap(dst *[]*Node, address string,
 	dstMutex.Lock()
 	*dst = append(*dst, nodes...)
 	dstMutex.Unlock()
+	wg.Done()
 }
 
 // GetAllFromChildMap retrieves a list of nodes from a single remote
