@@ -3,6 +3,7 @@
 	"Hostname": "localhost",
 	"Prefix": "",
 	"Addr": "0.0.0.0:8077",
+	"ChildMaps": [],
 	"Database": {
 		"DriverName": "sqlite3",
 		"Resource": "example.db",
