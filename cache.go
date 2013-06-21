@@ -75,6 +75,14 @@ func (db DB) ClearCache() (err error) {
 	return err
 }
 
+// AddNewMapSource inserts a new map address into the cached_maps
+// table.
+func (db DB) AddNewMapSource(address, name string) (err error) {
+	_, err = db.Exec(`INSERT INTO cached_maps
+(hostname,name) VALUES(?, ?)`, address, name)
+	return
+}
+
 // GetMapSourceToID returns a mapping of child map hostnames to their
 // local IDs. It also includes a mapping of "local" to id 0.
 func (db DB) GetMapSourceToID() (sourceToID map[string]int, err error) {
@@ -291,9 +299,18 @@ func GetAllFromChildMap(address string, sourceToID *map[string]int,
 		id, ok := (*sourceToID)[source]
 		sourceMutex.RUnlock()
 		if !ok {
-			// Add the new ID as the len(sourceToID), because that
-			// should be unique, under our ID scheme.
+			// Add the new source to the database, and put it in the
+			// map under the ID len(sourceToID), because that should
+			// be unique.
 			sourceMutex.Lock()
+			err := Db.AddNewMapSource(source, "")
+			if err != nil {
+				// Uh oh.
+				sourceMutex.Unlock()
+				l.Errf("Error while caching %q: %s", address, err)
+				return
+			}
+
 			id = len(*sourceToID)
 			(*sourceToID)[source] = id
 			sourceMutex.Unlock()
