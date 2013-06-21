@@ -96,6 +96,11 @@ type Config struct {
 
 		// Zoom is the Leaflet.js zoom level to start the map at.
 		Zoom int
+
+		// Attribution is the "map data" copyright notice placed at
+		// the bottom right of the map, meant to credit the
+		// maintainers of the tileserver.
+		Attribution string
 	}
 }
 

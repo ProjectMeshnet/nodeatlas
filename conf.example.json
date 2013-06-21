@@ -25,6 +25,7 @@
 			"Latitude": 40,
 			"Longitude": -100
 		},
-		"Zoom": 4
+		"Zoom": 4,
+		"Attribution": "© OpenStreetMap contributors"
 	}
 }
