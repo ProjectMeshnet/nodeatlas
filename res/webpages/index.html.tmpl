@@ -1,119 +1,24 @@
 <!DOCTYPE html>
 <html>
-  <head>
-	<title>{{.Name}}</title>
-	<link rel="shortcut icon" href="/res/img/favicon.png">
-	<!-- CDN w/o local fallbacks will need to be addressed -->
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootswatch/2.3.1/flatly/bootstrap.min.css">
-	<link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.min.css" rel="stylesheet">
-	<link href='http://fonts.googleapis.com/css?family=Noto+Sans' rel='stylesheet' type='text/css'>
-	<link type="text/css" rel="stylesheet" href="res/css/leaflet.css" />
-	<link type="text/css" rel="stylesheet" href="res/css/custom.css" />
-	<!--[if lte IE 8]><link type="text/css" rel="stylesheet" href="res/css/leaflet.ie.css" /><![endif]-->
-	<link type="text/css" rel="stylesheet" href="res/css/MarkerCluster.css" />
-	<link type="text/css" rel="stylesheet" href="res/css/MarkerCluster.Default.css" />
-  </head>
-
-  <body>
-	<div class="container-narrow">
-
-	  <div class="masthead">
-		<div class="navbar">
-		  <div class="navbar-inner">
-			<a href="/" class="brand">{{.Name}}</a>
-			<ul class="nav">
-			  <li><a href="#about" data-toggle="modal"><i class="icon-sitemap icon-muted icon-2x"></i><br><small>about</small></span></a></li>
-<li><a href="#tools" data-toggle="modal"><i class="icon-dashboard icon-muted icon-2x"></i><br><small>tools</small></span></a></li>
-
-</ul>
-
-<ul class="navbar-search pull-right">
-  <li><a class="btn btn-primary" data-toggle="modal" href="#me"><i class="icon-fixed-width icon-user"></i> Add Me</a></li>
-</ul>
-</div>
-
-</div>
-<div class="modal hide fade" id="about">
-  <div class="modal-header">
-	<a class="close" data-dismiss="modal">×</a>
-	<h3>About NodeAtlas</h3>
-  </div>
-  <div class="modal-body">
-	<p>How do you make sense of a meshnet? You map it.</p>
-	<p>This is an early release of the NodeAtlas meshnet map, proudly built with <a href="http://twitter.github.io/bootstrap/">Bootstrap</a>, <a href="http://golang.org">Go</a>, and <a href="http://leafletjs.com">Leaflet.js.</a></p>
-  </div>
-  <div class="modal-footer">
-	<a href="https://github.com/ProjectMeshnet/nodeatlas"class="btn btn-primary">View Github</a>
-  </div>
-</div>
-<div class="modal hide fade" id="tools">
-  <div class="modal-header">
-	<a class="close" data-dismiss="modal">×</a>
-	<h3>About NodeAtlas</h3>
-  </div>
-  <div class="modal-body">
-	<h1><i class="icon-wrench"></i> Tools</h1>
-  </div>
-  <div class="modal-footer">
-	<a href="https://github.com/ProjectMeshnet/nodeatlas"class="btn btn-primary">View Github</a>
-  </div>
-</div>
-<div class="modal hide fade" id="me">
-  <div class="modal-header">
-	<a class="close" data-dismiss="modal">×</a>
-	<h3>Add me to the map!</h3>
-  </div>
-  <div class="modal-body">
-	<p>Click on the Go! button below to get started.</p>
-	<p>Navigate to your desired location and click on the map to drop a marker and submit your information.</p>
-  </div>
-  <div class="modal-footer">
-	<a href="#" onClick="$('#me').modal('hide'); initRegistration(); return false;"class="btn btn-primary">Go!</a>
-  </div>
-</div>
-
-<div class="modal hide fade" id="insertSuccessModal">
-  <div class="modal-header">
-	<a class="close" data-dismiss="modal">×</a>
-	<h3>Success!</h3>
-  </div>
-  <div class="modal-body">
-	<p>Thanks for joining {{.Name}}!</p>
-	<p>You should receive an email shortly with a verification link.</p>
-  </div>
-</div>
-<div class="modal hide fade" id="insertSuccessModalNoVerify">
-  <div class="modal-header">
-	<a class="close" data-dismiss="modal">×</a>
-	<h3>Success!</h3>
-  </div>
-  <div class="modal-body">
-	<p>Thanks for joining {{.Name}}!</p>
-	<p>Your node has been added to the map.</p>
-  </div>
-</div>
-<div class="row-fluid marketing">
-	<div id="map"></div>
-	<div id="loading-mask" class="modal-backdrop" style="display:none;"></div>
-	<div id="loading" style="display:none;">
-	  <div class="loading-indicator">
-		<img src="res/img/ajax-loader.gif">
-	  </div>
-	</div>
-</div>
-
-<hr>
-
-<div class="footer">
-  <p>powered by <a href="https://github.com/ProjectMeshnet/nodeatlas">nodeatlas {{.Version}}</a></p>
-</div>
-
-</div> 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="res/js/leaflet.js"></script>
-<script type="text/javascript" src="res/js/leaflet.markercluster.js"></script>
-
-<script type="text/javascript" src="res/js/loadmap.js"></script>
-</body>
+	<head>
+		<title>{{.Name}}</title>
+		<link rel="shortcut icon" href="/res/img/favicon.png">
+		<!-- CDN w/o local fallbacks will need to be addressed -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootswatch/2.3.1/flatly/bootstrap.min.css">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.min.css" rel="stylesheet">
+		<link href='http://fonts.googleapis.com/css?family=Noto+Sans' rel='stylesheet' type='text/css'>
+		<link type="text/css" rel="stylesheet" href="res/css/leaflet.css" />
+		<link type="text/css" rel="stylesheet" href="res/css/custom.css" />
+		<!--[if lte IE 8]><link type="text/css" rel="stylesheet" href="res/css/leaflet.ie.css" /><![endif]-->
+		<link type="text/css" rel="stylesheet" href="res/css/MarkerCluster.css" />
+		<link type="text/css" rel="stylesheet" href="res/css/MarkerCluster.Default.css" />
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="res/js/leaflet.js"></script>
+		<script type="text/javascript" src="res/js/leaflet.markercluster.js"></script>
+	</head>
+	<body>
+		<div id="map"></div>
+		<script type="text/javascript" src="res/js/loadmap.js"></script>
+	</body>
 </html>
