@@ -265,11 +265,11 @@ func GetAllFromChildMap(address string, sourceToID *map[string]int,
 			// Add the new ID as the len(sourceToID), because that
 			// should be unique, under our ID scheme.
 			sourceMutex.Lock()
-			id = len(*sourceToID) + 1
+			id = len(*sourceToID)
 			(*sourceToID)[source] = id
 			sourceMutex.Unlock()
 
-			l.Debugf("Discoverd new source map %q, ID %d\n",
+			l.Debugf("Discovered new source map %q, ID %d\n",
 				source, id)
 		}
 
