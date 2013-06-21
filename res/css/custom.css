@@ -1,3 +1,19 @@
+@charset "Utf-8";
+
+#map {
+	width:100%;
+	height:700px;
+}
+
+
+
+
+
+
+
+
+
+
 /*
 .container-narrow {
 	margin: 0 auto;
@@ -87,8 +103,3 @@
 }
 
 */
-
-#map {
-	width:100%;
-	height:700px;
-}

@@ -1,5 +1,3 @@
-var map, newUser, tilelayer, nodelayer, attribution, firstLoad;
-
 var options = {
 	"tileserver": "{{.Map.Tileserver}}",
 	"center": new L.LatLng({{.Map.Center.Latitude}},
@@ -7,16 +5,12 @@ var options = {
 	"zoom": {{.Map.Zoom}}
 }
 
-firstLoad = true;
-
-attribution = 'Map data &copy; 2011 OpenStreetMap contributors';
-
-nodelayer = new L.MarkerClusterGroup({spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true});
-newUser = new L.LayerGroup();
-
-tilelayer = L.tileLayer(options.tileserver, {styleId: 22677, attribution: attribution});
-
-map = new L.Map('map', {
+var firstLoad = true;
+var attribution = 'Map data &copy; 2011 OpenStreetMap contributors';
+var nodelayer = new L.MarkerClusterGroup({spiderfyOnMaxZoom: true, showCoverageOnHover: false, zoomToBoundsOnClick: true});
+var newUser = new L.LayerGroup();
+var tilelayer = L.tileLayer(options.tileserver, {styleId: 22677, attribution: attribution});
+var map = new L.Map('map', {
 	center: options.center,
 	zoom: options.zoom,
 	maxZoom: 16,
@@ -24,35 +18,37 @@ map = new L.Map('map', {
 	layers: [tilelayer, nodelayer, newUser]
 });
 
-// GeoLocation Control
-function geoLocate() {
-	map.locate({setView: true});
-}
 var geolocControl = new L.control({
 	position: 'topright'
 });
 
-geolocControl.onAdd = function (map) {
-	var div = L.DomUtil.create('div', 'leaflet-control-zoom leaflet-control');
-	div.innerHTML = '<a class="leaflet-control-geoloc" href="#" onclick="geoLocate(); return false;" title="My location"></a>';
-	return div;
-};
-
-// Populate the map with nodes from /api/all.
-addNodes();
-
-map.addControl(geolocControl);
-map.addControl(new L.Control.Scale());
-
-//map.locate({setView: true, maxZoom: 3});
-
 $(document).ready(function() {
 	$.ajaxSetup({cache:true});
+	
+	geolocControl.onAdd = function (map) {
+		var div = L.DomUtil.create('div', 'leaflet-control-zoom leaflet-control');
+		div.innerHTML = '<a class="leaflet-control-geoloc" href="#" onclick="geoLocate(); return false;" title="My location"></a>';
+		return div;
+	};
+	
+	// Populate the map with nodes from /api/all.
+	addNodes();
+	
+	map.addControl(geolocControl);
+	map.addControl(new L.Control.Scale());
+	
+	//map.locate({setView: true, maxZoom: 3});
 });
 
 $(window).resize(function () {
 	$('#map').css('height', ($(window).height()));
 }).resize();
+
+
+// GeoLocation Control
+function geoLocate() {
+	map.locate({setView: true});
+}
 
 function geoLocate() {
 	map.locate({setView: true, maxZoom: 17});
