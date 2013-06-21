@@ -5,7 +5,19 @@
 	height:700px;
 }
 
+.leaflet-control-geoloc {
+	background-image: url(/res/img/location.png);
+	background-position: 
+	-webkit-border-radius: 5px 5px 5px 5px;
+	border-radius: 5px 5px 5px 5px;
+}
 
+.leaflet-control-node {
+	background-image: url(/res/img/node.png);
+	background-position: 
+	-webkit-border-radius: 5px 5px 5px 5px;
+	border-radius: 5px 5px 5px 5px;
+}
 
 
 
@@ -92,11 +104,6 @@
 	background: #F7F7F7;
 }
 
-.leaflet-control-geoloc {
-	background-image: url(/res/img/location.png);
-	-webkit-border-radius: 5px 5px 5px 5px;
-	border-radius: 5px 5px 5px 5px;
-}
 
 #inputform i {
 	font-size: 10px;
