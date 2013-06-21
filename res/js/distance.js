@@ -18,10 +18,21 @@ function onDistanceClick(e) {
 	} else if (typeof loc2 == 'undefined') {
 		loc2 = loc;
 		map.off('popupopen', onDistanceClick);
+		drawLine([loc1, loc2]);
 		alertDistance(findDistance(loc1, loc2));
 		loc1 = undefined;
 		loc2 = undefined;
 	} 
+}
+
+function drawLine(points) {
+	var line = new L.Polyline(points, {
+		color: '#00F',
+		weight: 3,
+		opacity: 0.5,
+		smoothFactor: 1
+	});
+	line.addTo(map);
 }
 
 function findDistance(loc1, loc2) {	
