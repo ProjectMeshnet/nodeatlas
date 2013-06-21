@@ -144,6 +144,74 @@ type nodeDumpWrapper struct {
 	Error interface{}        `json:"error"`
 }
 
+// GetAllFromChildMaps accepts a list of child map addresses to
+// retrieve nodes from. It does this concurrently, and puts any nodes
+// and newly discovered addresses in the local ID table.
+func GetAllFromChildMaps(addresses []string) (err error) {
+	// First off, initialize the slice into which we'll be appending
+	// all the nodes, and the souceToID map and mutex.
+	nodes := make([]*Node, 0)
+
+	sourceToID, err := Db.GetMapSourceToID()
+	if err != nil {
+		return
+	}
+	sourceMutex := new(sync.RWMutex)
+
+	// Next, we'll need a channel to wait for requests to complete,
+	// and a mutex to control appending to nodes.
+	finishChan := make(chan interface{})
+	nodesMutex := new(sync.Mutex)
+
+	// Now, start a separate goroutine for every address to
+	// concurrently retrieve nodes and append them (thread-safely) to
+	// nodes.
+	for _, address := range addresses {
+		go func() {
+			appendNodesFromChildMap(&nodes, address,
+				&sourceToID, sourceMutex, nodesMutex)
+			finishChan <- nil
+		}()
+	}
+
+	// Wait until all goroutines are finished. This loop declares
+	// workers as the number of addreses to get through (and therefore
+	// the number of goroutines started), checks that it's greater
+	// than zero, waits for a worker to finish by reading from
+	// finishChan (which blocks), then decrements the worker count.
+	//
+	// Even if a worker finishes immediately, its write to finishChan
+	// will block until this for loop starts, because it has a buffer
+	// size of 0.
+	for workers := len(addresses); workers > 0; workers-- {
+		<-finishChan
+	}
+
+	return Db.CacheNodes(nodes)
+}
+
+// appendNodesFromChildMap is a helper function used by
+// GetAllFromChildMaps() which calls GetAllFromChildMap() and
+// thread-safely appends the result to the given slice.
+func appendNodesFromChildMap(dst *[]*Node, address string,
+	sourceToID *map[string]int, sourceMutex *sync.RWMutex,
+	dstMutex *sync.Mutex) {
+
+	// First, retrieve the nodes if possible. If there was an error,
+	// it will be logged, and if there were no nodes, we can stop
+	// here.
+	nodes := GetAllFromChildMap(address, sourceToID, sourceMutex)
+	if nodes == nil {
+		return
+	}
+
+	// Now that we have the nodes, we need to lock the destination
+	// slice while we append to it.
+	dstMutex.Lock()
+	*dst = append(*dst, nodes...)
+	dstMutex.Unlock()
+}
+
 // GetAllFromChildMap retrieves a list of nodes from a single remote
 // address, and localizes them. If it encounters a remote address that
 // is not already known, it safely adds it to the sourceToID map. It
