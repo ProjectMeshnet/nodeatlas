@@ -17,6 +17,22 @@
 		<script type="text/javascript" src="res/js/leaflet.markercluster.js"></script>
 	</head>
 	<body>
+		<div class="modal hide fade" id="me">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>Add me to the map!</h3>
+			</div>
+			<div class="modal-body">
+				<p>Click on the Go! button below to get started.</p>
+				<p>Navigate to your desired location and click on the map to drop a marker and submit your information.</p>
+			</div>
+			<div class="modal-footer">
+				<a href="#" onClick="$('#me').modal('hide'); initRegistration(); return false;"class="btn btn-primary">Go!</a>
+			</div>
+		</div>
+
+		
+		
 		<div id="map"></div>	
 		<script type="text/javascript" src="res/js/loadmap.js"></script>
 	</body>
