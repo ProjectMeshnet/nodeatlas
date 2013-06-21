@@ -27,8 +27,8 @@ function onDistanceClick(e) {
 
 function drawLine(points) {
 	var line = new L.Polyline(points, {
-		color: '#00F',
-		weight: 3,
+		color: '#000',
+		weight: 5,
 		opacity: 0.5,
 		smoothFactor: 1
 	});
