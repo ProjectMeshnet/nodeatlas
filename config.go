@@ -84,6 +84,11 @@ type Config struct {
 	// Map contains the information used by NodeAtlas to power the
 	// Leaflet.js map.
 	Map struct {
+		// Favicon is the icon to be displayed in the browser when
+		// viewing the map. It is a filename to be loaded from
+		// `<*fRes>/icon/`.
+		Favicon string
+
 		// Tileserver is the URL used for loading tiles. It is of the
 		// form "http://{s}.tile.osm.org/{z}/{x}/{y}.png", so that
 		// Leaflet.js can use it.

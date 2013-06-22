@@ -28,5 +28,6 @@ func HandleRes(w http.ResponseWriter, req *http.Request) {
 // HandleIcon responds to requests for favicon.ico by serving icon.png
 // from the resources directory.
 func HandleIcon(w http.ResponseWriter, req *http.Request) {
-	http.ServeFile(w, req, path.Join(StaticDir, "icon.png"))
+	http.ServeFile(w, req, path.Join(StaticDir, "icon",
+		Conf.Map.Favicon))
 }

@@ -20,6 +20,7 @@
 		"ServerAddress": "mail.example.com:587"
 	},
 	"Map": {
+		"Favicon": "nodeatlas.png",
 		"Tileserver": "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
 		"Center": {
 			"Latitude": 40,
