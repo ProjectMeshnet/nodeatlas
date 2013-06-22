@@ -107,7 +107,7 @@ function onEachNode(feature, layer) {
 	// If the Feature properties include popupContent, display it.
 	if (feature.properties) {
 		var html =  '<h4>'+feature.properties.OwnerName+'</h4>'+
-					'<div class="btn btn-small">'+feature.properties.Address+'</div>'
+					'<div class="btn btn-small">'+feature.id+'</div>'
 		
 		
 		layer.bindPopup(html);

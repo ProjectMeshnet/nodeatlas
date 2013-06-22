@@ -89,7 +89,7 @@ func FeatureCollectionNodes(nodes []*Node) *geojson.FeatureCollection {
 	for i, n := range nodes {
 		properties := make(map[string]interface{}, 1)
 		properties["OwnerName"] = n.OwnerName
-		properties["Address"] = n.Addr
+		//		properties["Address"] = n.Addr
 		features[i] = geojson.NewFeature(
 			geojson.NewPoint(geojson.Coordinate{
 				geojson.CoordType(n.Longitude),
