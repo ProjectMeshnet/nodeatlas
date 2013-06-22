@@ -7,6 +7,7 @@ function initDistance() {
 
 function onDistanceClick(e) {
 	var loc = e.popup._source.getLatLng();
+	e.popup._close();
 	if (typeof loc1 == 'undefined') {
 		loc1 = loc;
 	} else if (loc == loc1) {
