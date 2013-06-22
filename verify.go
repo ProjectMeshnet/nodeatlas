@@ -14,7 +14,9 @@ var SMTPDisabledError = errors.New("SMTP disabled in the configuration")
 // responsibility to close the client. If the Conf.SMTP is nil,
 // STMPDisabledError will be returned.
 func ConnectSMTP() (c *smtp.Client, err error) {
-	if !Conf.SMTP.VerifyDisabled {
+	// If the SMTP portion of the config isn't specified, we don't
+	// know what to connect to.
+	if Conf.SMTP == nil {
 		return nil, SMTPDisabledError
 	}
 
