@@ -26,6 +26,10 @@ var addNode = new L.control({
 	position: 'topright'
 });
 
+var distance = new L.control({
+	position: 'topright'
+});
+
 $(document).ready(function() {
 	$.ajaxSetup({cache:true});
 	
@@ -41,11 +45,19 @@ $(document).ready(function() {
 		return div;
 	};
 
+	distance.onAdd = function (map) {
+		var div = L.DomUtil.create('div', 'leaflet-control-zoom leaflet-control');
+		div.innerHTML = '<a class="leaflet-control-distance" href="#distance" data-toggle="modal" title="Calculate distance"></a>';
+		return div;
+	};
+
+
 	// Populate the map with nodes from /api/all.
 	addNodes();
 	
 	map.addControl(geolocControl);
 	map.addControl(addNode);
+	map.addControl(distance);
 	map.addControl(new L.Control.Scale());
 	
 	//map.locate({setView: true, maxZoom: 3});

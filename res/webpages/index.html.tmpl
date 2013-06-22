@@ -15,6 +15,7 @@
 		<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="res/js/leaflet.js"></script>
 		<script type="text/javascript" src="res/js/leaflet.markercluster.js"></script>
+		<script type="text/javascript" src="res/js/distance.js"></script>
 	</head>
 	<body>
 		<div class="modal hide fade" id="me">
@@ -45,8 +46,24 @@
 				<a href="https://github.com/ProjectMeshnet/nodeatlas"class="btn btn-primary">View Github</a>
 			</div>
 		</div>
+		<div class="modal hide fade" id="distance">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>Calculate distance</h3>
+			</div>
+			<div class="modal-body">
+				<p>Click on the Go! button below to get started.</p>
+				<p>Navigate to your first node and click on the starting marker, and then navigate to your
+				second node and click on the ending marker.</p>
+				<p>Hover over a path to see the distance, and click a path to remove it.</p>
+			</div>
+			<div class="modal-footer">
+				<a href="#" onClick="$('#distance').modal('hide'); initDistance(); return false;"class="btn btn-primary">Go!</a>
+			</div>
+		</div>
+		
 		<div id="map"></div>
-		<div id="name" href="#about" data-toggle="modal">{{.Name}}</div>	
+		<div id="mapname" href="#about" data-toggle="modal">{{.Name}}</div>	
 		<script type="text/javascript" src="res/js/loadmap.js"></script>
 	</body>
 </html>
