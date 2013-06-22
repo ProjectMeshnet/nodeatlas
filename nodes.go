@@ -11,11 +11,38 @@ import (
 // is intended to be always-online and therefore should usually be
 // available, its status would be "active."
 const (
-	StatusActive = iota
-	StatusInactive
-	StatusPlanned
-	StatusPossible
-	StatusUnknown // All numbers greater than this are unknown.
+	StatusActive = uint32(1 << iota) // << 0 active/planned
+	_
+	_
+	_
+	_ // << 4
+	_
+	_
+	StatusPhysical //      physical server/virtual server
+	StatusInternet // << 8 internet access/no internet
+	StatusWireless //      wireless access/no wireless
+	StatusWired    //      wired access/no wired
+	_
+	_ // << 12
+	_
+	_
+	_
+	_ // << 16
+	_
+	_
+	_
+	_ // << 20
+	_
+	_
+	_
+	StatusPingable // << 24 pingable/down
+	_
+	_
+	_
+	_ // << 28
+	_
+	_
+	_
 )
 
 // Node is the basic type for a computer, radio, transmitter, or any
@@ -26,9 +53,10 @@ type Node struct {
 	// SourceID is 0, the node is considered to be local.
 	SourceID int `json:"-"`
 
-	// Status represents the indended availability for the node. For
-	// example, StatusActive, StatusPlanned, etc.
-	Status int
+	// Status is a list of bit flags representing the node's status,
+	// such as whether it is active or planned, has wireless access,
+	// is a physical server, etc.
+	Status uint32
 
 	// Latitude and Longitude represent the physical location of the
 	// node on earth.

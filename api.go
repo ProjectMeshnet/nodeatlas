@@ -111,8 +111,8 @@ func (*Api) PostNode(ctx *jas.Context) {
 	node.Longitude = ctx.RequireFloat("longitude")
 	node.OwnerName = ctx.RequireString("name")
 	node.OwnerEmail = ctx.RequireString("email")
-	status, _ := ctx.FindInt("status")
-	node.Status = int(status)
+	status, _ := ctx.FindPositiveInt("status")
+	node.Status = uint32(status)
 
 	// TODO(DuoNoxSol): Authenticate/limit node registration.
 

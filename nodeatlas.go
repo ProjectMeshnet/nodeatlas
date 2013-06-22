@@ -291,7 +291,7 @@ func TestDatabase(db DB) {
 		OwnerEmail: "admin@example.org",
 		Latitude:   80.01010,
 		Longitude:  -80.10101,
-		Status:     StatusPossible,
+		Status:     uint32(0),
 	}
 
 	nodeCached := &Node{
@@ -300,7 +300,7 @@ func TestDatabase(db DB) {
 		OwnerEmail:   "nothing@example.com",
 		Latitude:     34.14523,
 		Longitude:    5.3635,
-		Status:       StatusPossible,
+		Status:       uint32(0),
 		RetrieveTime: time.Now().Unix(),
 	}
 
