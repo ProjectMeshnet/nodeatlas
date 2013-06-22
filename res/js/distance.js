@@ -34,7 +34,7 @@ function drawLine(points, distance, center) {
 	
 	var popup = L.popup();
 	popup.setLatLng(line.getBounds().getCenter());
-	popup.setContent(distance+'km');
+	popup.setContent(distance+' km<br/>'+distance.toMiles()+' miles');
 	
 	line.on('click', function() {
 		map.removeLayer(this);
@@ -67,4 +67,8 @@ function findDistance(loc1, loc2) {
 
 Number.prototype.toRad = function() {
 	return this * Math.PI / 180;
+}
+
+Number.prototype.toMiles = function() {
+	return this/1.60934;
 }
