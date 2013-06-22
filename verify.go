@@ -107,7 +107,7 @@ VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 // by checking if their expiration stamp is past the current time.
 func (db DB) DeleteExpiredFromQueue() (err error) {
 	_, err = db.Exec(`DELETE FROM nodes_verify_queue
-WHERE expiration <= DATETIME('now');`)
+WHERE expiration <= ?;`, time.Now())
 	return
 }
 
