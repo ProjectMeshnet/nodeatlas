@@ -5,6 +5,10 @@ function initDistance() {
 	map.on('popupopen', onDistanceClick);
 }
 
+function removeLine(e) {
+	map.removeLayer(this);
+}
+
 function onDistanceClick(e) {
 	var loc = e.popup._source.getLatLng();
 	if (typeof loc1 == 'undefined') {
@@ -32,6 +36,7 @@ function drawLine(points) {
 		opacity: 0.5,
 		smoothFactor: 1
 	});
+	line.on('click', removeLine);
 	line.addTo(map);
 }
 
