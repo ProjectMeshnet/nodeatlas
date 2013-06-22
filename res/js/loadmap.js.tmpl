@@ -11,7 +11,7 @@ var nodelayer = new L.MarkerClusterGroup({
 	spiderfyOnMaxZoom: true,
 	showCoverageOnHover: false,
 	zoomToBoundsOnClick: true,
-	maxClusterRadius: 50
+	maxClusterRadius: {{.Map.ClusterRadius}}
 });
 var newUser = new L.LayerGroup();
 var tilelayer = L.tileLayer(options.tileserver, {styleId: 22677, attribution: attribution});

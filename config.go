@@ -107,6 +107,10 @@ type Config struct {
 		// Zoom is the Leaflet.js zoom level to start the map at.
 		Zoom int
 
+		// ClusterRadius is the range (in pixels) at which markers on
+		// the map will cluster together.
+		ClusterRadius int
+
 		// Attribution is the "map data" copyright notice placed at
 		// the bottom right of the map, meant to credit the
 		// maintainers of the tileserver.
