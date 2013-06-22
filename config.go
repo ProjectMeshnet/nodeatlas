@@ -62,7 +62,10 @@ type Config struct {
 	// SMTP contains the information necessary to connect to a mail
 	// relay, so as to send verification email to registered nodes.
 	SMTP *struct {
-		// If true, this will disable email verification for new nodes
+		// VerifyDisabled controls whether email verification is used
+		// for newly registered nodes. If it is false or omitted, an
+		// email will be sent using the SMTP settings defined in this
+		// struct.
 		VerifyDisabled bool
 
 		// EmailAddress will be given as the "From" address when
