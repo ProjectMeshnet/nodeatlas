@@ -126,8 +126,24 @@ func (*Api) PostNode(ctx *jas.Context) {
 	// If SMTP verification is not explicitly disabled, send an email.
 	if !Conf.SMTP.VerifyDisabled {
 		id := rand.Int63() // Pseudo-random positive int64
-		if err := Db.QueueNode(id, Conf.VerificationExpiration,
-			node); err != nil {
+
+		emailsent := true
+		if err := SendVerificationEmail(id, node); err != nil {
+			// If the sending of the email fails, set the internal
+			// error and log it, then set a bool so that email can be
+			// resent. If email continues failing to send, it will
+			// eventually expire and be removed from the database.
+			ctx.Error = jas.NewInternalError(err)
+			l.Err(err)
+			emailsent = false
+			// Note that we do *not* return here.
+		}
+
+		// Once we have attempted to send the email, queue the node
+		// for verification. If the email has not been sent, it will
+		// be recorded in the database.
+		if err := Db.QueueNode(id, emailsent,
+			Conf.VerificationExpiration, node); err != nil {
 			// If there is a database failure, report it as an
 			// internal error.
 			ctx.Error = jas.NewInternalError(err)
@@ -135,17 +151,17 @@ func (*Api) PostNode(ctx *jas.Context) {
 			return
 		}
 
-		if err := SendVerificationEmail(id, node); err != nil {
-			// If the sending of the email fails, set the internal
-			// error, log it, and remove the node from the database.
-			ctx.Error = jas.NewInternalError(err)
-			l.Err(err)
-			// The cached node will be removed when it expires, so it
-			// may not be worth it to do it here.
-			return
+		// If the email could be sent successfully, report
+		// it. Otherwise, report that it is in the queue, and the
+		// email will be resent.
+		if emailsent {
+			ctx.Data = "verification email sent"
+			l.Infof("Node %q entered, waiting for verification", ip)
+		} else {
+			ctx.Data = "verification email will be resent"
+			l.Infof("Node %q entered, verification email will be resent",
+				ip)
 		}
-		ctx.Data = "verification email sent"
-		l.Infof("Node %q entered, waiting for verification", ip)
 	} else {
 		err := Db.AddNode(node)
 		if err != nil {

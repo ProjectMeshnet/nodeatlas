@@ -52,6 +52,7 @@ email VARCHAR(255) NOT NULL,
 lat FLOAT NOT NULL,
 lon FLOAT NOT NULL,
 status INT NOT NULL,
+verifysent BOOL NOT NULL,
 expiration DATETIME);`)
 	if err != nil {
 		return

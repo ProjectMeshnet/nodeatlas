@@ -90,15 +90,16 @@ func SendVerificationEmail(id int64, n *Node) (err error) {
 }
 
 // QueueNode inserts the given node into the verify queue with its
-// expiration time set to the current time plus the grace period, and
-// identified by the given ID.
-func (db DB) QueueNode(id int64, grace Duration, node *Node) (err error) {
+// expiration time set to the current time plus the grace period, its
+// emailsent field set by the matching argument, and identified by the
+// given ID.
+func (db DB) QueueNode(id int64, emailsent bool, grace Duration, node *Node) (err error) {
 	_, err = db.Exec(`INSERT INTO nodes_verify_queue
-(id, address, owner, email, lat, lon, status, expiration)
-VALUES(?, ?, ?, ?, ?, ?, ?, ?)`,
+(id, address, owner, email, lat, lon, status, verifysent, expiration)
+VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		id, []byte(node.Addr), node.OwnerName, node.OwnerEmail,
 		node.Latitude, node.Longitude, node.Status,
-		time.Now().Add(time.Duration(grace)))
+		emailsent, time.Now().Add(time.Duration(grace)))
 	return
 }
 
