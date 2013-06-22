@@ -4,8 +4,14 @@ nodeatlas
 # Configuration files
 conf.json
 
+# Logs
+*.log
+
 # Sqlite3 databases
 *.db
+
+# Any user-installed icons
+res/icon/*
 
 # Editor temporary files
 *~
