@@ -38,6 +38,7 @@ function drawLine(points, distance, center) {
 	
 	line.on('click', function() {
 		map.removeLayer(this);
+		map.removeLayer(popup);
 	});
 	line.on('mouseover', function() {
 		popup.addTo(map);
