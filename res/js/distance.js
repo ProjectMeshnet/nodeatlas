@@ -62,7 +62,7 @@ function findDistance(loc1, loc2) {
 			Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
 	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
 	var d = R * c;
-	drawLine([loc1, loc2], d);
+	drawLine([loc1, loc2], parseFloat(d.toFixed(2)));
 }
 
 Number.prototype.toRad = function() {
@@ -70,5 +70,5 @@ Number.prototype.toRad = function() {
 }
 
 Number.prototype.toMiles = function() {
-	return this/1.60934;
+	return parseFloat((this/1.60934).toFixed(2));
 }
