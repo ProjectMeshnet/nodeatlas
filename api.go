@@ -119,7 +119,7 @@ func (*Api) PostNode(ctx *jas.Context) {
 	// If SMTP is not disabled, send an email to verify. In future
 	// versions, SMTP will be required to verify nodes, unless
 	// explicitly set.
-	if Conf.SMTP != nil {
+	if !Conf.SMTP.VerifyDisabled {
 		id := rand.Int63() // Pseudo-random positive int64
 		if err := Db.QueueNode(id, Conf.VerificationExpiration,
 			node); err != nil {

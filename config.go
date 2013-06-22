@@ -60,9 +60,11 @@ type Config struct {
 	VerificationExpiration Duration
 
 	// SMTP contains the information necessary to connect to a mail
-	// relay, so as to send verification email to registered nodes. If
-	// it is nil, then node registration will be disabled.
+	// relay, so as to send verification email to registered nodes.
 	SMTP *struct {
+		// If true, this will disable email verification for new nodes
+		VerifyDisabled bool
+
 		// EmailAddress will be given as the "From" address when
 		// sending email.
 		EmailAddress string

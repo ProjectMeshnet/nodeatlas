@@ -13,6 +13,7 @@
 	"CacheExpiration": "168h",
 	"VerificationExpiration": "48h",
 	"SMTP": {
+		"VerifyDisabled": false,
 		"EmailAddress": "nodeatlas@example.com",
 		"Username": "nodeatlas",
 		"Password": "password123",
