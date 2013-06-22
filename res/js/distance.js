@@ -8,15 +8,15 @@ function initDistance() {
 function onDistanceClick(e) {
 	var loc = e.popup._source.getLatLng();
 	e.popup._close();
+	var popup = L.popup();
+	popup.setLatLng(loc);
+	popup.setContent('You have already picked this node.');
 	if (typeof loc1 == 'undefined') {
 		loc1 = loc;
 	} else if (loc == loc1) {
-		// TODO: create a real error message with
-		//       the nice popup thing that has yet
-		//       to be written yet.
-		// You already picked this node.
-		alert('You have already picked this node.');
+		popup.addTo(map);
 	} else if (typeof loc2 == 'undefined') {
+		map.removeLayer(popup);
 		loc2 = loc;
 		map.off('popupopen', onDistanceClick);
 		findDistance(loc1, loc2);
