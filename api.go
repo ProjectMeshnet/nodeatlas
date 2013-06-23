@@ -56,7 +56,9 @@ func (*Api) GetStatus(ctx *jas.Context) {
 }
 
 // GetNode retrieves a single node from the database, removes
-// sensitive data (such as an email address) and sets ctx.Data to it.
+// sensitive data (such as an email address) and sets ctx.Data to
+// it. If `?geojson` is set, then it returns it in geojson.Feature
+// form.
 func (*Api) GetNode(ctx *jas.Context) {
 	ip := IP(net.ParseIP(ctx.RequireString("address")))
 	if ip == nil {
@@ -80,11 +82,21 @@ func (*Api) GetNode(ctx *jas.Context) {
 		return
 	}
 
-	// Remove any sensitive data.
-	node.OwnerEmail = ""
+	// We must invoke ParseForm() so that we can access ctx.Form.
+	ctx.ParseForm()
 
-	// Finally, set the data and exit.
-	ctx.Data = node
+	// If the form value 'geojson' is included, dump in GeoJSON
+	// form. Otherwise, just dump with normal marhshalling.
+	if _, ok := ctx.Form["geojson"]; ok {
+		ctx.Data = node.Feature()
+		return
+	} else {
+		// Only after removing any sensitive data, though.
+		node.OwnerEmail = ""
+
+		// Finally, set the data and exit.
+		ctx.Data = node
+	}
 }
 
 // PostNode creates a *Node from the submitted form and queues it for
