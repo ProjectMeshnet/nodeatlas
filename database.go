@@ -181,7 +181,7 @@ func (db DB) GetNode(addr IP) (node *Node, err error) {
 FROM nodes
 WHERE address = ?
 UNION
-SELECT owner, email, lat, lon, status
+SELECT owner, "", lat, lon, status
 FROM nodes_cached
 WHERE address = ?
 LIMIT 1`)
