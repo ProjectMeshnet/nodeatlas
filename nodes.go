@@ -81,6 +81,21 @@ type Node struct {
 	OwnerEmail string `json:",omitempty"`
 }
 
+// Feature returns the Node as a *geojson.Feature.
+func (n *Node) Feature() (f *geojson.Feature) {
+	// Set the properties.
+	properties := make(map[string]interface{}, 1)
+	properties["OwnerName"] = n.OwnerName
+
+	// Create and return the feature.
+	return geojson.NewFeature(
+		geojson.NewPoint(geojson.Coordinate{
+			geojson.CoordType(n.Longitude),
+			geojson.CoordType(n.Latitude)}),
+		properties,
+		n.Addr)
+}
+
 // IP is a wrapper for net.IP which implements the json.Marshaler and
 // json.Unmarshaler.
 type IP net.IP
@@ -110,20 +125,14 @@ func (ip IP) String() string {
 	return net.IP(ip).String()
 }
 
-// FeatureCollectionNodes returns a *geojson.Featurecollection type
+// FeatureCollectionNodes returns a *geojson.FeatureCollection type
 // from the given nodes, in order.
 func FeatureCollectionNodes(nodes []*Node) *geojson.FeatureCollection {
 	features := make([]*geojson.Feature, len(nodes))
 	for i, n := range nodes {
-		properties := make(map[string]interface{}, 1)
-		properties["OwnerName"] = n.OwnerName
+
 		//		properties["Address"] = n.Addr
-		features[i] = geojson.NewFeature(
-			geojson.NewPoint(geojson.Coordinate{
-				geojson.CoordType(n.Longitude),
-				geojson.CoordType(n.Latitude)}),
-			properties,
-			n.Addr)
+		features[i] = n.Feature()
 	}
 	return geojson.NewFeatureCollection(features)
 }
