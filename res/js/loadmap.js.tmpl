@@ -98,6 +98,9 @@ function addNodes() {
 	$.getJSON("/api/all?geojson", function (response) {
 		// TODO: Check for errors here (response.error)
 		L.geoJson(response.data, {
+			pointToLayer: function(feature, latlng) {
+				return L.marker(latlng);
+			},
 			onEachFeature: onEachNode
 		}).addTo(nodelayer);
 	});
