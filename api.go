@@ -212,18 +212,45 @@ func (*Api) GetVerify(ctx *jas.Context) {
 }
 
 // GetAll dumps the entire database of nodes, including cached
-// ones. If the form value 'geojson' is present, then the "data" field
+// ones. If the form value `since` is supplied with a valid RFC3339
+// timestamp, only nodes updated or cached more recently than that
+// will be dumped. If 'geojson' is present, then the "data" field
 // contains the dump in GeoJSON compliant form.
 func (*Api) GetAll(ctx *jas.Context) {
-	nodes, err := Db.DumpNodes()
+	// We must invoke ParseForm() so that we can access ctx.Form.
+	ctx.ParseForm()
+
+	// In order to access this at the end, we need to declare nodes
+	// here, so the results from the dump don't go out of scope.
+	var nodes []*Node
+	var err error
+
+	// If the form value "since" was supplied, we will be doing a dump
+	// based on update/retrieve time.
+	if tstring := ctx.FormValue("since"); len(tstring) > 0 {
+		var t time.Time
+		t, err = time.Parse(time.RFC3339, tstring)
+		if err != nil {
+			ctx.Data = err.Error()
+			ctx.Error = jas.NewRequestError("invalidTime")
+			return
+		}
+
+		// Now, perform the time-based dump. Errors will be handled
+		// outside the if block.
+		nodes, err = Db.DumpChanges(t)
+	} else {
+		// If there was no "since," provide a simple full-database
+		// dump.
+		nodes, err = Db.DumpNodes()
+	}
+
+	// Handle any database errors here.
 	if err != nil {
 		ctx.Error = jas.NewInternalError(err)
 		l.Err(err)
 		return
 	}
-
-	// We must invoke ParseForm() so that we can access ctx.Form.
-	ctx.ParseForm()
 
 	// If the form value 'geojson' is included, dump in GeoJSON
 	// form. Otherwise, just dump with normal marhshalling.
