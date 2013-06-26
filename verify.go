@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"net"
 	"net/smtp"
 	"time"
 )
@@ -36,10 +37,14 @@ func ConnectSMTP() (c *smtp.Client, err error) {
 			}
 		}
 
-		// Authenticate using the password via CRAM-MD5. (Wait, we still
-		// use MD5? Ugh.)
-		if err = c.Auth(smtp.CRAMMD5Auth(Conf.SMTP.Username,
-			Conf.SMTP.Password)); err != nil {
+		// Authenticate using the password via plain auth.
+		host, _, err := net.SplitHostPort(Conf.SMTP.ServerAddress)
+		if err != nil {
+			return nil, err
+		}
+
+		if err = c.Auth(smtp.PlainAuth("", Conf.SMTP.Username,
+			Conf.SMTP.Password, host)); err != nil {
 			// If the authentication fails, close the client and exit.
 			c.Quit()
 			return nil, err
