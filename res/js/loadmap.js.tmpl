@@ -99,7 +99,7 @@ function addNodes() {
 		// TODO: Check for errors here (response.error)
 		L.geoJson(response.data, {
 			pointToLayer: function(feature, latlng) {
-				return L.marker(latlng);
+				return L.marker(latlng, {icon: activeNodeIcon});
 			},
 			onEachFeature: onEachNode
 		}).addTo(nodelayer);
