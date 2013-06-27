@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	_ "github.com/go-sql-driver/mysql"
+	"time"
 )
 
 var (
@@ -102,9 +103,9 @@ func (db DB) DumpNodes() (nodes []*Node, err error) {
 
 	// Perform the query.
 	rows, err := db.Query(`
-SELECT address,owner,lat,lon,status,0
+SELECT address,owner,lat,lon,status
 FROM nodes
-UNION SELECT address,owner,lat,lon,status,retrieved
+UNION SELECT address,owner,lat,lon,status
 FROM nodes_cached;`)
 	if err != nil {
 		l.Errf("Error dumping database: %s", err)
@@ -120,11 +121,37 @@ FROM nodes_cached;`)
 		nodes[i] = node
 
 		// Scan all of the values into it.
-		err = rows.Scan(&node.Addr, &node.OwnerName, &node.Latitude,
-			&node.Longitude, &node.Status, &node.RetrieveTime)
+		err = rows.Scan(&node.Addr, &node.OwnerName,
+			&node.Latitude, &node.Longitude, &node.Status)
 		if err != nil {
 			return
 		}
+	}
+	return
+}
+
+// DumpChanges returns all nodes, both local and cached, which have
+// been updated or retrieved more recently than the given time.
+func (db DB) DumpChanges(time time.Time) (nodes []*Node, err error) {
+	rows, err := db.Query(`
+SELECT address,owner,lat,lon,status
+FROM nodes WHERE updated >= ?
+UNION
+SELECT address,owner,lat,lon,status
+FROM nodes_cached WHERE retrieved >= ?;`, time, time)
+	if err != nil {
+		return
+	}
+
+	// Append each node to the array in sequence.
+	for rows.Next() {
+		node := new(Node)
+		err = rows.Scan(&node.Addr, &node.OwnerName,
+			&node.Latitude, &node.Longitude, &node.Status)
+		if err != nil {
+			return
+		}
+		nodes = append(nodes, node)
 	}
 	return
 }
@@ -181,7 +208,7 @@ func (db DB) GetNode(addr IP) (node *Node, err error) {
 FROM nodes
 WHERE address = ?
 UNION
-SELECT owner, email, lat, lon, status
+SELECT owner, "", lat, lon, status
 FROM nodes_cached
 WHERE address = ?
 LIMIT 1`)
