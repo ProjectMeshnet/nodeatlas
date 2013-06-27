@@ -5,9 +5,13 @@ var NodeIcon = L.Icon.extend({
 });
 
 var activeNodeIcon = new NodeIcon({
-	iconUrl: '/res/img/marker-icon.png'
+	iconUrl: '/res/img/marker-icon.png',
+	iconSize: [25, 41],
+	iconAnchor: [15, 35]
 });
 var	inactiveNodeIcon = new NodeIcon({
 	iconUrl: '/res/img/inactive-marker.png',
-	shadowAnchor: [2, 0]
+	iconSize: [20, 41],
+	iconAnchor: [14, 35],
+	shadowAnchor: [16, 35]
 });
