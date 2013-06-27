@@ -7,11 +7,12 @@ var NodeIcon = L.Icon.extend({
 var activeNodeIcon = new NodeIcon({
 	iconUrl: '/res/img/marker-icon.png',
 	iconSize: [25, 41],
-	iconAnchor: [15, 35]
+	iconAnchor: [15, 35],
+	popupAnchor: [-1, -25]
 });
 var	inactiveNodeIcon = new NodeIcon({
 	iconUrl: '/res/img/inactive-marker.png',
 	iconSize: [20, 41],
 	iconAnchor: [14, 35],
-	shadowAnchor: [16, 35]
+	shadowAnchor: [-1, -25]
 });
