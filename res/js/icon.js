@@ -10,6 +10,7 @@ var activeNodeIcon = new NodeIcon({
 	iconAnchor: [15, 35],
 	popupAnchor: [-1, -25]
 });
+
 var	inactiveNodeIcon = new NodeIcon({
 	iconUrl: '/res/img/inactive-marker.png',
 	iconSize: [20, 41],
