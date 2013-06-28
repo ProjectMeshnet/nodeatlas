@@ -75,12 +75,6 @@ $(window).resize(function () {
 	$('#map').css('height', ($(window).height()));
 }).resize();
 
-
-// GeoLocation Control
-function geoLocate() {
-	map.locate({setView: true});
-}
-
 function geoLocate() {
 	map.locate({setView: true, maxZoom: 17});
 }
