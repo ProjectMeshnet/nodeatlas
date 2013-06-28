@@ -70,6 +70,8 @@ $(document).ready(function() {
 	map.addControl(new L.Control.Scale());
 	
 	//map.locate({setView: true, maxZoom: 3});
+	
+	initRightClick();
 });
 
 $(window).resize(function () {
@@ -119,6 +121,8 @@ function createMarker(feature, latlng) {
 	p.setContent(html);
 	
 	var m = L.marker(latlng, {icon: activeNodeIcon}).bindPopup(html);
+	m.on('contextmenu', onNode);
+	
 	// If we specify a node, center the map on it
 	if (feature.id == getParameterByName('node')) {
 		map.setView(latlng, 8);

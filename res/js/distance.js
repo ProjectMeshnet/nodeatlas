@@ -47,9 +47,13 @@ function drawLine(points, distance, center) {
 		map.removeLayer(this);
 		map.removeLayer(popup);
 	});
+	
 	line.on('mouseover', function() {
 		popup.addTo(map);
 	});
+	
+	line.on('contextmenu', onPath);
+	
 	line.addTo(map);
 }
 
