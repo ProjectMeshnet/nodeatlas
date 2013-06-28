@@ -84,8 +84,9 @@ type Node struct {
 // Feature returns the Node as a *geojson.Feature.
 func (n *Node) Feature() (f *geojson.Feature) {
 	// Set the properties.
-	properties := make(map[string]interface{}, 1)
+	properties := make(map[string]interface{}, 2)
 	properties["OwnerName"] = n.OwnerName
+	properties["Status"] = n.Status
 
 	// Create and return the feature.
 	return geojson.NewFeature(
