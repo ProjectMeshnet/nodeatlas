@@ -39,6 +39,7 @@ var distance = new L.control({
 });
 
 $(document).ready(function() {
+	
 	$.ajaxSetup({cache:true});
 	
 	geolocControl.onAdd = function (map) {
@@ -104,23 +105,26 @@ function addNodes() {
 	$.getJSON("/api/all?geojson", function (response) {
 		// TODO: Check for errors here (response.error)
 		L.geoJson(response.data, {
-			pointToLayer: function(feature, latlng) {
-				return L.marker(latlng, {icon: activeNodeIcon});
-			},
-			onEachFeature: onEachNode
+			pointToLayer: createMarker
 		}).addTo(nodelayer);
 	});
 }
 
-function onEachNode(feature, layer) {
-	// If the Feature properties include popupContent, display it.
-	if (feature.properties) {
-		var html =  '<h4>'+feature.properties.OwnerName+'</h4>'+
-					'<div class="btn btn-small">'+feature.id+'</div>'
-		
-		
-		layer.bindPopup(html);
+function createMarker(feature, latlng) {
+	var html =  '<h4>'+feature.properties.OwnerName+'</h4>'+
+				'<div class="btn btn-small">'+feature.id+'</div>'
+	
+	var p = L.popup();
+	p.setLatLng(latlng);
+	p.setContent(html);
+	
+	var m = L.marker(latlng, {icon: activeNodeIcon}).bindPopup(html);
+	// If we specify a node, center the map on it
+	if (feature.id == getParameterByName('node')) {
+		map.setView(latlng, 8);
+		p.openOn(map);
 	}
+	return m;
 }
 
 function insertUser() {
@@ -191,4 +195,11 @@ function onMapClick(e) {
 		'</div>'+
 		'</form>';
 	marker.bindPopup(form).openPopup();
+}
+
+function getParameterByName(name) {
+	name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+	results = regex.exec(location.search);
+	return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
