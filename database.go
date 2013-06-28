@@ -62,7 +62,8 @@ expiration DATETIME);`)
 	_, err = db.Query(`CREATE TABLE IF NOT EXISTS cached_maps (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 hostname VARCHAR(255) NOT NULL,
-name VARCHAR(255) NOT NULL);`)
+name VARCHAR(255) NOT NULL,
+lastsync DATETIME DEFAULT CURRENT_TIMESTAMP);`)
 	if err != nil {
 		return
 	}

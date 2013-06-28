@@ -9,6 +9,16 @@ import (
 	"time"
 )
 
+// ChildMap is a type which wraps data pertaining to caching of child
+// maps, such as internal ID, URL, last successful sync, and display
+// name.
+type ChildMap struct {
+	HostName    string
+	DisplayName string
+	ID          int
+	LastSync    time.Time
+}
+
 // UpdateMapCache updates the node cache intelligently using
 // Conf.ChildMaps. Any unknown map addresses are added to the database
 // automatically, and errors are logged.
@@ -47,7 +57,7 @@ VALUES(?, ?, ?, ?, ?, ?, ?)`)
 }
 
 func (db DB) CacheNodes(nodes []*Node) (err error) {
-	stmt, err := db.Prepare(`INSERT INTO nodes_cached
+	stmt, err := db.Prepare(`REPLACE INTO nodes_cached
 (address, owner, lat, lon, status, source, retrieved)
 VALUES (?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
@@ -83,30 +93,43 @@ func (db DB) AddNewMapSource(address, name string) (err error) {
 	return
 }
 
-// GetMapSourceToID returns a mapping of child map hostnames to their
-// local IDs. It also includes a mapping of "local" to id 0.
-func (db DB) GetMapSourceToID() (sourceToID map[string]int, err error) {
-	// Initialize the map and insert the "local" id.
-	sourceToID = make(map[string]int, 1)
-	sourceToID["local"] = 0
+// UpdateMapSync updates the lastsync timestamp for a given child
+// map. If a time is provided, it will be set to that. Otherwise, the
+// current time will be used.
+func (db DB) UpdateMapSync(mapID int, lastsync time.Time) {
+	if lastsync.IsZero {
+		lastsync = time.Now()
+	}
+	_, err := db.Exec(`UPDATE `)
+}
+
+// GetMapSourceToMap returns a mapping of child map hostnames to actual
+// ChildMap types. It also includes a mapping of "local" to blank
+// ChildMap with ID 0.
+func (db DB) GetMapSourceToMap() (sourceToMap map[string]*ChildMap,
+	err error) {
+	// Initialize the map and insert the "local" map. Note that the
+	// newly initialized ChildMap will have ID 0.
+	sourceToMap = make(map[string]*ChildMap, 1)
+	sourceToMap["local"] = new(ChildMap)
 
 	// Retrieve every pair of hostnames and IDs.
-	rows, err := db.Query(`SELECT hostname,id
+	rows, err := db.Query(`SELECT hostname,name,id,lastsync
 FROM cached_maps;`)
 	if err == sql.ErrNoRows {
-		return sourceToID, nil
+		return sourceToMap, nil
 	} else if err != nil {
 		return
 	}
 
 	// Put in the rest of the mappings.
 	for rows.Next() {
-		var hostname string
-		var id int
-		if err = rows.Scan(&hostname, &id); err != nil {
+		childmap := new(ChildMap)
+		if err = rows.Scan(&childmap.HostName, &childmap.ID,
+			&childmap.DisplayName, &childmap.LastSync); err != nil {
 			return
 		}
-		sourceToID[hostname] = id
+		sourceToMap[childmap.HostName] = childmap
 	}
 
 	return
@@ -183,13 +206,13 @@ type nodeDumpWrapper struct {
 
 // GetAllFromChildMaps accepts a list of child map addresses to
 // retrieve nodes from. It does this concurrently, and puts any nodes
-// and newly discovered addresses in the local ID table.
+// and newly discovered sub-children in the local maps table.
 func GetAllFromChildMaps(addresses []string) (err error) {
 	// First off, initialize the slice into which we'll be appending
 	// all the nodes, and the souceToID map and mutex.
 	nodes := make([]*Node, 0)
 
-	sourceToID, err := Db.GetMapSourceToID()
+	sourceToMap, err := Db.GetMapSourceToMap()
 	if err != nil {
 		return
 	}
@@ -200,8 +223,8 @@ func GetAllFromChildMaps(addresses []string) (err error) {
 	waiter := new(sync.WaitGroup)
 	nodesMutex := new(sync.Mutex)
 
-	// We'll need to wait for len(addresses) goroutines to finish, so
-	// put that number in the WaitGroup.
+	// We'll need to wait for len(maps) goroutines to finish, so put
+	// that number in the WaitGroup.
 	waiter.Add(len(addresses))
 
 	// Now, start a separate goroutine for every address to
@@ -209,8 +232,17 @@ func GetAllFromChildMaps(addresses []string) (err error) {
 	// nodes. Whenever appendNodesFromChildMap() finishes, it calls
 	// waiter.Done().
 	for _, address := range addresses {
-		go appendNodesFromChildMap(&nodes, address,
-			&sourceToID, sourceMutex, nodesMutex, waiter)
+		// Retrieve the ChildMap type, if it's known. If it's not,
+		// initialize a new one with blank fields except the hostname,
+		// for simplicity.
+		childmap, ok := sourceToMap[address]
+		if !ok {
+			childmap = new(ChildMap)
+			childmap.HostName = address
+		}
+		go appendNodesFromChildMap(&nodes, childmap.HostName,
+			childmap.LastSync, &sourceToMap,
+			sourceMutex, nodesMutex, waiter)
 	}
 
 	// Block until all goroutines are finished. This is simple to do
@@ -226,13 +258,14 @@ func GetAllFromChildMaps(addresses []string) (err error) {
 // thread-safely appends the result to the given slice. At the end of
 // the function, it calls wg.Done().
 func appendNodesFromChildMap(dst *[]*Node, address string,
-	sourceToID *map[string]int, sourceMutex *sync.RWMutex,
-	dstMutex *sync.Mutex, wg *sync.WaitGroup) {
+	since time.Time, sourceToMap *map[string]*ChildMap,
+	sourceMutex *sync.RWMutex, dstMutex *sync.Mutex,
+	wg *sync.WaitGroup) {
 
 	// First, retrieve the nodes if possible. If there was an error,
 	// it will be logged, and if there were no nodes, we can stop
 	// here.
-	nodes := GetAllFromChildMap(address, sourceToID, sourceMutex)
+	nodes := GetAllFromChildMap(address, since, sourceToMap, sourceMutex)
 	if nodes == nil {
 		wg.Done()
 		return
@@ -247,15 +280,25 @@ func appendNodesFromChildMap(dst *[]*Node, address string,
 }
 
 // GetAllFromChildMap retrieves a list of nodes from a single remote
-// address, and localizes them. If it encounters a remote address that
-// is not already known, it safely adds it to the sourceToID map. It
-// is safe for concurrent use. If it encounters an error, it will log
-// it and return nil.
-func GetAllFromChildMap(address string, sourceToID *map[string]int,
+// address, and localizes them. It only requests updates if the
+// "since" argument is nonzero. If it encounters a remote address that
+// is not already known, it safely adds it to sourceToMap. It is safe
+// for concurrent use. If it encounters an error, it will log it and
+// return nil.
+func GetAllFromChildMap(address string, since time.Time,
+	sourceToMap *map[string]*ChildMap,
 	sourceMutex *sync.RWMutex) (nodes []*Node) {
-	// Try to get all nodes via the API.
+
+	// First, determine whether to send `since`.
+	var form string
+	if !since.IsZero() {
+		form = "?since=" + since.Format(time.RFC3339)
+	}
+
+	// Try to get all nodes via the API. If the form is filled out,
+	// send it as well.
 	resp, err := http.Get("http://" +
-		strings.TrimRight(address, "/") + "/api/all")
+		strings.TrimRight(address, "/") + "/api/all" + form)
 	if err != nil {
 		l.Errf("Caching %q produced: %s", address, err)
 		return nil
@@ -291,13 +334,13 @@ func GetAllFromChildMap(address string, sourceToID *map[string]int,
 
 		// First, check if the source is known. If not, then we need
 		// to add it and refresh our map. Make sure all reads and
-		// writes to sourceToID are threadsafe.
+		// writes to sourceToMap are threadsafe.
 		sourceMutex.RLock()
-		id, ok := (*sourceToID)[source]
+		childmap, ok := (*sourceToMap)[source]
 		sourceMutex.RUnlock()
 		if !ok {
 			// Add the new source to the database, and put it in the
-			// map under the ID len(sourceToID), because that should
+			// map under the ID len(sourceToMap), because that should
 			// be unique.
 			sourceMutex.Lock()
 			err := Db.AddNewMapSource(source, "")
@@ -308,18 +351,20 @@ func GetAllFromChildMap(address string, sourceToID *map[string]int,
 				return
 			}
 
-			id = len(*sourceToID)
-			(*sourceToID)[source] = id
+			childmap = new(ChildMap)
+			childmap.HostName = source
+			childmap.ID = len(*sourceToMap)
+			(*sourceToMap)[source] = childmap
 			sourceMutex.Unlock()
 
 			l.Debugf("Discovered new source map %q, ID %d\n",
-				source, id)
+				source, childmap.ID)
 		}
 
 		// Once the ID is set, proceed on to add it in all the
 		// remoteNodes.
 		for _, n := range remoteNodes {
-			n.SourceID = id
+			n.SourceID = childmap.ID
 		}
 
 		// Finally, append remoteNodes to the slice we're returning.
