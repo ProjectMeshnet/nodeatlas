@@ -172,12 +172,14 @@ function onMapClick(e) {
 	newUser.clearLayers();
 	newUser.addLayer(marker);
 	var form =  '<form id="inputform" enctype="multipart/form-data" class="well">'+
-		'<label><strong>Name:</strong> <i>marker title</i></label>'+
+		'<label><strong>Name:</strong> <small>marker title</small></label>'+
 		'<input type="text" class="input-medium" placeholder="Required" id="name" name="name" />'+
-		'<label><strong>Email:</strong> <i>never shared</i></label>'+
+		'<label><strong>Email:</strong> <small>never shared</small></label>'+
 		'<input type="email" class="input-medium" placeholder="Required" id="email" name="email" />'+
 		'<label><strong>IPv6:</strong></label>'+
 		'<input type="text" class="input-medium" id="address" name="address" placeholder="Required" />'+
+		'<label><strong>Description:</strong></label>' +
+		'<input type="text" class="input-medium" placeholder="Apartment, VPS, ..." />'+
 		'<input style="display: none;" type="text" id="latitude" name="latitude" value="'+e.latlng.lat.toFixed(6)+'" />'+
 		'<input style="display: none;" type="text" id="longitude" name="longitude" value="'+e.latlng.lng.toFixed(6)+'" /><br><br>'+
 		'<div class="row-fluid">'+
