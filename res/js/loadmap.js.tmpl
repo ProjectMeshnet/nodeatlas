@@ -7,14 +7,17 @@ var options = {
 
 var firstLoad = true;
 var attribution = '<a href="https://github.com/ProjectMeshnet/nodeatlas">NodeAtlas {{.Version}}</a> — Map data {{.Map.Attribution}}';
+
 var nodelayer = new L.MarkerClusterGroup({
 	spiderfyOnMaxZoom: true,
 	showCoverageOnHover: false,
 	zoomToBoundsOnClick: true,
 	maxClusterRadius: {{.Map.ClusterRadius}}
 });
+
 var newUser = new L.LayerGroup();
 var tilelayer = L.tileLayer(options.tileserver, {styleId: 22677, attribution: attribution});
+
 var map = new L.Map('map', {
 	center: options.center,
 	zoom: options.zoom,
