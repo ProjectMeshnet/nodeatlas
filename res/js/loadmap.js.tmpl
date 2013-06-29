@@ -142,12 +142,18 @@ function createMarker(feature, latlng) {
 }
 
 function insertUser() {
-	$("#loading-mask").show();
-	$("#loading").show();
-	
 	var address = $("#address").val();
 	var name = $("#name").val();
 	var email = $("#email").val();
+	var details = $("#details").val();
+	
+	var active = $("#active").val();
+	var residential = $("#residential").val();
+	
+	var internet = $("#internet").val();
+	var wireless = $("#wireless").val();
+	var wired = $("#wired").val();
+	
 	var latitude = $("#latitude").val();
 	var longitude = $("#longitude").val();
 
@@ -206,7 +212,7 @@ function getForm() {
 			form += '<label><strong>Address</strong> <span class="desc">Network-specific IP</span></label>';
 			form += '<input type="text" class="input-medium" id="address" name="address" placeholder="Required" />';
 			form += '<label><strong>Details</strong></label>';
-			form += '<input type="text" class="input-medium" placeholder="Home, Work, ..." />';
+			form += '<input type="text" class="input-medium" placeholder="Home, Work, ..." id="details"/>';
 			form += '<br/><div class="row-fluid"><div class="span6" style="text-align:center;">';
 			form += '<button class="btn btn-small" href="#" onclick="cancelRegistration(); return false;">Cancel</button></div>';
 			form += '<div class="span6" style="text-align:center;">';
@@ -216,11 +222,11 @@ function getForm() {
 			form += '<label><strong>Status</strong> <span class="desc">check all that apply</span></label>';
 			form += '<div class="checkbox">';
 				form += '<label>';
-					form += '<input type="checkbox" value="active">';
+					form += '<input type="checkbox" value="active" id="active">';
 					form += 'Active node';
 				form += '</label>';
 				form += '<label>';
-					form += '<input type="checkbox" value="residential">';
+					form += '<input type="checkbox" value="residential" id="residential">';
 					form += 'Residential node';
 				form += '</label>';
 			form += '</div>';
@@ -233,15 +239,15 @@ function getForm() {
 			form += '<label><strong>Status</strong> <span class="desc">check all that apply</span></label>';
 			form += '<div class="checkbox">';
 				form += '<label>';
-					form += '<input type="checkbox" value="internet">';
+					form += '<input type="checkbox" value="internet" id="internet">';
 					form += 'Internet access';
 				form += '</label>';
 				form += '<label>';
-					form += '<input type="checkbox" value="wireless">';
+					form += '<input type="checkbox" value="wireless" id="wireless">';
 					form += 'Wireless access';
 				form += '</label>';
 				form += '<label>';
-					form += '<input type="checkbox" value="wired">';
+					form += '<input type="checkbox" value="wired" id="wired">';
 					form += 'Wired (eth) access';
 				form += '</label>';
 			form += '</div>';
