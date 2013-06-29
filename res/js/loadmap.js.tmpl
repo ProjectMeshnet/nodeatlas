@@ -253,17 +253,14 @@ function getForm() {
 		form += '<div class="tab" id="four">';
 			form += '<label><strong>Contact</strong></label>';
 			form += '<textarea class="contact" placeholder="XMPP username, Reddit username, ..." maxlength="255"></textarea>';
+			form += '<input style="display: none;" type="text" id="latitude" name="latitude" value="'+e.latlng.lat.toFixed(6)+'"/>';
+			form += '<input style="display: none;" type="text" id="longitude" name="longitude" value="'+e.latlng.lng.toFixed(6)+'"/>';
 			form += '<div class="row-fluid"><div class="span6" style="text-align:center;">';
 			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(3); return false;">Back</button></div>';
 			form += '<div class="span6" style="text-align:center;">';
-			form += '<button class="btn btn-small btn-info" href="#" onclick="submitUser(); return false;">Submit</button></div></div>';
+			form += '<button class="btn btn-small btn-info" href="#" onclick="insertUser(); return false;">Submit</button></div></div>';
 		form += '</div>';
 	form += '</div>';
-	/*
-		'<input style="display: none;" type="text" id="latitude" name="latitude" value="'+e.latlng.lat.toFixed(6)+'" />'+
-		'<input style="display: none;" type="text" id="longitude" name="longitude" value="'+e.latlng.lng.toFixed(6)+'" /><br><br>'+
-		'<div class="span6" style="text-align:center;"><button type="button" class="btn btn-small btn-primary" onclick="insertUser()">Submit</button></div>'+
-	*/
 	form += '</form>';
 	return form;
 }
