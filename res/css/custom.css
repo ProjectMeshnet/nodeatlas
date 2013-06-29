@@ -54,3 +54,16 @@ a.close {
 	-webkit-border-radius: 5px 5px 5px 5px;
 	border-radius: 5px 5px 5px 5px;
 }
+
+.desc {
+	color: #AAA;
+	font-size: 10px;
+}
+
+#two, #three, #four {
+	display: none;
+}
+
+textarea.contact {
+	width: 150px !important;
+}
