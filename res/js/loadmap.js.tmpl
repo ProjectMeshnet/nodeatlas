@@ -147,12 +147,31 @@ function insertUser() {
 	var email = $("#email").val();
 	var details = $("#details").val();
 	
-	var active = $("#active").val();
-	var residential = $("#residential").val();
+	var active = 0, residential = 0, internet = 0, wireless = 0, wired = 0;
 	
-	var internet = $("#internet").val();
-	var wireless = $("#wireless").val();
-	var wired = $("#wired").val();
+	if ($(#active").is(':checked')) {
+		active = STATUS_ACTIVE;
+	}
+	
+	if ($(#residential").is(':checked')) {
+		residential = STATUS_PHYSICAL;
+	}
+	
+	if ($(#internet").is(':checked')) {
+		internet = STATUS_INTERNET;
+	}
+	
+	if ($(#wireless").is(':checked')) {
+		wireless = STATUS_INTERNET;
+	}
+	
+	if ($(#wired").is(':checked')) {
+		wired = STATUS_WIRED;
+	}
+	
+	var status = active|residential|internet|wireless|wired;
+	
+	var contact = $("#contact").val();
 	
 	var latitude = $("#latitude").val();
 	var longitude = $("#longitude").val();
@@ -161,12 +180,16 @@ function insertUser() {
 		alert("Name is required!");
 		return false;
 	}
+	
 	if (email.length == 0) {
 		alert("Email is required!");
 		return false;
 	}
 	
-	var dataString = 'name='+ name + '&email=' + email + '&address=' + address + '&latitude=' + latitude + '&longitude=' + longitude;	
+	var dataString = 'name=' + name + '&email=' + email + '&address=' + 
+	    address + '&latitude=' + latitude + '&longitude=' + longitude + 
+		'&status=' + status + '&contact=' + contact;
+	
 	$.ajax({
 		type: "POST",
 		url: "/api/node",
@@ -198,10 +221,10 @@ function onMapClick(e) {
 	var marker = new L.Marker(markerLocation);
 	newUser.clearLayers();
 	newUser.addLayer(marker);
-	marker.bindPopup(getForm()).openPopup();
+	marker.bindPopup(getForm(e)).openPopup();
 }
 
-function getForm() {
+function getForm(e) {
 	var form =  '<form id="inputform" enctype="multipart/form-data">';
 	form += '<div class="tabby">';
 		form += '<div class="tab" id="one">';
@@ -222,11 +245,11 @@ function getForm() {
 			form += '<label><strong>Status</strong> <span class="desc">check all that apply</span></label>';
 			form += '<div class="checkbox">';
 				form += '<label>';
-					form += '<input type="checkbox" value="active" id="active">';
+					form += '<input type="checkbox" id="active">';
 					form += 'Active node';
 				form += '</label>';
 				form += '<label>';
-					form += '<input type="checkbox" value="residential" id="residential">';
+					form += '<input type="checkbox" id="residential">';
 					form += 'Residential node';
 				form += '</label>';
 			form += '</div>';
@@ -239,15 +262,15 @@ function getForm() {
 			form += '<label><strong>Status</strong> <span class="desc">check all that apply</span></label>';
 			form += '<div class="checkbox">';
 				form += '<label>';
-					form += '<input type="checkbox" value="internet" id="internet">';
+					form += '<input type="checkbox" id="internet">';
 					form += 'Internet access';
 				form += '</label>';
 				form += '<label>';
-					form += '<input type="checkbox" value="wireless" id="wireless">';
+					form += '<input type="checkbox" id="wireless">';
 					form += 'Wireless access';
 				form += '</label>';
 				form += '<label>';
-					form += '<input type="checkbox" value="wired" id="wired">';
+					form += '<input type="checkbox" id="wired">';
 					form += 'Wired (eth) access';
 				form += '</label>';
 			form += '</div>';
