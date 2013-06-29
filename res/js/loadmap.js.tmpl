@@ -227,9 +227,9 @@ function getForm(e) {
 	var form =  '<form id="inputform" enctype="multipart/form-data">';
 	form += '<div class="tabby">';
 		form += '<div class="tab" id="one">';
-			form += '<label><strong>Name</strong> <span class="desc">marker title</span></label>';
+			form += '<label><strong>Name</strong> <span class="desc">Marker title</span></label>';
 			form += '<input type="text" class="input-medium" placeholder="Required" id="name" name="name" />';
-			form += '<label><strong>Email</strong> <span class="desc">never shared</span></label>';
+			form += '<label><strong>Email</strong> <span class="desc">Never shared</span></label>';
 			form += '<input type="email" class="input-medium" placeholder="Required" id="email" name="email" />';
 			form += '<label><strong>Address</strong> <span class="desc">Network-specific IP</span></label>';
 			form += '<input type="text" class="input-medium" id="address" name="address" placeholder="Required" />';
@@ -241,7 +241,7 @@ function getForm(e) {
 			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(2); return false;">Next</button></div></div>';
 		form += '</div>';
 		form += '<div class="tab" id="two">';
-			form += '<label><strong>Status</strong> <span class="desc">check all that apply</span></label>';
+			form += '<label><strong>Status</strong> <span class="desc">Check all that apply.</span></label>';
 			form += '<div class="checkbox">';
 				form += '<label>';
 					form += '<input type="checkbox" id="active">';
@@ -258,7 +258,7 @@ function getForm(e) {
 			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(3); return false;">Next</button></div></div>';
 		form += '</div>';
 		form += '<div class="tab" id="three">';
-			form += '<label><strong>Status</strong> <span class="desc">check all that apply</span></label>';
+			form += '<label><strong>Status</strong> <span class="desc">Check all that apply.</span></label>';
 			form += '<div class="checkbox">';
 				form += '<label>';
 					form += '<input type="checkbox" id="internet">';
@@ -281,6 +281,8 @@ function getForm(e) {
 		form += '<div class="tab" id="four">';
 			form += '<label><strong>Contact</strong></label>';
 			form += '<textarea class="contact" placeholder="XMPP username, Reddit username, ..." maxlength="255"></textarea>';
+			form += '<label><strong>PGP</strong> <span class="desc">8 digit or 16 digit</span></label>';
+			form += '<input type="text" class="input-medium" placeholder="CAFEBABE" id="pgp" name="pgp" />';
 			form += '<input style="display: none;" type="text" id="latitude" name="latitude" value="'+e.latlng.lat.toFixed(6)+'"/>';
 			form += '<input style="display: none;" type="text" id="longitude" name="longitude" value="'+e.latlng.lng.toFixed(6)+'"/>';
 			form += '<div class="row-fluid"><div class="span6" style="text-align:center;">';
