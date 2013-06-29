@@ -1,5 +1,9 @@
 @charset "Utf-8";
 
+a.btn {
+	color: #FFF;
+}
+
 #map {
 	width:100%;
 	height:700px;

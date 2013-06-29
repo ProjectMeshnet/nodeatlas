@@ -117,7 +117,7 @@ function addNodes() {
 
 function createMarker(feature, latlng) {
 	var html =  '<h4>'+feature.properties.OwnerName+'</h4>'+
-				'<div class="btn btn-small">'+feature.id+'</div>'
+				'<a href="/?node='+feature.id+'" class="btn btn-small">'+feature.id+'</a>'
 	
 	var p = L.popup();
 	p.setLatLng(latlng);
