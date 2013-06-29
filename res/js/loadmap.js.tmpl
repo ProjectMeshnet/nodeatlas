@@ -60,7 +60,6 @@ $(document).ready(function() {
 		return div;
 	};
 
-
 	// Populate the map with nodes from /api/all.
 	addNodes();
 	
@@ -149,27 +148,29 @@ function insertUser() {
 	
 	var active = 0, residential = 0, internet = 0, wireless = 0, wired = 0;
 	
-	if ($(#active").is(':checked')) {
+	if ($("#active").is(':checked')) {
 		active = STATUS_ACTIVE;
 	}
 	
-	if ($(#residential").is(':checked')) {
+	if ($("#residential").is(':checked')) {
 		residential = STATUS_PHYSICAL;
 	}
 	
-	if ($(#internet").is(':checked')) {
+	if ($("#internet").is(':checked')) {
 		internet = STATUS_INTERNET;
 	}
 	
-	if ($(#wireless").is(':checked')) {
+	if ($("#wireless").is(':checked')) {
 		wireless = STATUS_INTERNET;
 	}
 	
-	if ($(#wired").is(':checked')) {
+	if ($("#wired").is(':checked')) {
 		wired = STATUS_WIRED;
 	}
 	
 	var status = active|residential|internet|wireless|wired;
+	
+	alert(status);
 	
 	var contact = $("#contact").val();
 	
