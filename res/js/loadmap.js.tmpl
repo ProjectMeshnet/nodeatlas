@@ -150,6 +150,15 @@ function insertUser() {
 	var email = $("#email").val();
 	var details = $("#details").val();
 	
+	var pgp = $("#pgp").val();
+	var contact = $("#contact").val();
+	
+	// ^[a-zA-Z0-9]{8}{0,2}$
+	// TODO ^ USE REGEX TO CHECK PGP
+	
+	var latitude = $("#latitude").val();
+	var longitude = $("#longitude").val();
+	
 	var active = 0, residential = 0, internet = 0, wireless = 0, wired = 0;
 	
 	if ($("#active").is(':checked')) {
@@ -173,11 +182,6 @@ function insertUser() {
 	}
 	
 	var status = active|residential|internet|wireless|wired;
-
-	var contact = $("#contact").val();
-	
-	var latitude = $("#latitude").val();
-	var longitude = $("#longitude").val();
 
 	if (name.length == 0) {
 		alert("Name is required!");
