@@ -279,10 +279,10 @@ function getForm(e) {
 			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(4); return false;">Next</button></div></div>';
 		form += '</div>';
 		form += '<div class="tab" id="four">';
-			form += '<label><strong>Contact</strong></label>';
-			form += '<textarea class="contact" placeholder="XMPP username, Reddit username, ..." maxlength="255"></textarea>';
 			form += '<label><strong>PGP</strong> <span class="desc">8 digit or 16 digit</span></label>';
 			form += '<input type="text" class="input-medium" placeholder="CAFEBABE" id="pgp" name="pgp" />';
+			form += '<label><strong>Contact</strong></label>';
+			form += '<textarea class="contact" placeholder="XMPP username, Reddit username, ..." maxlength="255"></textarea>';
 			form += '<input style="display: none;" type="text" id="latitude" name="latitude" value="'+e.latlng.lat.toFixed(6)+'"/>';
 			form += '<input style="display: none;" type="text" id="longitude" name="longitude" value="'+e.latlng.lng.toFixed(6)+'"/>';
 			form += '<div class="row-fluid"><div class="span6" style="text-align:center;">';
