@@ -147,6 +147,7 @@ function insertUser() {
 	var details = $("#details").val();
 	
 	var active = 0, residential = 0, internet = 0, wireless = 0, wired = 0;
+<<<<<<< HEAD
 	
 	if ($("#active").is(':checked')) {
 		active = STATUS_ACTIVE;
@@ -165,13 +166,36 @@ function insertUser() {
 	}
 	
 	if ($("#wired").is(':checked')) {
+=======
+	
+	if ($(#active").is(':checked')) {
+		active = STATUS_ACTIVE;
+	}
+	
+	if ($(#residential").is(':checked')) {
+		residential = STATUS_PHYSICAL;
+	}
+	
+	if ($(#internet").is(':checked')) {
+		internet = STATUS_INTERNET;
+	}
+	
+	if ($(#wireless").is(':checked')) {
+		wireless = STATUS_INTERNET;
+	}
+	
+	if ($(#wired").is(':checked')) {
+>>>>>>> 51b5ad6910ad1bc4b7026a5421b99175ecd11605
 		wired = STATUS_WIRED;
 	}
 	
 	var status = active|residential|internet|wireless|wired;
 	
+<<<<<<< HEAD
 	alert(status);
 	
+=======
+>>>>>>> 51b5ad6910ad1bc4b7026a5421b99175ecd11605
 	var contact = $("#contact").val();
 	
 	var latitude = $("#latitude").val();
