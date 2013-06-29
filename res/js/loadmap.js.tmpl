@@ -50,7 +50,7 @@ $(document).ready(function() {
 	
 	addNode.onAdd = function (map) {
 		var div = L.DomUtil.create('div', 'leaflet-control-zoom leaflet-control');
-		div.innerHTML = '<a class="leaflet-control-node" href="#me" data-toggle="modal" title="Add node"></a>';
+		div.innerHTML = '<a class="leaflet-control-node dis" href="#me" data-toggle="modal" id="addme" title="Add node"></a>';
 		return div;
 	};
 
@@ -94,14 +94,20 @@ function geoLocate() {
 }
 
 function initRegistration() {
-	map.addEventListener('click', onMapClick);
 	$('#map').css('cursor', 'crosshair');
+	$('#addme').removeClass('dis');
+	$('#addme').css('background-color', 'rgba(0, 0, 0, 1)');
+	$('#addme').css('background-image', 'url(/res/img/node_white.png)');
+	map.addEventListener('click', onMapClick);
 	return false;
 }
 
 function cancelRegistration() {
 	newUser.clearLayers();
 	$('#map').css('cursor', '');
+	$('#addme').addClass('dis');
+	$('#addme').css('background-color', 'rgba(255, 255, 255, .8)');
+	$('#addme').css('background-image', 'url(/res/img/node.png)');
 	map.removeEventListener('click', onMapClick);
 }
 
@@ -203,13 +209,9 @@ function insertUser() {
 				else
 					$('#insertSuccessModal').modal('show');
 			}
-			$("#loading-mask").hide();
-			$("#loading").hide();
 		},
 		error: function(data) {
 			alert("Registration unsuccessful.");
-			$("#loading-mask").hide();
-			$("#loading").hide();
 		}
 	});
 	return false;
