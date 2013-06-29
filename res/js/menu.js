@@ -3,13 +3,13 @@ function initRightClick() {
 }
 
 function onMap(e) {
-	alert('right click on map');
+	//alert('right click on map');
 }
 
 function onNode(e) {
-	alert('right click on node');
+	//alert('right click on node');
 }
 
 function onPath(e) {
-	alert('right click on path');
+	//alert('right click on path');
 }
