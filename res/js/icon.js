@@ -14,6 +14,5 @@ var activeNodeIcon = new NodeIcon({
 var	inactiveNodeIcon = new NodeIcon({
 	iconUrl: '/res/img/inactive-marker.png',
 	iconSize: [20, 41],
-	iconAnchor: [14, 35],
-	shadowAnchor: [-1, -25]
+	iconAnchor: [10, 35]
 });

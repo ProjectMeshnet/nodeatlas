@@ -122,8 +122,15 @@ function createMarker(feature, latlng) {
 	var p = L.popup();
 	p.setLatLng(latlng);
 	p.setContent(html);
+
+	// Use the status to set an appropriate icon and effects.
+	var icon = inactiveNodeIcon
+	if (feature.properties.Status & STATUS_ACTIVE > 0) {
+		icon = activeNodeIcon
+	}
 	
-	var m = L.marker(latlng, {icon: activeNodeIcon}).bindPopup(html);
+	// Create the Marker with options set above.
+	var m = L.marker(latlng, {icon: icon}).bindPopup(html);
 	m.on('contextmenu', onNode);
 	
 	// If we specify a node, center the map on it
