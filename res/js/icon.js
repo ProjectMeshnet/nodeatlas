@@ -16,3 +16,10 @@ var	inactiveNodeIcon = new NodeIcon({
 	iconSize: [20, 41],
 	iconAnchor: [10, 35]
 });
+
+var newUserIcon = new NodeIcon({
+	iconUrl: '/res/img/marker-icon_gray.png',
+	iconSize: [25, 41],
+	iconAnchor: [15, 35],
+	popupAnchor: [-1, -25]
+});
