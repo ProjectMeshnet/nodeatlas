@@ -27,7 +27,7 @@ address BINARY(16) PRIMARY KEY,
 owner VARCHAR(255) NOT NULL,
 email VARCHAR(255) NOT NULL,
 contact VARCHAR(255),
-pgp VARCHAR(16),
+pgp BINARY(8),
 lat FLOAT NOT NULL,
 lon FLOAT NOT NULL,
 status INT NOT NULL,
@@ -53,7 +53,7 @@ address BINARY(16) NOT NULL,
 owner VARCHAR(255) NOT NULL,
 email VARCHAR(255) NOT NULL,
 contact VARCHAR(255),
-pgp VARCHAR(16),
+pgp BINARY(8),
 lat FLOAT NOT NULL,
 lon FLOAT NOT NULL,
 status INT NOT NULL,
@@ -124,13 +124,18 @@ FROM nodes_cached;`)
 		node := new(Node)
 		nodes[i] = node
 
+		// Create temporary values to simplify scanning.
+		contact := sql.NullString{}
+
 		// Scan all of the values into it.
 		err = rows.Scan(&node.Addr, &node.OwnerName,
-			&node.Contact, &node.PGP,
+			&contact, &node.PGP,
 			&node.Latitude, &node.Longitude, &node.Status)
 		if err != nil {
 			return
 		}
+
+		node.Contact = contact.String
 	}
 	return
 }
@@ -173,7 +178,7 @@ VALUES(?, ?, ?, ?, ?, ?, ?, ?)`)
 		return
 	}
 	_, err = stmt.Exec([]byte(node.Addr), node.OwnerName, node.OwnerEmail,
-		node.Contact, node.PGP,
+		node.Contact, []byte(node.PGP),
 		node.Latitude, node.Longitude, node.Status)
 	stmt.Close()
 	return

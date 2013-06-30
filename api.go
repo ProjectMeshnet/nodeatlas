@@ -108,6 +108,7 @@ func (*Api) PostNode(ctx *jas.Context) {
 		ctx.Error = ReadOnlyError
 		return
 	}
+	var err error
 
 	// Initialize the node and retrieve fields.
 	node := new(Node)
@@ -131,9 +132,8 @@ func (*Api) PostNode(ctx *jas.Context) {
 
 	// Validate the PGP ID, if given.
 	// TODO(DuoNoxSol): Ensure that it is hex.
-	node.PGP, _ = ctx.FindString("pgp")
-	if len(node.PGP) != 0 && len(node.PGP) != 8 &&
-		len(node.PGP) != 16 {
+	pgpstr, _ := ctx.FindString("pgp")
+	if node.PGP, err = DecodePGPID([]byte(pgpstr)); err != nil {
 		ctx.Error = jas.NewRequestError("pgpInvalid")
 		return
 	}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"github.com/kpawlik/geojson"
@@ -85,7 +86,7 @@ type Node struct {
 	Contact string `json:",omitempty"`
 
 	// PGP is the key ID of the owner's public key.
-	PGP string `json:",omitempty"`
+	PGP PGPID `json:",omitempty"`
 }
 
 // Feature returns the Node as a *geojson.Feature.
@@ -138,9 +139,44 @@ func (ip IP) String() string {
 func FeatureCollectionNodes(nodes []*Node) *geojson.FeatureCollection {
 	features := make([]*geojson.Feature, len(nodes))
 	for i, n := range nodes {
-
-		//		properties["Address"] = n.Addr
 		features[i] = n.Feature()
 	}
 	return geojson.NewFeatureCollection(features)
+}
+
+type PGPID []byte
+
+var IncorrectlyFormattedPGPID = errors.New("incorrectly formatted PGP ID")
+
+func (pgpid PGPID) MarshalJSON() ([]byte, error) {
+	b := make([]byte, len(pgpid)*2)
+	hex.Encode(b, pgpid)
+	return json.Marshal(string(b))
+}
+
+func (pgpid *PGPID) UnmarshalJSON(b []byte) error {
+	if b[0] != '"' {
+		// If a quote is not the first character, then the next part
+		// will segfault.
+		return IncorrectlyFormattedPGPID
+	}
+	b = b[1 : len(b)-1]
+	if len(b) != 0 && len(b) != 8 && len(b) != 16 {
+		return IncorrectlyFormattedPGPID
+	} else if len(b) == 0 {
+		// If the length is zero, make the result nil.
+		*pgpid = nil
+	}
+	*pgpid = make(PGPID, len(b)/2)
+	_, err := hex.Decode(*pgpid, b)
+	return err
+}
+
+func DecodePGPID(b []byte) (pgpid PGPID, err error) {
+	if len(b) != 0 && len(b) != 8 && len(b) != 16 {
+		return nil, IncorrectlyFormattedPGPID
+	}
+	pgpid = make(PGPID, len(b)/2)
+	_, err = hex.Decode(pgpid, b)
+	return
 }

@@ -104,7 +104,7 @@ func (db DB) QueueNode(id int64, emailsent bool, grace Duration, node *Node) (er
 lat, lon, status, verifysent, expiration)
 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		id, []byte(node.Addr), node.OwnerName, node.OwnerEmail,
-		node.Contact, node.PGP,
+		node.Contact, []byte(node.PGP),
 		node.Latitude, node.Longitude, node.Status,
 		emailsent, time.Now().Add(time.Duration(grace)))
 	return
