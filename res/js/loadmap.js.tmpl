@@ -121,15 +121,18 @@ function addNodes() {
 function createMarker(feature, latlng) {
 	var html =  '<h4>'+feature.properties.OwnerName+'</h4>'+
 				'<a href="/?node='+feature.id+'" class="btn btn-small">'+feature.id+'</a>';
+
 	if (feature.properties.Details) {
-		html += '<div>'+feature.Properties.Details+'</div>';
+		html += '<div>'+feature.properties.Details+'</div>';
 	}
 	if (feature.properties.Contact) {
 		html += '<div>'+feature.properties.Contact+'</div>';
 	}
 	if (feature.properties.PGP) {
-		html += '<div>'+feature.properties.PGP.toUpperCase()+'</div>';
+		html += '<div>'+feature.properties.PGP+'</div>';
 	}
+	
+	
 	
 	var p = L.popup();
 	p.setLatLng(latlng);
