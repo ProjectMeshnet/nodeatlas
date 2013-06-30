@@ -193,15 +193,22 @@ function insertUser() {
 		return false;
 	}
 	
-	var dataString = 'name=' + name + '&email=' + email + '&address=' + 
-	    address + '&latitude=' + latitude + '&longitude=' + longitude + 
-		'&status=' + status + '&contact=' + contact + "&pgp=" + pgp +
-		'&details=' + details;
+	var dataObject = {
+		'name': name,
+		'email': email,
+		'address': address,
+		'latitude': latitude,
+		'longitude': longitude,
+		'status': status,
+		'contact': contact,
+		'details': details,
+		'pgp': pgp
+	};
 	
 	$.ajax({
 		type: "POST",
 		url: "/api/node",
-		data: dataString,
+		data: dataObject,
 		success: function(response) {
 			if (response.error == null) {
 				cancelRegistration();
