@@ -195,7 +195,7 @@ function insertUser() {
 	
 	var dataString = 'name=' + name + '&email=' + email + '&address=' + 
 	    address + '&latitude=' + latitude + '&longitude=' + longitude + 
-		'&status=' + status + '&contact=' + contact;
+		'&status=' + status + '&contact=' + contact + "&pgp=" + pgp;
 	
 	$.ajax({
 		type: "POST",

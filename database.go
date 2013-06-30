@@ -26,6 +26,8 @@ func (db DB) InitializeTables() (err error) {
 address BINARY(16) PRIMARY KEY,
 owner VARCHAR(255) NOT NULL,
 email VARCHAR(255) NOT NULL,
+contact VARCHAR(255),
+pgp VARCHAR(16),
 lat FLOAT NOT NULL,
 lon FLOAT NOT NULL,
 status INT NOT NULL,
@@ -50,6 +52,8 @@ id INT PRIMARY KEY,
 address BINARY(16) NOT NULL,
 owner VARCHAR(255) NOT NULL,
 email VARCHAR(255) NOT NULL,
+contact VARCHAR(255),
+pgp VARCHAR(16),
 lat FLOAT NOT NULL,
 lon FLOAT NOT NULL,
 status INT NOT NULL,
@@ -103,9 +107,9 @@ func (db DB) DumpNodes() (nodes []*Node, err error) {
 
 	// Perform the query.
 	rows, err := db.Query(`
-SELECT address,owner,lat,lon,status
+SELECT address,owner,contact,pgp,lat,lon,status
 FROM nodes
-UNION SELECT address,owner,lat,lon,status
+UNION SELECT address,owner,"","",lat,lon,status
 FROM nodes_cached;`)
 	if err != nil {
 		l.Errf("Error dumping database: %s", err)
@@ -122,6 +126,7 @@ FROM nodes_cached;`)
 
 		// Scan all of the values into it.
 		err = rows.Scan(&node.Addr, &node.OwnerName,
+			&node.Contact, &node.PGP,
 			&node.Latitude, &node.Longitude, &node.Status)
 		if err != nil {
 			return
@@ -134,10 +139,10 @@ FROM nodes_cached;`)
 // been updated or retrieved more recently than the given time.
 func (db DB) DumpChanges(time time.Time) (nodes []*Node, err error) {
 	rows, err := db.Query(`
-SELECT address,owner,lat,lon,status
+SELECT address,owner,contact,pgp,lat,lon,status
 FROM nodes WHERE updated >= ?
 UNION
-SELECT address,owner,lat,lon,status
+SELECT address,owner,"","",lat,lon,status
 FROM nodes_cached WHERE retrieved >= ?;`, time, time)
 	if err != nil {
 		return
@@ -147,6 +152,7 @@ FROM nodes_cached WHERE retrieved >= ?;`, time, time)
 	for rows.Next() {
 		node := new(Node)
 		err = rows.Scan(&node.Addr, &node.OwnerName,
+			&node.Contact, &node.PGP,
 			&node.Latitude, &node.Longitude, &node.Status)
 		if err != nil {
 			return
@@ -161,12 +167,14 @@ FROM nodes_cached WHERE retrieved >= ?;`, time, time)
 func (db DB) AddNode(node *Node) (err error) {
 	// Inserts a new node into the database
 	stmt, err := db.Prepare(`INSERT INTO nodes
-(address, owner, email, lat, lon, status)
-VALUES(?, ?, ?, ?, ?, ?)`)
+(address, owner, email, contact, pgp, lat, lon, status)
+VALUES(?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		return
 	}
-	_, err = stmt.Exec([]byte(node.Addr), node.OwnerName, node.OwnerEmail, node.Latitude, node.Longitude, node.Status)
+	_, err = stmt.Exec([]byte(node.Addr), node.OwnerName, node.OwnerEmail,
+		node.Contact, node.PGP,
+		node.Latitude, node.Longitude, node.Status)
 	stmt.Close()
 	return
 }
@@ -176,12 +184,13 @@ VALUES(?, ?, ?, ?, ?, ?)`)
 func (db DB) UpdateNode(node *Node) (err error) {
 	// Updates an existing node in the database
 	stmt, err := db.Prepare(`UPDATE nodes SET
-owner = ?, lat = ?, lon = ?, status = ?
+owner = ?, contact = ?, pgp = ?, lat = ?, lon = ?, status = ?
 WHERE address = ?`)
 	if err != nil {
 		return
 	}
-	_, err = stmt.Exec(node.OwnerName, node.Latitude, node.Longitude, node.Status, []byte(node.Addr))
+	_, err = stmt.Exec(node.OwnerName, node.Contact, node.PGP,
+		node.Latitude, node.Longitude, node.Status, []byte(node.Addr))
 	stmt.Close()
 	return
 }
@@ -204,11 +213,12 @@ func (db DB) DeleteNode(addr IP) (err error) {
 // node matches, however, both return values will be nil.
 func (db DB) GetNode(addr IP) (node *Node, err error) {
 	// Retrieves the node with the given address from the database
-	stmt, err := db.Prepare(`SELECT owner, email, lat, lon, status
+	stmt, err := db.Prepare(`
+SELECT owner, email, contact, pgp, lat, lon, status
 FROM nodes
 WHERE address = ?
 UNION
-SELECT owner, "", lat, lon, status
+SELECT owner, "", "", "", lat, lon, status
 FROM nodes_cached
 WHERE address = ?
 LIMIT 1`)
@@ -222,7 +232,9 @@ LIMIT 1`)
 
 	// Perform the actual query.
 	row := stmt.QueryRow(baddr, baddr)
-	err = row.Scan(&node.OwnerName, &node.OwnerEmail, &node.Latitude, &node.Longitude, &node.Status)
+	err = row.Scan(&node.OwnerName, &node.OwnerEmail,
+		&node.Contact, &node.PGP,
+		&node.Latitude, &node.Longitude, &node.Status)
 	stmt.Close()
 
 	// If the error is of the particular type sql.ErrNoRows, it simply

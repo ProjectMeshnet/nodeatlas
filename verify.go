@@ -100,9 +100,11 @@ func SendVerificationEmail(id int64, n *Node) (err error) {
 // given ID.
 func (db DB) QueueNode(id int64, emailsent bool, grace Duration, node *Node) (err error) {
 	_, err = db.Exec(`INSERT INTO nodes_verify_queue
-(id, address, owner, email, lat, lon, status, verifysent, expiration)
-VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+(id, address, owner, email, contact, pgp,
+lat, lon, status, verifysent, expiration)
+VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		id, []byte(node.Addr), node.OwnerName, node.OwnerEmail,
+		node.Contact, node.PGP,
 		node.Latitude, node.Longitude, node.Status,
 		emailsent, time.Now().Add(time.Duration(grace)))
 	return
@@ -121,13 +123,16 @@ WHERE expiration <= ?;`, time.Now())
 func (db DB) VerifyQueuedNode(id int64) (addr IP, err error) {
 	// Get the node via the id.
 	var node = new(Node)
-	err = db.QueryRow(`SELECT address,owner,email,lat,lon,status
+	err = db.QueryRow(`
+SELECT address,owner,email,contact,pgp,lat,lon,status
 FROM nodes_verify_queue WHERE id = ?;`, id).Scan(
 		&node.Addr, &node.OwnerName, &node.OwnerEmail,
+		&node.Contact, &node.PGP,
 		&node.Latitude, &node.Longitude, &node.Status)
 	if err != nil {
 		return
 	}
+
 	_, err = db.Exec(`DELETE FROM nodes_verify_queue
 WHERE id = ?;`, id)
 	if err != nil {

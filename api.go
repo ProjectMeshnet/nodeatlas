@@ -123,6 +123,20 @@ func (*Api) PostNode(ctx *jas.Context) {
 	node.Longitude = ctx.RequireFloat("longitude")
 	node.OwnerName = ctx.RequireString("name")
 	node.OwnerEmail = ctx.RequireString("email")
+	node.Contact, _ = ctx.FindString("contact")
+	if len(node.Contact) > 255 {
+		ctx.Error = jas.NewRequestError("contactTooLong")
+		return
+	}
+
+	// Validate the PGP ID, if given.
+	// TODO(DuoNoxSol): Ensure that it is hex.
+	node.PGP, _ = ctx.FindString("pgp")
+	if len(node.PGP) != 0 && len(node.PGP) != 8 &&
+		len(node.PGP) != 16 {
+		ctx.Error = jas.NewRequestError("pgpInvalid")
+		return
+	}
 	status, _ := ctx.FindPositiveInt("status")
 	node.Status = uint32(status)
 

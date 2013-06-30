@@ -79,6 +79,13 @@ type Node struct {
 
 	// OwnerEmail is the node's owner's email address.
 	OwnerEmail string `json:",omitempty"`
+
+	// Contact is public contact information, such as a nickname,
+	// email, or xmpp username.
+	Contact string `json:",omitempty"`
+
+	// PGP is the key ID of the owner's public key.
+	PGP string `json:",omitempty"`
 }
 
 // Feature returns the Node as a *geojson.Feature.
