@@ -95,6 +95,12 @@ func (n *Node) Feature() (f *geojson.Feature) {
 	properties := make(map[string]interface{}, 2)
 	properties["OwnerName"] = n.OwnerName
 	properties["Status"] = n.Status
+	if len(n.Contact) != 0 {
+		properties["Contact"] = n.Contact
+	}
+	if len(n.PGP) != 0 {
+		properties["PGP"] = n.PGP.String()
+	}
 
 	// Create and return the feature.
 	return geojson.NewFeature(
@@ -170,6 +176,16 @@ func (pgpid *PGPID) UnmarshalJSON(b []byte) error {
 	*pgpid = make(PGPID, len(b)/2)
 	_, err := hex.Decode(*pgpid, b)
 	return err
+}
+
+func (pgpid PGPID) String() string {
+	if len(pgpid) == 0 {
+		return ""
+	}
+
+	b := make([]byte, len(pgpid)*2)
+	_ = hex.Encode(b, pgpid)
+	return string(b)
 }
 
 func DecodePGPID(b []byte) (pgpid PGPID, err error) {
