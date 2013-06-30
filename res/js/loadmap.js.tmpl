@@ -195,7 +195,8 @@ function insertUser() {
 	
 	var dataString = 'name=' + name + '&email=' + email + '&address=' + 
 	    address + '&latitude=' + latitude + '&longitude=' + longitude + 
-		'&status=' + status + '&contact=' + contact + "&pgp=" + pgp;
+		'&status=' + status + '&contact=' + contact + "&pgp=" + pgp +
+		'&details=' + details;
 	
 	$.ajax({
 		type: "POST",
@@ -240,13 +241,13 @@ function getForm(e) {
 	form += '<div class="tabby">';
 		form += '<div class="tab" id="one">';
 			form += '<label><strong>Name</strong> <span class="desc">Marker title</span></label>';
-			form += '<input type="text" class="input-medium" placeholder="Required" id="name" name="name" />';
+			form += '<input type="text" class="input-medium" placeholder="Required" id="name" name="name" maxlength="255"/>';
 			form += '<label><strong>Email</strong> <span class="desc">Never shared</span></label>';
 			form += '<input type="email" class="input-medium" placeholder="Required" id="email" name="email" />';
 			form += '<label><strong>Address</strong> <span class="desc">Network-specific IP</span></label>';
-			form += '<input type="text" class="input-medium" id="address" name="address" placeholder="Required" />';
+			form += '<input type="text" class="input-medium" id="address" name="address" placeholder="Required" maxlength="39"/>';
 			form += '<label><strong>Details</strong></label>';
-			form += '<input type="text" class="input-medium" placeholder="Home, Work, ..." id="details"/>';
+			form += '<input type="text" class="input-medium" placeholder="Home, Work, ..." id="details" maxlength="255"/>';
 			form += '<br/><div class="row-fluid"><div class="span6" style="text-align:center;">';
 			form += '<button class="btn btn-small" href="#" onclick="cancelRegistration(); return false;">Cancel</button></div>';
 			form += '<div class="span6" style="text-align:center;">';
@@ -292,7 +293,7 @@ function getForm(e) {
 		form += '</div>';
 		form += '<div class="tab" id="four">';
 			form += '<label><strong>PGP</strong> <span class="desc">8 digit or 16 digit</span></label>';
-			form += '<input type="text" class="input-medium" placeholder="CAFEBABE" id="pgp" name="pgp" />';
+			form += '<input type="text" class="input-medium" placeholder="CAFEBABE" id="pgp" name="pgp" maxlength="16" />';
 			form += '<label><strong>Contact</strong></label>';
 			form += '<textarea class="contact" id="contact" placeholder="XMPP username, Reddit username, ..." maxlength="255"></textarea>';
 			form += '<input style="display: none;" type="text" id="latitude" name="latitude" value="'+e.latlng.lat.toFixed(6)+'"/>';
