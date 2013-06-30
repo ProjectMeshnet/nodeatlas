@@ -49,7 +49,7 @@ VALUES(?, ?, ?, ?, ?, ?, ?)`)
 func (db DB) CacheNodes(nodes []*Node) (err error) {
 	stmt, err := db.Prepare(`INSERT INTO nodes_cached
 (address, owner, details, lat, lon, status, source, retrieved)
-VALUES (?, ?, ?, ?, ?, ?, ?)`)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		return
 	}

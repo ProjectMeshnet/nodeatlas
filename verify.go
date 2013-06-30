@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"errors"
 	"net"
 	"net/smtp"
@@ -100,11 +101,11 @@ func SendVerificationEmail(id int64, n *Node) (err error) {
 // given ID.
 func (db DB) QueueNode(id int64, emailsent bool, grace Duration, node *Node) (err error) {
 	_, err = db.Exec(`INSERT INTO nodes_verify_queue
-(id, address, owner, email, contact, pgp,
+(id, address, owner, email, contact, details, pgp,
 lat, lon, status, verifysent, expiration)
-VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		id, []byte(node.Addr), node.OwnerName, node.OwnerEmail,
-		node.Contact, []byte(node.PGP),
+		node.Contact, node.Details, []byte(node.PGP),
 		node.Latitude, node.Longitude, node.Status,
 		emailsent, time.Now().Add(time.Duration(grace)))
 	return
@@ -123,15 +124,20 @@ WHERE expiration <= ?;`, time.Now())
 func (db DB) VerifyQueuedNode(id int64) (addr IP, err error) {
 	// Get the node via the id.
 	var node = new(Node)
+	contact := sql.NullString{}
+	details := sql.NullString{}
+
 	err = db.QueryRow(`
-SELECT address,owner,email,contact,pgp,lat,lon,status
+SELECT address,owner,email,contact,details,pgp,lat,lon,status
 FROM nodes_verify_queue WHERE id = ?;`, id).Scan(
 		&node.Addr, &node.OwnerName, &node.OwnerEmail,
-		&node.Contact, &node.PGP,
+		&contact, &details, &node.PGP,
 		&node.Latitude, &node.Longitude, &node.Status)
 	if err != nil {
 		return
 	}
+	node.Contact = contact.String
+	node.Details = details.String
 
 	_, err = db.Exec(`DELETE FROM nodes_verify_queue
 WHERE id = ?;`, id)
