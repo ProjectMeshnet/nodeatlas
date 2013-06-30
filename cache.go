@@ -35,12 +35,12 @@ func UpdateMapCache() {
 
 func (db DB) CacheNode(node *Node, expiry int) (err error) {
 	stmt, err := db.Prepare(`INSERT INTO nodes_cached
-(address, owner, lat, lon, status, expiration)
+(address, owner, details, lat, lon, status, expiration)
 VALUES(?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		return
 	}
-	_, err = stmt.Exec(node.Addr, node.OwnerName,
+	_, err = stmt.Exec(node.Addr, node.OwnerName, node.Details,
 		node.Latitude, node.Longitude, node.SourceID, node.Status)
 	stmt.Close()
 	return
@@ -48,7 +48,7 @@ VALUES(?, ?, ?, ?, ?, ?, ?)`)
 
 func (db DB) CacheNodes(nodes []*Node) (err error) {
 	stmt, err := db.Prepare(`INSERT INTO nodes_cached
-(address, owner, lat, lon, status, source, retrieved)
+(address, owner, details, lat, lon, status, source, retrieved)
 VALUES (?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		return
@@ -60,6 +60,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?)`)
 			retrieved = time.Now().Unix()
 		}
 		_, err = stmt.Exec([]byte(node.Addr), node.OwnerName,
+			node.Details,
 			node.Latitude, node.Longitude,
 			node.Status, node.SourceID, retrieved)
 		if err != nil {

@@ -85,6 +85,9 @@ type Node struct {
 	// email, or xmpp username.
 	Contact string `json:",omitempty"`
 
+	// Details is extra information about node
+	Details string `json:",omitempty"`
+
 	// PGP is the key ID of the owner's public key.
 	PGP PGPID `json:",omitempty"`
 }
@@ -92,7 +95,7 @@ type Node struct {
 // Feature returns the Node as a *geojson.Feature.
 func (n *Node) Feature() (f *geojson.Feature) {
 	// Set the properties.
-	properties := make(map[string]interface{}, 2)
+	properties := make(map[string]interface{}, 5)
 	properties["OwnerName"] = n.OwnerName
 	properties["Status"] = n.Status
 	if len(n.Contact) != 0 {
@@ -100,6 +103,9 @@ func (n *Node) Feature() (f *geojson.Feature) {
 	}
 	if len(n.PGP) != 0 {
 		properties["PGP"] = n.PGP.String()
+	}
+	if len(n.Details) != 0 {
+		properties["Details"] = n.Details
 	}
 
 	// Create and return the feature.

@@ -125,8 +125,15 @@ func (*Api) PostNode(ctx *jas.Context) {
 	node.OwnerName = ctx.RequireString("name")
 	node.OwnerEmail = ctx.RequireString("email")
 	node.Contact, _ = ctx.FindString("contact")
+	node.Details, _ = ctx.FindString("details")
+
 	if len(node.Contact) > 255 {
 		ctx.Error = jas.NewRequestError("contactTooLong")
+		return
+	}
+
+	if len(node.Details) > 255 {
+		ctx.Error = jas.NewRequestError("detailsTooLong")
 		return
 	}
 

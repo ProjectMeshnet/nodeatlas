@@ -27,6 +27,7 @@ address BINARY(16) PRIMARY KEY,
 owner VARCHAR(255) NOT NULL,
 email VARCHAR(255) NOT NULL,
 contact VARCHAR(255),
+details VARCHAR(255),
 pgp BINARY(8),
 lat FLOAT NOT NULL,
 lon FLOAT NOT NULL,
@@ -38,6 +39,7 @@ updated DATETIME DEFAULT CURRENT_TIMESTAMP);`)
 	_, err = db.Query(`CREATE TABLE IF NOT EXISTS nodes_cached (
 address BINARY(16) PRIMARY KEY,
 owner VARCHAR(255) NOT NULL,
+details VARCHAR(255),
 lat FLOAT NOT NULL,
 lon FLOAT NOT NULL,
 status INT NOT NULL,
@@ -53,6 +55,7 @@ address BINARY(16) NOT NULL,
 owner VARCHAR(255) NOT NULL,
 email VARCHAR(255) NOT NULL,
 contact VARCHAR(255),
+details VARCHAR(255),
 pgp BINARY(8),
 lat FLOAT NOT NULL,
 lon FLOAT NOT NULL,
@@ -107,9 +110,9 @@ func (db DB) DumpNodes() (nodes []*Node, err error) {
 
 	// Perform the query.
 	rows, err := db.Query(`
-SELECT address,owner,contact,pgp,lat,lon,status
+SELECT address,owner,contact,details,pgp,lat,lon,status
 FROM nodes
-UNION SELECT address,owner,"","",lat,lon,status
+UNION SELECT address,owner,"",details,"",lat,lon,status
 FROM nodes_cached;`)
 	if err != nil {
 		l.Errf("Error dumping database: %s", err)
@@ -126,16 +129,18 @@ FROM nodes_cached;`)
 
 		// Create temporary values to simplify scanning.
 		contact := sql.NullString{}
+		details := sql.NullString{}
 
 		// Scan all of the values into it.
 		err = rows.Scan(&node.Addr, &node.OwnerName,
-			&contact, &node.PGP,
+			&contact, &details, &node.PGP,
 			&node.Latitude, &node.Longitude, &node.Status)
 		if err != nil {
 			return
 		}
 
 		node.Contact = contact.String
+		node.Details = details.String
 	}
 	return
 }
@@ -144,10 +149,10 @@ FROM nodes_cached;`)
 // been updated or retrieved more recently than the given time.
 func (db DB) DumpChanges(time time.Time) (nodes []*Node, err error) {
 	rows, err := db.Query(`
-SELECT address,owner,contact,pgp,lat,lon,status
+SELECT address,owner,contact,details,pgp,lat,lon,status
 FROM nodes WHERE updated >= ?
 UNION
-SELECT address,owner,"","",lat,lon,status
+SELECT address,owner,"",details,"",lat,lon,status
 FROM nodes_cached WHERE retrieved >= ?;`, time, time)
 	if err != nil {
 		return
@@ -156,12 +161,20 @@ FROM nodes_cached WHERE retrieved >= ?;`, time, time)
 	// Append each node to the array in sequence.
 	for rows.Next() {
 		node := new(Node)
+
+		contact := sql.NullString{}
+		details := sql.NullString{}
+
 		err = rows.Scan(&node.Addr, &node.OwnerName,
-			&node.Contact, &node.PGP,
+			contact, details, &node.PGP,
 			&node.Latitude, &node.Longitude, &node.Status)
 		if err != nil {
 			return
 		}
+
+		node.Contact = contact.String
+		node.Details = details.String
+
 		nodes = append(nodes, node)
 	}
 	return
@@ -172,13 +185,13 @@ FROM nodes_cached WHERE retrieved >= ?;`, time, time)
 func (db DB) AddNode(node *Node) (err error) {
 	// Inserts a new node into the database
 	stmt, err := db.Prepare(`INSERT INTO nodes
-(address, owner, email, contact, pgp, lat, lon, status)
-VALUES(?, ?, ?, ?, ?, ?, ?, ?)`)
+(address, owner, email, contact, details, pgp, lat, lon, status)
+VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		return
 	}
 	_, err = stmt.Exec([]byte(node.Addr), node.OwnerName, node.OwnerEmail,
-		node.Contact, []byte(node.PGP),
+		node.Contact, node.Details, []byte(node.PGP),
 		node.Latitude, node.Longitude, node.Status)
 	stmt.Close()
 	return
@@ -189,12 +202,12 @@ VALUES(?, ?, ?, ?, ?, ?, ?, ?)`)
 func (db DB) UpdateNode(node *Node) (err error) {
 	// Updates an existing node in the database
 	stmt, err := db.Prepare(`UPDATE nodes SET
-owner = ?, contact = ?, pgp = ?, lat = ?, lon = ?, status = ?
+owner = ?, contact = ?, details = ?, pgp = ?, lat = ?, lon = ?, status = ?
 WHERE address = ?`)
 	if err != nil {
 		return
 	}
-	_, err = stmt.Exec(node.OwnerName, node.Contact, node.PGP,
+	_, err = stmt.Exec(node.OwnerName, node.Contact, node.Details, node.PGP,
 		node.Latitude, node.Longitude, node.Status, []byte(node.Addr))
 	stmt.Close()
 	return
@@ -219,11 +232,11 @@ func (db DB) DeleteNode(addr IP) (err error) {
 func (db DB) GetNode(addr IP) (node *Node, err error) {
 	// Retrieves the node with the given address from the database
 	stmt, err := db.Prepare(`
-SELECT owner, email, contact, pgp, lat, lon, status
+SELECT owner, email, contact, details, pgp, lat, lon, status
 FROM nodes
 WHERE address = ?
 UNION
-SELECT owner, "", "", "", lat, lon, status
+SELECT owner, "", "", details, "", lat, lon, status
 FROM nodes_cached
 WHERE address = ?
 LIMIT 1`)
@@ -234,13 +247,18 @@ LIMIT 1`)
 	// Initialize the node and temporary variable.
 	node = &Node{Addr: addr}
 	baddr := []byte(addr)
+	contact := sql.NullString{}
+	details := sql.NullString{}
 
 	// Perform the actual query.
 	row := stmt.QueryRow(baddr, baddr)
 	err = row.Scan(&node.OwnerName, &node.OwnerEmail,
-		&node.Contact, &node.PGP,
+		contact, details, &node.PGP,
 		&node.Latitude, &node.Longitude, &node.Status)
 	stmt.Close()
+
+	node.Contact = contact.String
+	node.Details = details.String
 
 	// If the error is of the particular type sql.ErrNoRows, it simply
 	// means that the node does not exist. In that case, return (nil,
