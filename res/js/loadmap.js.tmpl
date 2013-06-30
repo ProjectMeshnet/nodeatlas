@@ -210,10 +210,18 @@ function insertUser() {
 					$('#insertSuccessModalNoVerify').modal('show');
 				else
 					$('#insertSuccessModal').modal('show');
+			} else {
+				if (response.error == 'addressInvalid') {
+					alert("Unable to create node; the address you have entered is invalid.");
+				} else {
+					alert("Unable to create node: " + response.error);
+				}
 			}
 		},
 		error: function(data) {
-			alert("Registration unsuccessful.");
+			alert("Something went wrong! If you try again, it might work. If it doesn't, contact the admin!");
+			$("#loading-mask").hide();
+			$("#loading").hide();
 		}
 	});
 	return false;
