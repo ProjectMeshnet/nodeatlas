@@ -39,7 +39,7 @@ var distance = new L.control({
 });
 
 $(document).ready(function() {
-	
+
 	$.ajaxSetup({cache:true});
 	
 	geolocControl.onAdd = function (map) {
@@ -69,9 +69,8 @@ $(document).ready(function() {
 	map.addControl(new L.Control.Scale());
 	
 	//map.locate({setView: true, maxZoom: 3});
-	
+		
 	initRightClick();
-	
 });
 
 $(window).resize(function () {
@@ -123,16 +122,14 @@ function createMarker(feature, latlng) {
 				'<a href="/?node='+feature.id+'" class="btn btn-small">'+feature.id+'</a>';
 
 	if (feature.properties.Details) {
-		html += '<div>'+feature.properties.Details+'</div>';
+		html += '<div class="property">Details</div><div class="more">'+feature.properties.Details+'</div>';
 	}
 	if (feature.properties.Contact) {
-		html += '<div>'+feature.properties.Contact+'</div>';
+		html += '<div class="property">Contact</div><div class="more">'+feature.properties.Contact+'</div>';
 	}
 	if (feature.properties.PGP) {
-		html += '<div>'+feature.properties.PGP+'</div>';
+		html += '<div class="property">PGP</div><div class="more">'+(feature.properties.PGP).toUpperCase()+'</div>';
 	}
-	
-	
 	
 	var p = L.popup();
 	p.setLatLng(latlng);
@@ -153,6 +150,7 @@ function createMarker(feature, latlng) {
 		map.setView(latlng, 8);
 		p.openOn(map);
 	}
+		
 	return m;
 }
 

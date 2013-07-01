@@ -71,3 +71,9 @@ a.close {
 textarea.contact {
 	width: 150px !important;
 }
+
+.property {
+	color: #2C3E50;
+	font-size: 16px;
+	font-weight: 900;
+}
