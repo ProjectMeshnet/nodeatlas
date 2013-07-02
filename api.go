@@ -212,8 +212,14 @@ func (*Api) PostNode(ctx *jas.Context) {
 // database, as identified by its long random ID.
 func (*Api) GetVerify(ctx *jas.Context) {
 	id := ctx.RequireInt("id")
-	ip, err := Db.VerifyQueuedNode(id)
-	if err == sql.ErrNoRows {
+	ip, verifyerr, err := Db.VerifyQueuedNode(id, ctx.Request)
+	if verifyerr != nil {
+		// If there was an error inverification, there was no internal
+		// error, but the circumstances of the verification were
+		// incorrect. It has not been removed from the database.
+		ctx.Error = jas.NewRequestError(verifyerr.Error())
+		return
+	} else if err == sql.ErrNoRows {
 		// If we encounter a ErrNoRows, then there was no node with
 		// that ID. Report it.
 		ctx.Error = jas.NewRequestError("invalid id")

@@ -4,11 +4,17 @@ import (
 	"database/sql"
 	"errors"
 	"net"
+	"net/http"
 	"net/smtp"
 	"time"
 )
 
-var SMTPDisabledError = errors.New("SMTP disabled in the configuration")
+var (
+	SMTPDisabledError = errors.New("SMTP disabled in the configuration")
+
+	RemoteAddressDoesNotMatchError = errors.New(
+		"verify: remote address does not match Node address")
+)
 
 // ConnectSMTP uses the global Conf to connect to the SMTP server and,
 // unless disabled in the configuration, authenticates with STARTTLS
@@ -120,8 +126,10 @@ WHERE expiration <= ?;`, time.Now())
 }
 
 // VerifyQueuedNode removes a node (as identified by the id) from the
-// queue and inserts it into the nodes table.
-func (db DB) VerifyQueuedNode(id int64) (addr IP, err error) {
+// queue, performs VerifyRequest checks, and inserts it into the nodes
+// table. If it encounters an error, the node remains in the verify
+// queue.
+func (db DB) VerifyQueuedNode(id int64, r *http.Request) (addr IP, verifyerr error, err error) {
 	// Get the node via the id.
 	var node = new(Node)
 	contact := sql.NullString{}
@@ -139,6 +147,17 @@ FROM nodes_verify_queue WHERE id = ?;`, id).Scan(
 	node.Contact = contact.String
 	node.Details = details.String
 
+	// Perform VerifyRequest checks.
+	verifyerr = VerifyRequest(node, r)
+	if verifyerr != nil {
+		return
+	}
+
+	err = db.AddNode(node)
+	if err != nil {
+		return
+	}
+
 	_, err = db.Exec(`DELETE FROM nodes_verify_queue
 WHERE id = ?;`, id)
 	if err != nil {
@@ -146,5 +165,32 @@ WHERE id = ?;`, id)
 	}
 
 	// Add the node to the regular database.
-	return node.Addr, db.AddNode(node)
+	return node.Addr, nil, nil
+}
+
+// VerifyRequest performs appropriate verification checks for a Node
+// based on a received http.Request, as follows. Checks are only
+// performed if they are enabled in the configuration. If all checks
+// are successful, it returns nil.
+//
+// - Ensure that remote address matches the Node's address.
+func VerifyRequest(node *Node, r *http.Request) error {
+	// Ensure that r.RemoteAddr matches node.Addr.
+	if Conf.Verify.FromNode {
+		remoteAddr, _, err := net.SplitHostPort(r.RemoteAddr)
+		if err != nil {
+			// If we encounter an error here, it is probably something
+			// to do with the reverse proxy. As such, log it as an
+			// internal error, and return it.
+			l.Errf("Could not parse input address while verifying %q: %s\n",
+				node.Addr, err)
+			return err
+		}
+		if !net.IP(node.Addr).Equal(net.ParseIP(remoteAddr)) {
+			// If the node address and remote address don't match,
+			// then this verify step has failed.
+			return RemoteAddressDoesNotMatchError
+		}
+	}
+	return nil
 }

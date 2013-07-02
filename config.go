@@ -128,6 +128,16 @@ type Config struct {
 		// maintainers of the tileserver.
 		Attribution string
 	}
+
+	// Verify contains the list of steps used to ensure that new nodes
+	// are valid when registered. They can be enabled or disabled
+	// according to one's needs.
+	Verify struct {
+		// FromNode requires the verification request (GET
+		// /api/verify?id=<long_random_id>) to originate from the
+		// address of the node that is being verified.
+		FromNode bool
+	}
 }
 
 // ReadConfig uses os and encoding/json to read a configuration from
