@@ -12,23 +12,35 @@ type Config struct {
 	// the region about which it focuses.
 	Name string
 
-	// Hostname is the address which NodeAtlas should identify itself
-	// as. For example, in a verification email, NodeAtlas would give
-	// the verification link as
-	// http://<hostname><prefix>/<long-random-id>
-	Hostname string
+	// Web is the structure which contains information relating to the
+	// backend of the HTTP webserver.
+	Web struct {
+		// Hostname is the address which NodeAtlas should identify
+		// itself as. For example, in a verification email, NodeAtlas
+		// would give the verification link as
+		// http://<hostname><prefix>/verify/<long-random-id>
+		Hostname string
 
-	// Prefix is the URL prefix which is required to access the front
-	// end. For example, with a prefix of "/nodeatlas", NodeAtlas
-	// would be able to respond to http://example.com/nodeatlas.
-	Prefix string
+		// Prefix is the URL prefix which is required to access the
+		// front end. For example, with a prefix of "/nodeatlas",
+		// NodeAtlas would be able to respond to
+		// http://example.com/nodeatlas.
+		Prefix string
 
-	// Addr is the network interface and port to which NodeAtlas
-	// should bind. This of the form "0.0.0.0:8077" (for global
-	// binding on port 8077) or "127.0.0.1:8077" (for only localhost
-	// binding on port 8077) or ":8077" (which is equivalent to
-	// "0.0.0.0:8077".)
-	Addr string
+		// Addr is the network interface and port to which NodeAtlas
+		// should bind. This of the form "0.0.0.0:8077" (for global
+		// binding on port 8077) or "127.0.0.1:8077" (for only
+		// localhost binding on port 8077) or ":8077" (which is
+		// equivalent to "0.0.0.0:8077".)
+		Addr string
+
+		// DeproxyHeaderFields is a list of HTTP header fields that
+		// should be used instead of the connecting IP when verifying
+		// nodes and logging major errors. They must be in
+		// canonicalized form, such as "X-Forwarded-For" or
+		// "X-Real-IP".
+		DeproxyHeaderFields []string
+	}
 
 	// ChildMaps is a list of addresses from which to pull lists of
 	// nodes every heartbeat. Please note that these maps are trusted

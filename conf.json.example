@@ -1,8 +1,14 @@
 {
 	"Name": "Meshnet",
-	"Hostname": "localhost",
-	"Prefix": "",
-	"Addr": "0.0.0.0:8077",
+	"Web": {
+		"Hostname": "localhost",
+		"Prefix": "",
+		"Addr": "0.0.0.0:8077",
+		"DeproxyHeaderFields": [
+			"X-Forwarded-For",
+			"X-Real-Ip"
+		]
+	},
 	"ChildMaps": [],
 	"Database": {
 		"DriverName": "sqlite3",
