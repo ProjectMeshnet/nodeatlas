@@ -228,12 +228,13 @@ func RegisterTemplates() (err error) {
 // ListenSignal uses os/signal to wait for OS signals, such as SIGHUP
 // and SIGINT, and perform the appropriate actions as listed below.
 //     SIGHUP: reload configuration file
-//     SIGINT: gracefully shut down
+//     SIGINT, SIGKILL, SIGTERM: gracefully shut down
 func ListenSignal() {
 	// Create the channel and use signal.Notify to listen for any
 	// specified signals.
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT)
+	signal.Notify(c, syscall.SIGHUP,
+		os.Interrupt, os.Kill, syscall.SIGTERM)
 	for sig := range c {
 		switch sig {
 		case syscall.SIGHUP:
@@ -247,8 +248,8 @@ func ListenSignal() {
 
 			// Restart the heartbeat ticker.
 			Heartbeat()
-		case syscall.SIGINT:
-			l.Info("Caught SIGINT; NodeAtlas over and out\n")
+		case os.Interrupt, os.Kill, syscall.SIGTERM:
+			l.Infof("Caught %s; NodeAtlas over and out\n", sig)
 			var exitCode int
 
 			// Close the database connection.
