@@ -89,6 +89,10 @@ func SendVerificationEmail(id int64, n *Node) (err error) {
 	data["InstanceName"] = Conf.Name
 	data["Link"] = "http://" + Conf.Web.Hostname + Conf.Web.Prefix
 	data["VerificationID"] = id
+	data["FromEmail"] = Conf.SMTP.EmailAddress
+	data["ToEmail"] = n.OwnerEmail
+	const layout = "Mon, 2 Jan 2006 15:04:05 -0700"
+	date["Date"] = time.Now().Format(layout)
 
 	// Tell the server we're about to send it the data.
 	w, err := c.Data()

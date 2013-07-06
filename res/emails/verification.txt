@@ -1,4 +1,7 @@
+From: {{.FromAddress}}
 Subject: {{.InstanceName}} Node Registration
+Date: {{.Date}}
+To: {{.ToAddress}}
 MIME-version: 1.0;\nContent-Type: text/plain; charset=\"UTF-8\";
 
 To verify your node at the below link. If you didn't place this node,
