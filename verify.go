@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"net"
 	"net/http"
 	"net/smtp"
@@ -11,9 +12,6 @@ import (
 
 var (
 	SMTPDisabledError = errors.New("SMTP disabled in the configuration")
-
-	RemoteAddressDoesNotMatchError = errors.New(
-		"verify: remote address does not match Node address")
 )
 
 // ConnectSMTP uses the global Conf to connect to the SMTP server and,
@@ -171,6 +169,30 @@ WHERE id = ?;`, id)
 	// Add the node to the regular database.
 	return node.Addr, nil, nil
 }
+
+var (
+	NodeAddrNotContainedByNetmaskError = "verify: Node address not within configured netmask: %s"
+)
+
+// VerifyRegistrant performs appropriate registration-time checks to
+// ensure that a Node is fit to be placed in the verification
+// queue. If the given Node is acceptable, then no error will be
+// returned.
+func VerifyRegistrant(node *Node) error {
+	// Ensure that the node's address is contained by the netmask.
+	if Conf.Verify.Netmask != nil {
+		if !(*net.IPNet)(Conf.Verify.Netmask).Contains(net.IP(node.Addr)) {
+			return fmt.Errorf(NodeAddrNotContainedByNetmaskError,
+				Conf.Verify.Netmask)
+		}
+	}
+	return nil
+}
+
+var (
+	RemoteAddressDoesNotMatchError = errors.New(
+		"verify: remote address does not match Node address")
+)
 
 // VerifyRequest performs appropriate verification checks for a Node
 // based on a received http.Request, as follows. Checks are only

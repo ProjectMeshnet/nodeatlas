@@ -38,6 +38,7 @@
 		"Attribution": "© OpenStreetMap contributors"
 	},
 	"Verify": {
+		"Netmask": "fc00::/8",
 		"FromNode": true
 	}
 }

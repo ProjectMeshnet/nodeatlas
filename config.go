@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
+	"net"
 	"os"
 	"time"
 )
@@ -133,6 +135,14 @@ type Config struct {
 	// are valid when registered. They can be enabled or disabled
 	// according to one's needs.
 	Verify struct {
+		// Netmask, if not nil, is a CIDR-form network mask which
+		// requires that nodes registered have an Addr which matches
+		// it. For example, "fc00::/8" would only allow IPv6 addresses
+		// in which the first two digits are "fc", and
+		// "192.168.0.0/16" would only allow IPv4 addresses in which
+		// the first two bytes are "192.168".
+		Netmask *IPNet
+
 		// FromNode requires the verification request (GET
 		// /api/verify?id=<long_random_id>) to originate from the
 		// address of the node that is being verified.
@@ -185,5 +195,25 @@ func (d *Duration) UnmarshalJSON(b []byte) error {
 		return err
 	}
 	*d = *(*Duration)(&dur)
+	return nil
+}
+
+// IPNet is a wrapper for net.IPNet which implements json.Unmarshaler.
+
+type IPNet net.IPNet
+
+var InvalidIPNetError = errors.New("network mask is invalid")
+
+func (n *IPNet) UnmarshalJSON(b []byte) error {
+	if b[0] != '"' {
+		// If the IPNet is not given as a string, then it is invalid
+		// and should return an error.
+		return InvalidIPNetError
+	}
+	_, ipnet, err := net.ParseCIDR(string(b[1 : len(b)-1]))
+	if err != nil {
+		return err
+	}
+	*n = *(*IPNet)(ipnet)
 	return nil
 }

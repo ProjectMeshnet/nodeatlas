@@ -147,6 +147,12 @@ func (*Api) PostNode(ctx *jas.Context) {
 	status, _ := ctx.FindPositiveInt("status")
 	node.Status = uint32(status)
 
+	// Ensure that the node is correct and usable.
+	if err = VerifyRegistrant(node); err != nil {
+		ctx.Error = jas.NewRequestError(err.Error())
+		return
+	}
+
 	// TODO(DuoNoxSol): Authenticate/limit node registration.
 
 	// If SMTP is missing from the config, we cannot continue.
