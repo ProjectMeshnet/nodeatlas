@@ -4,11 +4,24 @@ Date: {{.Date}}
 To: {{.To}}
 MIME-version: 1.0;\nContent-Type: text/plain; charset=\"UTF-8\";
 
-To verify your node at the below link. If you didn't place this node,
-your email address was entered by mistake, then please ignore this
-email. Our apologies.
+To verify your node, visit the below link. {{if .FromNode}}Bear in
+mind that you must visit it from the address you registered on the
+map.{{end}}
 
 {{.Link}}/api/verify?id={{.VerificationID}}
+
+{{if .FromNode}}If you can't access the link from the node you placed,
+such as if it's a virtual private server, then you can access it via
+the command line.
+
+    curl {{.Link}}/api/verify?id={{.VerificationID}}
+
+If you don't have cURL, try the following.
+
+    wget -qO- {{.Link}}/api/verify?id={{.VerificationID}}{{end}}
+
+If you didn't place this node and your email address was entered by
+mistake, then please ignore this email. We're sorry.
 
 --
 Automated email by {{.InstanceName}} NodeAtlas

@@ -92,6 +92,7 @@ func SendVerificationEmail(id int64, n *Node) (err error) {
 	data["From"] = Conf.SMTP.EmailAddress
 	data["To"] = n.OwnerEmail
 	data["Date"] = time.Now().Format(time.RFC1123Z)
+	data["FromNode"] = Conf.Verify.FromNode
 
 	// Tell the server we're about to send it the data.
 	w, err := c.Data()
