@@ -29,11 +29,11 @@ type Config struct {
 		// http://example.com/nodeatlas.
 		Prefix string
 
-		// Addr is the network interface and port to which NodeAtlas
-		// should bind. This of the form "0.0.0.0:8077" (for global
-		// binding on port 8077) or "127.0.0.1:8077" (for only
-		// localhost binding on port 8077) or ":8077" (which is
-		// equivalent to "0.0.0.0:8077".)
+		// Addr is the network protocol, interface, and port to which
+		// NodeAtlas should bind. For example, "tcp://0.0.0.0:8077"
+		// will bind globally to the 8077 TCP port, and
+		// "unix://nodeatlas.sock" will create a UNIX socket at
+		// nodeatlas.sock.
 		Addr string
 
 		// DeproxyHeaderFields is a list of HTTP header fields that

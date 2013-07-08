@@ -221,10 +221,15 @@ func ListenSignal() {
 			Heartbeat()
 		case os.Interrupt, os.Kill, syscall.SIGTERM:
 			l.Infof("Caught %s; NodeAtlas over and out\n", sig)
+			var err error
 			var exitCode int
 
+			// Close the HTTP Listener. If a UNIX socket is in use, it
+			// will automatically be removed.
+			listener.Close()
+
 			// Close the database connection.
-			err := Db.Close()
+			err = Db.Close()
 			if err != nil {
 				// If closing the database gave an error, report it
 				// and set the exit code.

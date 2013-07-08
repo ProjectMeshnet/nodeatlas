@@ -3,7 +3,7 @@
 	"Web": {
 		"Hostname": "localhost",
 		"Prefix": "",
-		"Addr": "0.0.0.0:8077",
+		"Addr": "tcp://0.0.0.0:8077",
 		"DeproxyHeaderFields": [
 			"X-Forwarded-For",
 			"X-Real-Ip"

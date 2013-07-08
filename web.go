@@ -1,10 +1,19 @@
 package main
 
 import (
+	"errors"
 	"html/template"
+	"net"
 	"net/http"
 	"path"
+	"strings"
 )
+
+var (
+	listener net.Listener
+)
+
+var InvalidBindAddress = errors.New("invalid address to bind to")
 
 // StartServer is a simple helper function to register any handlers
 // (such as the API) and start the HTTP server on the configured
@@ -24,11 +33,20 @@ func StartServer() (err error) {
 		return
 	}
 
+	// Parse the address and create an appropriate net.Listener. The
+	// Web.Addr will be of the form "protocol://address:port".
+	parts := strings.Split(Conf.Web.Addr, "://")
+	if len(parts) != 2 {
+		return InvalidBindAddress
+	}
+	listener, err = net.Listen(parts[0], parts[1])
+	if err != nil {
+		return
+	}
+
 	// Create a custom http.Server, so that we can have better control
 	// over certain behaviors.
-	s := &http.Server{
-		Addr: Conf.Web.Addr,
-	}
+	s := &http.Server{}
 
 	// If either the Prefix or DeproxyHeaderFields are set, then we
 	// need to wrap the default Handler with a Deproxier.
@@ -42,7 +60,7 @@ func StartServer() (err error) {
 
 	// Start the HTTP server and return any errors if it crashes.
 	l.Infof("Starting HTTP server on %q\n", Conf.Web.Addr)
-	return s.ListenAndServe()
+	return s.Serve(listener)
 }
 
 // Deproxier implements the http.Handler interface by setting the
