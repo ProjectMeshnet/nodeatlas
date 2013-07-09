@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"html/template"
 	"net"
 	"os"
 	"time"
@@ -53,7 +54,7 @@ type Config struct {
 		// HeaderSnippet is a snippet of code which is inserted into
 		// the <head> of each page. For example, one could include a
 		// script tieing into Pikwik.
-		HeaderSnippet string
+		HeaderSnippet template.HTML
 	}
 
 	// ChildMaps is a list of addresses from which to pull lists of
