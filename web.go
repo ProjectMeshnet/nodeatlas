@@ -81,7 +81,7 @@ func (d *Deproxier) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// and break out of the loop.
 	for _, fieldname := range Conf.Web.DeproxyHeaderFields {
 		if realip, ok := r.Header[fieldname]; ok {
-			r.RemoteAddr = realip[0]
+			r.RemoteAddr = net.JoinHostPort(realip[0], "0")
 			break
 		}
 	}
