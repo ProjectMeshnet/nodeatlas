@@ -14,6 +14,13 @@ type Config struct {
 	// the region about which it focuses.
 	Name string
 
+	// AdminContact is the information shown in the about menu or when
+	// displaying errors. It should be at least a name and email
+	// address, such as "Your Name <email@example.com>" with an
+	// optional PGP key ID, such as "Your Name <email@example.com>
+	// 0123ABCD"
+	AdminContact string
+
 	// Web is the structure which contains information relating to the
 	// backend of the HTTP webserver.
 	Web struct {

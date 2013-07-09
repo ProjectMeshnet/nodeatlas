@@ -1,5 +1,6 @@
 {
 	"Name": "Meshnet",
+	"AdminContact": "John Doe <johndoe@example.com> 0123ABCD",
 	"Web": {
 		"Hostname": "localhost",
 		"Prefix": "",
