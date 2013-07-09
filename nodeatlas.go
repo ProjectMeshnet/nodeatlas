@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-var Version = "0.4"
+var Version = "0.4.1"
 
 var (
 	LogLevel = log.LogLevel(log.INFO)
