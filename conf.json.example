@@ -8,7 +8,8 @@
 		"DeproxyHeaderFields": [
 			"X-Forwarded-For",
 			"X-Real-Ip"
-		]
+		],
+		"HeaderSnippet": ""
 	},
 	"ChildMaps": [],
 	"Database": {
@@ -36,8 +37,7 @@
 		},
 		"Zoom": 4,
 		"ClusterRadius": 50,
-		"Attribution": "© OpenStreetMap contributors",
-		"HeaderSnippet": ""
+		"Attribution": "© OpenStreetMap contributors"
 	},
 	"Verify": {
 		"Netmask": "fc00::/8",
