@@ -36,7 +36,8 @@
 		},
 		"Zoom": 4,
 		"ClusterRadius": 50,
-		"Attribution": "© OpenStreetMap contributors"
+		"Attribution": "© OpenStreetMap contributors",
+		"HeaderSnippet": ""
 	},
 	"Verify": {
 		"Netmask": "fc00::/8",

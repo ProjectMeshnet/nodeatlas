@@ -49,6 +49,11 @@ type Config struct {
 		// canonicalized form, such as "X-Forwarded-For" or
 		// "X-Real-IP".
 		DeproxyHeaderFields []string
+
+		// HeaderSnippet is a snippet of code which is inserted into
+		// the <head> of each page. For example, one could include a
+		// script tieing into Pikwik.
+		HeaderSnippet string
 	}
 
 	// ChildMaps is a list of addresses from which to pull lists of
