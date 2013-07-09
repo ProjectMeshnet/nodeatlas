@@ -251,6 +251,7 @@ function onMapClick(e) {
 	newUser.clearLayers();
 	newUser.addLayer(marker);
 	marker.bindPopup(getForm(e)).openPopup();
+	$('#name').focus();
 }
 
 function getForm(e) {
@@ -258,7 +259,7 @@ function getForm(e) {
 	form += '<div class="tabby">';
 		form += '<div class="tab" id="one">';
 			form += '<label><strong>Name</strong> <span class="desc">Marker title</span></label>';
-			form += '<input type="text" class="input-medium" placeholder="Required" id="name" name="name" maxlength="255"/>';
+			form += '<input type="text" class="input-medium" placeholder="Required" id="name" name="name" maxlength="255" />';
 			form += '<label><strong>Email</strong> <span class="desc">Never shared</span></label>';
 			form += '<input type="email" class="input-medium" placeholder="Required" id="email" name="email" />';
 			form += '<label><strong>Address</strong> <span class="desc">Network-specific IP</span></label>';
