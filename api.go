@@ -214,6 +214,84 @@ func (*Api) PostNode(ctx *jas.Context) {
 	}
 }
 
+// PostUpdateNode removes a Node of a given IP from the database and
+// re-adds it with the supplied information. It is the equivalent of
+// removing a Node from the database, then invoking PostNode() with
+// its information, with the exception that it does not send a
+// verification email, and requires that the request be sent by the
+// Node that is being update.
+func (*Api) PostUpdateNode(ctx *jas.Context) {
+	if Db.ReadOnly {
+		// If the database is readonly, set that as the error and
+		// return.
+		ctx.Error = ReadOnlyError
+		return
+	}
+	var err error
+
+	// Initialize the node and retrieve fields.
+	node := new(Node)
+
+	ip := IP(net.ParseIP(ctx.RequireString("address")))
+	if ip == nil {
+		// If the address is invalid, return that error.
+		ctx.Error = jas.NewRequestError("addressInvalid")
+		return
+	}
+
+	// Check to make sure that the Node is the one sending the
+	// address. If not, return an error.
+	if !net.IP(ip).Equal(net.ParseIP(ctx.RemoteAddr)) {
+		ctx.Error = jas.NewRequestError(
+			RemoteAddressDoesNotMatchError.Error())
+		return
+	}
+
+	node.Addr = ip
+	node.Latitude = ctx.RequireFloat("latitude")
+	node.Longitude = ctx.RequireFloat("longitude")
+	node.OwnerName = ctx.RequireString("name")
+	node.OwnerEmail = ctx.RequireString("email")
+	node.Contact, _ = ctx.FindString("contact")
+	node.Details, _ = ctx.FindString("details")
+
+	if len(node.Contact) > 255 {
+		ctx.Error = jas.NewRequestError("contactTooLong")
+		return
+	}
+
+	if len(node.Details) > 255 {
+		ctx.Error = jas.NewRequestError("detailsTooLong")
+		return
+	}
+
+	// Validate the PGP ID, if given.
+	// TODO(DuoNoxSol): Ensure that it is hex.
+	pgpstr, _ := ctx.FindString("pgp")
+	if node.PGP, err = DecodePGPID([]byte(pgpstr)); err != nil {
+		ctx.Error = jas.NewRequestError("pgpInvalid")
+		return
+	}
+	status, _ := ctx.FindPositiveInt("status")
+	node.Status = uint32(status)
+
+	// Note that we do not perform a verification step here, or send
+	// an email. Because the Node was already verified once, we can
+	// assume that it remains usable.
+
+	// Update the Node in the database, replacing the one of matching
+	// IP.
+	err = Db.UpdateNode(node)
+	if err != nil {
+		ctx.Error = jas.NewInternalError(err)
+		l.Errf("Error updating %q: %s", node.Addr, err)
+		return
+	}
+
+	// If we reach this point, all was successful.
+	ctx.Data = "successful"
+}
+
 // GetVerify moves a node from the verification queue to the normal
 // database, as identified by its long random ID.
 func (*Api) GetVerify(ctx *jas.Context) {

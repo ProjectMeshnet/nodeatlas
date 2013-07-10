@@ -207,7 +207,8 @@ WHERE address = ?`)
 	if err != nil {
 		return
 	}
-	_, err = stmt.Exec(node.OwnerName, node.Contact, node.Details, node.PGP,
+	_, err = stmt.Exec(node.OwnerName, node.Contact,
+		node.Details, []byte(node.PGP),
 		node.Latitude, node.Longitude, node.Status, []byte(node.Addr))
 	stmt.Close()
 	return
