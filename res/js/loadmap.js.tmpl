@@ -145,13 +145,19 @@ function createMarker(feature, latlng) {
 	var m = L.marker(latlng, {icon: icon}).bindPopup(html);
 	m.on('contextmenu', onNode);
 	
-	// If we specify a node, center the map on it
-	if (feature.id == getParameterByName('node')) {
+	// If we have /node/xxx then center the map on it
+	if (nodexxx(feature.id)) {
 		map.setView(latlng, 8);
 		p.openOn(map);
 	}
 		
 	return m;
+}
+
+function nodexxx(node) {
+	var path = window.location.pathname.split( '/' );
+	if (path[1] != "node") return false;
+	return (path[2] == node);
 }
 
 function insertUser() {
@@ -324,13 +330,6 @@ function getForm(e) {
 	form += '</div>';
 	form += '</form>';
 	return form;
-}
-
-function getParameterByName(name) {
-	name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-	results = regex.exec(location.search);
-	return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
 function next(which) {
