@@ -134,11 +134,17 @@ function createMarker(feature, latlng) {
 	var p = L.popup();
 	p.setLatLng(latlng);
 	p.setContent(html);
-
+	
+	
 	// Use the status to set an appropriate icon and effects.
 	var icon = inactiveNodeIcon;
 	if (feature.properties.Status & STATUS_ACTIVE > 0) {
 		icon = activeNodeIcon;
+	}
+		
+	// If it's a VPS, show the VPS icon instead of the active/inactive icon
+	if (!(feature.properties.Status & STATUS_PHYSICAL)) {
+		icon = VPSIcon;
 	}
 	
 	// Create the Marker with options set above.

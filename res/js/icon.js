@@ -24,3 +24,10 @@ var newUserIcon = new NodeIcon({
 	iconAnchor: [15, 35],
 	popupAnchor: [-1, -25]
 });
+
+var VPSIcon = new NodeIcon({ 
+	iconUrl: '/res/img/marker-icon_light_gray.png',
+	iconSize: [25, 41],
+	iconAnchor: [15, 35],
+	popupAnchor: [-1, -25]
+});
