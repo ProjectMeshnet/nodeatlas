@@ -203,16 +203,7 @@ var (
 func VerifyRequest(node *Node, r *http.Request) error {
 	// Ensure that r.RemoteAddr matches node.Addr.
 	if Conf.Verify.FromNode {
-		remoteAddr, _, err := net.SplitHostPort(r.RemoteAddr)
-		if err != nil {
-			// If we encounter an error here, it is probably something
-			// to do with the reverse proxy. As such, log it as an
-			// internal error, and return it.
-			l.Errf("Could not parse input address while verifying %q: %s\n",
-				node.Addr, err)
-			return err
-		}
-		if !net.IP(node.Addr).Equal(net.ParseIP(remoteAddr)) {
+		if !net.IP(node.Addr).Equal(net.ParseIP(r.RemoteAddr)) {
 			// If the node address and remote address don't match,
 			// then this verify step has failed.
 			return RemoteAddressDoesNotMatchError

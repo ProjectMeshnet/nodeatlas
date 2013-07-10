@@ -49,9 +49,12 @@ func StartServer() (err error) {
 	s := &http.Server{}
 
 	// If either the Prefix or DeproxyHeaderFields are set, then we
-	// need to wrap the default Handler with a Deproxier.
+	// need to wrap the default Handler with a Deproxier. Otherwise,
+	// we just use our Handler.
 	if len(Conf.Web.Prefix) > 0 || len(Conf.Web.DeproxyHeaderFields) > 0 {
 		s.Handler = &Deproxier{http.DefaultServeMux}
+	} else {
+		s.Handler = &Handler{http.DefaultServeMux}
 	}
 
 	http.HandleFunc("/", HandleRoot)
@@ -61,6 +64,18 @@ func StartServer() (err error) {
 	// Start the HTTP server and return any errors if it crashes.
 	l.Infof("Starting HTTP server on %q\n", Conf.Web.Addr)
 	return s.Serve(listener)
+}
+
+// Handler acts is a simple http.Handler which performs some cleanup
+// on the Request before passing it on to its underlying
+// http.ServeMux.
+type Handler struct {
+	Mux *http.ServeMux
+}
+
+func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	r.RemoteAddr, _, _ = net.SplitHostPort(r.RemoteAddr)
+	h.Mux.ServeHTTP(w, r)
 }
 
 // Deproxier implements the http.Handler interface by setting the
@@ -77,11 +92,11 @@ type Deproxier struct {
 
 func (d *Deproxier) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Check the acceptable header fields in order, checking if each
-	// one is present. If so, set the r.RemoteAddr to its firste value
+	// one is present. If so, set the r.RemoteAddr to its first value
 	// and break out of the loop.
 	for _, fieldname := range Conf.Web.DeproxyHeaderFields {
 		if realip, ok := r.Header[fieldname]; ok {
-			r.RemoteAddr = net.JoinHostPort(realip[0], "0")
+			r.RemoteAddr = realip[0]
 			break
 		}
 	}
