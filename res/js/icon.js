@@ -12,9 +12,10 @@ var activeNodeIcon = new NodeIcon({
 });
 
 var	inactiveNodeIcon = new NodeIcon({
-	iconUrl: '/res/img/inactive-marker.png',
-	iconSize: [20, 41],
-	iconAnchor: [10, 35]
+	iconUrl: '/res/img/marker-icon_light_gray.png',
+	iconSize: [25, 41],
+	iconAnchor: [15, 35],
+	popupAnchor: [-1, -25]
 });
 
 var newUserIcon = new NodeIcon({
