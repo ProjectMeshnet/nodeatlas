@@ -60,6 +60,7 @@ func StartServer() (err error) {
 	http.HandleFunc("/", HandleRoot)
 	http.HandleFunc("/res/", HandleRes)
 	http.HandleFunc("/favicon", HandleIcon)
+	http.HandleFunc("/robots.txt", HandleMisc)
 
 	// Start the HTTP server and return any errors if it crashes.
 	l.Infof("Starting HTTP server on %q\n", Conf.Web.Addr)
@@ -122,6 +123,14 @@ func HandleRes(w http.ResponseWriter, req *http.Request) {
 func HandleIcon(w http.ResponseWriter, req *http.Request) {
 	http.ServeFile(w, req, path.Join(StaticDir, "icon",
 		Conf.Map.Favicon))
+}
+
+// HandleMisc serves files such as robots.txt from
+// <StaticDir>/webpages, using the request path to determine the
+// actual file to serve.
+func HandleMisc(w http.ResponseWriter, req *http.Request) {
+	http.ServeFile(w, req, path.Join(StaticDir, "webpages",
+		req.URL.Path))
 }
 
 // RegisterTemplates loads templates from <StaticDir>/emails/*.txt
