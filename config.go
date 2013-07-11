@@ -20,7 +20,7 @@ type Config struct {
 	// address, such as "Your Name <email@example.com>" with an
 	// optional PGP key ID, such as "Your Name <email@example.com>
 	// 0123ABCD"
-	AdminContact string
+	AdminContact template.HTML
 
 	// Web is the structure which contains information relating to the
 	// backend of the HTTP webserver.
