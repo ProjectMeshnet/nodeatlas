@@ -42,7 +42,7 @@ $(document).ready(function() {
 
 	$.ajaxSetup({cache:true});
 	
-
+	fixNavbarBrand();
 
 	// Populate the map with nodes from /api/all.
 	addNodes();
@@ -66,6 +66,13 @@ function geoLocate() {
 	map.on('locationfound', function() {
 		map.off('locationfound');
 	});
+}
+
+function fixNavbarBrand() {
+	// Function to check the height of the navbar
+	// If it's too big, then decrease the font size
+	// on the navbar-brand until we get a nice same
+	// height on all navbars
 }
 
 function initRegistration() {
