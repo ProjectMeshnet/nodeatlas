@@ -4,15 +4,14 @@
 		<title>{{.Name}}</title>
 		<link rel="shortcut icon" href="/favicon">
 		<!-- CDN w/o local fallbacks will need to be addressed -->
-		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootswatch/2.3.1/flatly/bootstrap.min.css">
-		<link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="/res/css/app.css">
 		<link type="text/css" rel="stylesheet" href="/res/css/leaflet.css" />
 		<link type="text/css" rel="stylesheet" href="/res/css/custom.css" />
 		<!--[if lte IE 8]><link type="text/css" rel="stylesheet" href="/res/css/leaflet.ie.css" /><![endif]-->
 		<link type="text/css" rel="stylesheet" href="/res/css/MarkerCluster.css" />
 		<link type="text/css" rel="stylesheet" href="/res/css/MarkerCluster.Default.css" />
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-		<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/res/js/jquery.min.js"></script>
+		<script src="/res/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="/res/js/leaflet.js"></script>
 		<script type="text/javascript" src="/res/js/leaflet.markercluster.js"></script>
 		<script type="text/javascript" src="/res/js/distance.js"></script>
@@ -22,39 +21,54 @@
 		{{.Web.HeaderSnippet}}
 	</head>
 	<body>
+<div id="wrap">
+<div class="navbar">
+<div class="container">
+<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+</button>
+<a class="navbar-brand" href="#">{{.Name}}</a>
+<div class="nav-collapse collapse navbar-responsive-collapse">
+<ul class="nav navbar-nav">
+<li class="active"><a href="/">Map</a></li>
+<li><a href="/about/">About</a></li>
+</ul>
+<!--<form class="navbar-form pull-right" action="">
+<input type="text" class="col-lg-8" placeholder="Search">
+</form>-->
+<ul class="nav navbar-nav pull-right">
+	<li><a href="#" onclick="geoLocate(); return false;">Locate Me</a></li>
+	<li><a onclick="initDistance();" id="distance">Calculate Distance</a></li>
+</ul>
+<div class="pull-right">
+	<button href="#me" class="btn btn-primary navbar-btn" data-toggle="modal" id="addme">Add Node</button>
+</div>
+</div> 
+</div> 
+</div>
 	<noscript><div class="alert alert-warning"><h1>Please enable Javascript</h1><p>This website requires javascript to be viewed properly.</p></noscript>
-		<div class="modal hide fade" id="me">
+		<div class="modal fade" id="me">
+		 <div class="modal-dialog">
+    	  <div class="modal-content">
 			<div class="modal-header">
 				<a class="close" data-dismiss="modal">×</a>
 				<h3>Add me to the map!</h3>
 			</div>
 			<div class="modal-body">
-				<p>Click on the Go! button below to get started.</p>
-				<p>Navigate to your desired location and click on the map to drop a marker and submit your information.</p>
+				<h5>Click on the Go! button below to get started.</h5>
+				<h5>Navigate to your desired location and click on the map to drop a marker and submit your information.</h5>
 			</div>
 			<div class="modal-footer">
 				<a href="#" onClick="$('#me').modal('hide'); initRegistration(); return false;"class="btn btn-primary">Go!</a>
 			</div>
 		</div>
-		<div class="modal hide fade" id="about">
-			<div class="modal-header">
-				<a class="close" data-dismiss="modal">×</a>
-				<h3>About NodeAtlas</h3>
-			</div>
-			<div class="modal-body">
-				<p>How do you make sense of a meshnet? You map it.</p>
-				<p>This is an early release of the NodeAtlas meshnet map, proudly built with 
-				<a href="http://twitter.github.io/bootstrap/">Bootstrap</a>, <a href="http://golang.org">Go</a>, 
-				and <a href="http://leafletjs.com">Leaflet.js.</a></p>
-				<p>Contact the Admin: {{.AdminContact}}</p>
-			</div>
-			<div class="modal-footer">
-				<a href="https://github.com/ProjectMeshnet/nodeatlas"class="btn btn-primary">View Github</a>
-			</div>
-		</div>
-		
+	</div>
+</div>	
+	
 		<div id="map"></div>
-		<div id="mapname" href="#about" data-toggle="modal">{{.Name}}</div>	
+	</div>
 		<script type="text/javascript" src="/res/js/loadmap.js"></script>
 	</body>
 </html>

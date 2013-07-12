@@ -3,9 +3,6 @@ var loc2;
 
 function initDistance() {
 	map.on('popupopen', onDistanceClick);
-	$('#distance').removeClass('dis');
-	$('#distance').css('background-color', 'rgba(0, 0, 0, 1)');
-	$('#distance').css('background-image', 'url(/res/img/ruler_white.png)');
 }
 
 function onDistanceClick(e) {
@@ -22,9 +19,6 @@ function onDistanceClick(e) {
 		map.removeLayer(popup);
 		loc2 = loc;
 		map.off('popupopen', onDistanceClick);
-		$('#distance').css('background-color', 'rgba(255, 255, 255, .8)');
-		$('#distance').css('background-image', 'url(/res/img/ruler.png)');
-		$('#distance').addClass('dis');
 		findDistance(loc1, loc2);
 		loc1 = undefined;
 		loc2 = undefined;
