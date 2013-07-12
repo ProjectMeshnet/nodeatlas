@@ -81,7 +81,7 @@ function cancelRegistration() {
 }
 
 function addNodes() {
-	$.getJSON("/api/all?geojson", function (response) {
+	$.getJSON("/res/js/test.json", function (response) {
 		// TODO: Check for errors here (response.error)
 		L.geoJson(response.data, {
 			pointToLayer: createMarker

@@ -3,7 +3,6 @@
 	<head>
 		<title>{{.Name}}</title>
 		<link rel="shortcut icon" href="/favicon">
-		<!-- CDN w/o local fallbacks will need to be addressed -->
 		<link rel="stylesheet" href="/res/css/app.css">
 		<link type="text/css" rel="stylesheet" href="/res/css/leaflet.css" />
 		<link type="text/css" rel="stylesheet" href="/res/css/custom.css" />
@@ -36,7 +35,7 @@
 <li><a href="/about/">About</a></li>
 </ul>
 <!--<form class="navbar-form pull-right" action="">
-<input type="text" class="col-lg-8" placeholder="Search">
+<input type="text" id="search-input" class="col-lg-8" placeholder="Search" data-provide="typeahead" autocomplete="off">
 </form>-->
 <ul class="nav navbar-nav pull-right">
 	<li><a href="#" onclick="geoLocate(); return false;">Locate Me</a></li>
