@@ -2,7 +2,7 @@
 	"Name": "Meshnet",
 	"AdminContact": "John Doe &lt;<a href=\"mailto:johndoe@example.com\">johndoe@example.com</a>&gt; 0123ABCD",
 	"Web": {
-		"Hostname": "localhost",
+		"Hostname": "http://localhost",
 		"Prefix": "",
 		"Addr": "tcp://0.0.0.0:8077",
 		"DeproxyHeaderFields": [
