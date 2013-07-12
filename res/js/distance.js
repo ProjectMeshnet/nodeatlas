@@ -45,10 +45,9 @@ function drawLine(points, distance, center) {
 	line.on('mouseover', function() {
 		popup.addTo(map);
 	});
-	
-	//line.on('contextmenu', onPath);
-	
+		
 	line.addTo(map);
+	popup.addTo(map);
 }
 
 function findDistance(loc1, loc2) {	
