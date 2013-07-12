@@ -43,30 +43,12 @@
 <ul class="nav navbar-nav pull-right">
 	<li><a href="#" onclick="geoLocate(); return false;">Locate Me</a></li>
 	<li><a href="#" onclick="initDistance();" id="distance">Calculate Distance</a></li>
-	<li><button href="#me" class="btn btn-primary navbar-btn" data-toggle="modal" id="addme">Add Node</button></li>
+	<li><button href="#" onclick="initRegistration();" class="btn btn-primary navbar-btn" id="addme">Add Node</button></li>
 </ul>
 </div> 
 </div> 
 </div>
 	<noscript><div class="alert alert-warning"><h1>Please enable Javascript</h1><p>This website requires javascript to be viewed properly.</p></noscript>
-		<div class="modal fade" id="me">
-		 <div class="modal-dialog">
-    	  <div class="modal-content">
-			<div class="modal-header">
-				<a class="close" data-dismiss="modal">×</a>
-				<h3>Add me to the map!</h3>
-			</div>
-			<div class="modal-body">
-				<p style="font-size:19px;font-weight:700;" class="text-success">Click on the Go! button below to get started.</p>
-				<br><p class="lead">Navigate to your desired location and click on the map to drop a marker and submit your information.</p>
-			</div>
-			<div class="modal-footer">
-				<a href="#" onClick="$('#me').modal('hide'); initRegistration(); return false;"class="btn btn-primary">Go!</a>
-			</div>
-		</div>
-	</div>
-</div>	
-	
 		<div id="map"></div>
 	</div>
 		<script type="text/javascript" src="/res/js/loadmap.js"></script>

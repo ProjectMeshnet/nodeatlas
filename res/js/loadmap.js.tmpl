@@ -267,7 +267,10 @@ function getForm(e) {
 			form += '<input type="text" class="input-medium" id="address" name="address" placeholder="Required" maxlength="39"/>';
 			form += '<label><strong>Details</strong></label>';
 			form += '<input type="text" class="input-medium" placeholder="Home, Work, ..." id="details" maxlength="255"/><br/><br/>';
-			form += '<button class="btn btn-block btn-primary" href="#" onclick="next(2); return false;">Next</button></div></div>';
+			form += '<div class="row"><div class="col col-lg-6" style="text-align:center;">';
+			form += '<button class="btn btn-small" href="#" onclick="cancelRegistration(); return false;">Cancel</button></div>';
+			form += '<div class="col col-lg-6" style="text-align:center;">';
+			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(2); return false;">Next</button></div></div>';
 		form += '</div>';
 		form += '<div class="tab" id="two">';
 			form += '<p><strong>Status</strong><br><small>Check all that apply.</small></p>';
