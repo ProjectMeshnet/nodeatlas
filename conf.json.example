@@ -9,7 +9,7 @@
 			"X-Forwarded-For",
 			"X-Real-Ip"
 		],
-		"HeaderSnippet": ""
+		"HeaderSnippet": "<meta name='description' content='Federated node mapping for mesh networks.'>"
 	},
 	"ChildMaps": [],
 	"Database": {
