@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"strings"
 )
 
 // metaData is a convenience type which wraps a *Config, but adds
@@ -135,7 +136,10 @@ func crawlDirectories(files *[]string, tmpdir, dir string) (err error) {
 	// is a directory. If it isn't, append it to newFiles. If it is,
 	// call crawlDirectories() on it again.
 	for _, fi := range fis {
-		if !fi.IsDir() {
+		if len(fi.Name()) > 0 && (strings.hasPrefix(fi.Name(), ".") || strings.hasPrefix(fi.Name(), "#") || strings.hasSuffix(fi.Name(), "~")) {
+			// Make sure not to include files that start with . or #
+			// Also make sure not to include files that end in ~
+		} else if !fi.IsDir() {
 			// If a file...
 			newFiles = append(newFiles, path.Join(dir, fi.Name()))
 		} else {
