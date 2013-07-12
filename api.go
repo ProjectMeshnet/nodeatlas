@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"github.com/coocood/jas"
+	"github.com/dchest/captcha"
 	"math/rand"
 	"net"
 	"net/http"
@@ -53,6 +54,14 @@ func (*Api) GetStatus(ctx *jas.Context) {
 		Name:  Conf.Name,
 		Nodes: Db.LenNodes(false),
 	}
+}
+
+// GetKey generates a CAPTCHA ID and returns it. This can be combined
+// with the solution to the returned CAPTCHA to authenticate certain
+// API functions. The CAPTCHAs can be accessed at /captcha/<id>.png or
+// /captcha/<id>.wav.
+func (*Api) GetKey(ctx *jas.Context) {
+	ctx.Data = captcha.New()
 }
 
 // GetNode retrieves a single node from the database, removes

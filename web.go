@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"github.com/dchest/captcha"
 	"html/template"
 	"net"
 	"net/http"
@@ -11,6 +12,8 @@ import (
 
 var (
 	listener net.Listener
+
+	captchaServer = captcha.Server(captcha.StdWidth, captcha.StdHeight)
 )
 
 var InvalidBindAddress = errors.New("invalid address to bind to")
@@ -59,6 +62,7 @@ func StartServer() (err error) {
 
 	http.HandleFunc("/", HandleRoot)
 	http.HandleFunc("/res/", HandleRes)
+	http.Handle("/captcha/", captchaServer)
 	http.HandleFunc("/favicon", HandleIcon)
 	http.HandleFunc("/robots.txt", HandleMisc)
 
