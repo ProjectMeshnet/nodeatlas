@@ -26,18 +26,6 @@ var map = new L.Map('map', {
 	layers: [tilelayer, nodelayer, newUser]
 });
 
-var geolocControl = new L.control({
-	position: 'topright'
-});
-
-var addNode = new L.control({
-	position: 'topright'
-});
-
-var distance = new L.control({
-	position: 'topright'
-});
-
 $(document).ready(function() {
 
 	$.ajaxSetup({cache:true});
@@ -51,10 +39,7 @@ $(document).ready(function() {
 	map.addControl(addNode);
 	map.addControl(distance);
 	map.addControl(new L.Control.Scale());
-	
-	//map.locate({setView: true, maxZoom: 3});
-		
-	initRightClick();
+			
 });
 
 $(window).resize(function () {
