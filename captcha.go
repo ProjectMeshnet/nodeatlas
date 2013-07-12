@@ -30,7 +30,7 @@ func (CAPTCHAStore) Get(id string, clear bool) (digits []byte) {
 	bid := []byte(id)
 	row := Db.QueryRow(`SELECT solution
 FROM captcha
-WHERE id = ? AND expiration >= ?;`, bid, time.Now())
+WHERE id = ? AND expiration > ?;`, bid, time.Now())
 	err := row.Scan(&digits)
 	if err == sql.ErrNoRows {
 		// If there are no rows, then the ID was not found.
@@ -53,11 +53,11 @@ WHERE id = ?;`, bid)
 	return
 }
 
-// ClearExpired removes any expired CAPTCHA solutions from the
+// ClearExpiredCAPTCHA removes any expired CAPTCHA solutions from the
 // database. It logs errors.
-func (*CAPTCHAStore) ClearExpired() {
+func ClearExpiredCAPTCHA() {
 	_, err := Db.Exec(`DELETE FROM captcha
-WHERE expiration < ?;`, time.Now())
+WHERE expiration <= ?;`, time.Now())
 	if err != nil {
 		l.Err("Error deleting expired CAPTCHAs:", err)
 	}

@@ -192,6 +192,7 @@ func Heartbeat() {
 			l.Debug("Heartbeat\n")
 			Db.DeleteExpiredFromQueue()
 			UpdateMapCache()
+			ClearExpiredCAPTCHA()
 		}
 	}()
 }
