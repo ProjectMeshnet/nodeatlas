@@ -136,7 +136,10 @@ func crawlDirectories(files *[]string, tmpdir, dir string) (err error) {
 	// is a directory. If it isn't, append it to newFiles. If it is,
 	// call crawlDirectories() on it again.
 	for _, fi := range fis {
-		if len(fi.Name()) > 0 && (strings.hasPrefix(fi.Name(), ".") || strings.hasPrefix(fi.Name(), "#") || strings.hasSuffix(fi.Name(), "~")) {
+		if len(fi.Name()) > 0 &&
+			(strings.HasPrefix(fi.Name(), ".") ||
+				strings.HasPrefix(fi.Name(), "#") ||
+				strings.HasSuffix(fi.Name(), "~")) {
 			// Make sure not to include files that start with . or #
 			// Also make sure not to include files that end in ~
 		} else if !fi.IsDir() {
