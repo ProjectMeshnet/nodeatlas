@@ -255,7 +255,7 @@ func appendNodesFromChildMap(dst *[]*Node, address string,
 func GetAllFromChildMap(address string, sourceToID *map[string]int,
 	sourceMutex *sync.RWMutex) (nodes []*Node) {
 	// Try to get all nodes via the API.
-	resp, err := http.Get("http://" +
+	resp, err := http.Get(Conf.Web.Hostname +
 		strings.TrimRight(address, "/") + "/api/all")
 	if err != nil {
 		l.Errf("Caching %q produced: %s", address, err)

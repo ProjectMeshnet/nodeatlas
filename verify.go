@@ -85,7 +85,7 @@ func SendVerificationEmail(id int64, n *Node) (err error) {
 	// Prepare the template data.
 	data := make(map[string]interface{}, 3)
 	data["InstanceName"] = Conf.Name
-	data["Link"] = "http://" + Conf.Web.Hostname + Conf.Web.Prefix
+	data["Link"] = Conf.Web.Hostname + Conf.Web.Prefix
 	data["VerificationID"] = id
 	data["From"] = Conf.SMTP.EmailAddress
 	data["To"] = n.OwnerEmail
