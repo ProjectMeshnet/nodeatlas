@@ -64,6 +64,9 @@ func StartServer() (err error) {
 		s.Handler = &Handler{http.DefaultServeMux}
 	}
 
+	// We need to set the database tile store.
+	captcha.SetCustomStore(CAPTCHAStore{})
+
 	http.HandleFunc("/", HandleRoot)
 	http.HandleFunc("/about/", HandleAbout)
 	http.HandleFunc("/res/", HandleRes)

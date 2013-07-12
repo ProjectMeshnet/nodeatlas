@@ -73,6 +73,15 @@ name VARCHAR(255) NOT NULL);`)
 	if err != nil {
 		return
 	}
+
+	_, err = db.Query(`CREATE TABLE IF NOT EXISTS captcha (
+id BINARY(32) NOT NULL,
+solution BINARY(6) NOT NULL,
+expiration DATETIME);`)
+	if err != nil {
+		return
+	}
+
 	return
 }
 
