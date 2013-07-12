@@ -59,3 +59,13 @@ textarea.contact {
 	font-size: 16px;
 	font-weight: 900;
 }
+
+.navbar {
+    position: absolute;
+    z-index: 2000;
+    width: 100%;
+}
+
+.leaflet-top {
+    top: 45px;
+}
