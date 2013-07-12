@@ -91,7 +91,7 @@ function addNodes() {
 
 function createMarker(feature, latlng) {
 	var html =  '<h4>'+feature.properties.OwnerName+'</h4>'+
-				'<a href="/node/'+feature.id+'" class="btn btn-small">'+feature.id+'</a>';
+				'<a href="/node/'+feature.id+'" class="btn btn-small btn-primary">'+feature.id+'</a>';
 
 	if (feature.properties.Details) {
 		html += '<div class="property">Details</div><div class="more">'+feature.properties.Details+'</div>';
