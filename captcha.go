@@ -34,7 +34,6 @@ WHERE id = ? AND expiration > ?;`, bid, time.Now())
 	err := row.Scan(&digits)
 	if err == sql.ErrNoRows {
 		// If there are no rows, then the ID was not found.
-		l.Debugln("CAPTCHA id not found")
 		return nil
 	} else if err != nil {
 		l.Err("Error retrieving CAPTCHA:", err)
