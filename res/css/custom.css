@@ -47,7 +47,7 @@ a.close {
 }
 
 textarea.contact {
-	width: 150px !important;
+	width: 200px !important;
 }
 
 .property {
@@ -68,4 +68,19 @@ textarea.contact {
 
 .padding {
 	padding-top: 25px;
+}
+
+#inputform {
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	position: absolute;
+	top: -1000px;
+	right: 25px;
+	background: rgba(255, 255, 255, .8);
+	padding: 25px;
+	overflow: hidden;
+	z-index: 4000;
+	font-family: Helvetica;
+	width: 250px;
 }

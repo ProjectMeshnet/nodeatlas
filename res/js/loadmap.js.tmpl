@@ -59,6 +59,7 @@ function initRegistration() {
 function cancelRegistration() {
 	newUser.clearLayers();
 	$('#map').css('cursor', '');
+	$('#inputform').remove();
 	map.removeEventListener('click', onMapClick);
 }
 
@@ -216,9 +217,16 @@ function onMapClick(e) {
 	newUser.clearLayers();
 	newUser.addLayer(marker);
 	
+	$('#wrap').append(getForm(e));
+	
+	$('#inputform').animate({
+		top: '60px'
+	}, 500);
+	
 	//marker.bindPopup(getForm(e)).openPopup();
 	$('#name').focus();
 }
+
 
 function getForm(e) {
 	var form =  '<form id="inputform" enctype="multipart/form-data">';
@@ -231,7 +239,7 @@ function getForm(e) {
 			form += '<label><strong>Address</strong> <span class="desc">Network-specific IP</span></label>';
 			form += '<input type="text" class="input-medium" id="address" name="address" placeholder="Required" maxlength="39"/>';
 			form += '<label><strong>Details</strong></label>';
-			form += '<input type="text" class="input-medium" placeholder="Home, Work, ..." id="details" maxlength="255"/><br/><br/>';
+			form += '<input type="text" class="input-medium" placeholder="Home, Work, ..." id="details" maxlength="255"/><br/>';
 			form += '<div class="row"><div class="col col-lg-6" style="text-align:center;">';
 			form += '<button class="btn btn-small" href="#" onclick="cancelRegistration(); return false;">Cancel</button></div>';
 			form += '<div class="col col-lg-6" style="text-align:center;">';
@@ -257,11 +265,11 @@ function getForm(e) {
 				form += '<label>';
 					form += '<input type="checkbox" id="internet"> ';
 					form += 'Internet access';
-				form += '</label>';
+				form += '</label><br/>';
 				form += '<label>';
 					form += '<input type="checkbox" id="wireless"> ';
 					form += 'Wireless access';
-				form += '</label>';
+				form += '</label><br/>';
 				form += '<label>';
 					form += '<input type="checkbox" id="wired"> ';
 					form += 'Wired (eth) access';
@@ -276,7 +284,7 @@ function getForm(e) {
 			form += '<p><strong>PGP</strong><br/><small>8 digit or 16 digit.</small></p>';
 			form += '<input type="text" class="input-medium" placeholder="CAFEBABE" id="pgp" name="pgp" maxlength="16" />';
 			form += '<label><strong>Contact</strong></label>';
-			form += '<textarea class="contact" id="contact" placeholder="XMPP username, Reddit username, ..." maxlength="255"></textarea><br/><br/>';
+			form += '<textarea class="contact" id="contact" placeholder="XMPP username, Reddit username, ..." maxlength="255"></textarea><br/>';
 			form += '<input style="display: none;" type="text" id="latitude" name="latitude" value="'+e.latlng.lat.toFixed(6)+'"/>';
 			form += '<input style="display: none;" type="text" id="longitude" name="longitude" value="'+e.latlng.lng.toFixed(6)+'"/>';
 			form += '<div class="row"><div class="col col-lg-6" style="text-align:center;">';
