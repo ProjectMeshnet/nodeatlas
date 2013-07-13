@@ -175,7 +175,7 @@ FROM nodes_cached WHERE retrieved >= ?;`, time, time)
 		details := sql.NullString{}
 
 		err = rows.Scan(&node.Addr, &node.OwnerName,
-			contact, details, &node.PGP,
+			&contact, &details, &node.PGP,
 			&node.Latitude, &node.Longitude, &node.Status)
 		if err != nil {
 			return
@@ -263,7 +263,7 @@ LIMIT 1`)
 	// Perform the actual query.
 	row := stmt.QueryRow(baddr, baddr)
 	err = row.Scan(&node.OwnerName, &node.OwnerEmail,
-		contact, details, &node.PGP,
+		&contact, &details, &node.PGP,
 		&node.Latitude, &node.Longitude, &node.Status)
 	stmt.Close()
 
