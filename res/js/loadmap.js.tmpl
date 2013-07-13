@@ -212,10 +212,11 @@ function insertUser() {
 
 function onMapClick(e) {
 	var markerLocation = new L.LatLng(e.latlng.lat, e.latlng.lng);
-	var marker = new L.Marker(markerLocation, {icon: newUserIcon});
+	var marker = new L.Marker(markerLocation, {icon: newUserIcon, draggable: true});
 	newUser.clearLayers();
 	newUser.addLayer(marker);
-	marker.bindPopup(getForm(e)).openPopup();
+	
+	//marker.bindPopup(getForm(e)).openPopup();
 	$('#name').focus();
 }
 
