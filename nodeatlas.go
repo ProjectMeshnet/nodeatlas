@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/signal"
 	"path"
+	"sync"
 	"syscall"
 	"time"
 )
@@ -29,6 +30,12 @@ var (
 
 	t *template.Template
 	l *log.Logger
+
+	shutdown = sync.NewCond(&sync.Mutex{})
+)
+
+var (
+	ignoreServerCrash bool
 )
 
 var (
@@ -155,11 +162,18 @@ func main() {
 	Heartbeat()
 	l.Debug("Heartbeat started\n")
 
-	// Start the HTTP server.
-	err = StartServer()
-	if err != nil {
-		l.Fatalf("Server crashed: %s", err)
-	}
+	go func() {
+		// Start the HTTP server. This will block until the server
+		// encounters an error.
+		err = StartServer()
+		if err != nil && !ignoreServerCrash {
+			l.Fatalf("Server crashed: %s", err)
+		}
+	}()
+
+	// Finally, block until told to exit.
+	shutdown.L.Lock()
+	shutdown.Wait()
 }
 
 // Heartbeat starts a time.Ticker to perform tasks on a regular
@@ -223,10 +237,12 @@ func ListenSignal() {
 		case os.Interrupt, os.Kill, syscall.SIGTERM:
 			l.Infof("Caught %s; NodeAtlas over and out\n", sig)
 			var err error
-			var exitCode int
 
 			// Close the HTTP Listener. If a UNIX socket is in use, it
-			// will automatically be removed.
+			// will automatically be removed. We need to tell the
+			// server to ignore errors, because closing the listener
+			// will cause http.Server.Serve() to return one.
+			ignoreServerCrash = true
 			listener.Close()
 
 			// Close the database connection.
@@ -235,7 +251,6 @@ func ListenSignal() {
 				// If closing the database gave an error, report it
 				// and set the exit code.
 				l.Errf("Database could not be closed: %s", err)
-				exitCode = 1
 			}
 
 			// Delete the directory of static files.
@@ -246,12 +261,11 @@ func ListenSignal() {
 				// exit code.
 				l.Errf("Static directory %q could not be removed: %s",
 					StaticDir, err)
-				exitCode = 1
 			}
 
-			// If all went well, close with exit code 0. Otherwise, it
-			// will be set to 1.
-			os.Exit(exitCode)
+			// Finally, tell the main routine to stop waiting and
+			// exit.
+			shutdown.Broadcast()
 		}
 	}
 }
