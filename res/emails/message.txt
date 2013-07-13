@@ -1,0 +1,17 @@
+From: {{.From}}
+Subject: {{.Subject}}
+Date: {{.Header.Date}}
+To: {{.To}}
+MIME-version: 1.0;\nContent-Type: text/plain; charset=\"UTF-8\";
+
+{{.Data.Message}}
+
+--
+This email was sent through NodeAtlas by another user because your
+node is listed on
+    {{.Data.Link}}
+
+If this email was abusive or spam, please email
+    {{.Data.AdminContact}}
+
+https://github.com/ProjectMeshnet/nodeatlas

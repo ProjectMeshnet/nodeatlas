@@ -386,3 +386,74 @@ func (*Api) GetAll(ctx *jas.Context) {
 		ctx.Data = mappedNodes
 	}
 }
+
+// PostMessage emails the given message to the email address owned by
+// the node with the given IP. It requires a correct and non-expired
+// CAPTCHA pair be given.
+func (*Api) PostMessage(ctx *jas.Context) {
+	// First, ensure that the given CAPTCHA pair is correct. If it is
+	// not, then return the explanation.
+	err := VerifyCAPTCHA(ctx.Request)
+	if err != nil {
+		ctx.Error = jas.NewRequestError(err.Error())
+		return
+	}
+
+	// Next, retrieve the IP of the node the user is attempting to
+	// contact.
+	ip := IP(net.ParseIP(ctx.RequireString("address")))
+	if ip == nil {
+		// If the address is invalid, return that error.
+		ctx.Error = jas.NewRequestError("addressInvalid")
+		return
+	}
+
+	// Find the appropriate variables. If any of these are not
+	// found, JAS will return a request error.
+	from := ctx.RequireString("from")
+	subject := ctx.RequireString("subject")
+	message := ctx.RequireString("message")
+
+	// Retrieve the appropriate node from the database.
+	node, err := Db.GetNode(ip)
+	if err != nil {
+		// If we encounter an error here, it was a database error.
+		ctx.Error = jas.NewInternalError(err)
+		l.Err("Error getting node %q: %s", ip, err)
+		return
+	} else if node == nil {
+		// If the IP wasn't found, explain that there was no node with
+		// that IP.
+		ctx.Error = jas.NewRequestError("address unknown")
+		return
+	} else if len(node.OwnerEmail) == 0 {
+		// If there was no email on the node, that probably means that
+		// it was cached.
+		ctx.Error = jas.NewRequestError("address belongs to cached node")
+		return
+	}
+
+	// Create and send an email. Log any errors.
+	e := &Email{
+		To:      node.OwnerEmail,
+		From:    from,
+		Subject: subject,
+	}
+	e.Data = make(map[string]interface{}, 3)
+	e.Data["Message"] = message
+	e.Data["Link"] = Conf.Web.Hostname + Conf.Web.Prefix
+	e.Data["AdminContact"] = Conf.AdminContact
+
+	err = e.Send("message.txt")
+	if err != nil {
+		ctx.Error = jas.NewInternalError(err)
+		l.Errf("Error messaging %q from %q: %s",
+			node.OwnerEmail, from, err)
+		return
+	}
+
+	// Even if there is no error, log the to and from info, in case it
+	// is abusive or spam.
+	l.Noticef("IP %q sent a message to %q from %q",
+		ctx.Request.RemoteAddr, node.OwnerEmail, from)
+}
