@@ -120,9 +120,9 @@ func (db DB) DumpNodes() (nodes []*Node, err error) {
 
 	// Perform the query.
 	rows, err := db.Query(`
-SELECT address,owner,contact,details,pgp,lat,lon,status
+SELECT address,owner,contact,details,pgp,lat,lon,status,0
 FROM nodes
-UNION SELECT address,owner,"",details,"",lat,lon,status
+UNION SELECT address,owner,"",details,"",lat,lon,status,source
 FROM nodes_cached;`)
 	if err != nil {
 		l.Errf("Error dumping database: %s", err)
@@ -144,7 +144,7 @@ FROM nodes_cached;`)
 		// Scan all of the values into it.
 		err = rows.Scan(&node.Addr, &node.OwnerName,
 			&contact, &details, &node.PGP,
-			&node.Latitude, &node.Longitude, &node.Status)
+			&node.Latitude, &node.Longitude, &node.Status, &node.SourceID)
 		if err != nil {
 			l.Errf("Error dumping database: %s", err)
 			return
