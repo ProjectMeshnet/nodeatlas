@@ -208,6 +208,27 @@ VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 	return
 }
 
+func (db DB) AddNodes(nodes []*Node) (err error) {
+	stmt, err := db.Prepare(`INSERT INTO nodes
+(address, owner, email, contact, details, pgp, lat, lon, status)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`)
+	if err != nil {
+		return
+	}
+
+	for _, node := range nodes {
+		_, err = stmt.Exec([]byte(node.Addr),
+			node.OwnerName, node.OwnerEmail,
+			node.Contact, node.Details, []byte(node.PGP),
+			node.Latitude, node.Longitude, node.Status)
+		if err != nil {
+			return
+		}
+	}
+	stmt.Close()
+	return
+}
+
 // UpdateNode replaces the node in the database with the IP matching
 // the given node.
 func (db DB) UpdateNode(node *Node) (err error) {
