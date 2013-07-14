@@ -48,6 +48,7 @@ var (
 
 	fReadOnly = flag.Bool("readonly", false, "disallow database changes")
 
+	fImport = flag.String("import", "", "import a JSON array of nodes")
 	fTestDB = flag.Bool("testdb", false, "test the database")
 )
 
@@ -89,9 +90,6 @@ func main() {
 		fmt.Printf("Could start logger: %s", err)
 		os.Exit(1)
 	}
-
-	// Listen for OS signals.
-	go ListenSignal()
 
 	l.Infof("Starting NodeAtlas %s\n", Version)
 
@@ -159,6 +157,21 @@ func main() {
 	l.Debug("Initialized database\n")
 	l.Infof("Nodes: %d (%d local)\n", Db.LenNodes(true), Db.LenNodes(false))
 
+	// Check action flags and abandon normal startup if any are set.
+	if len(*fImport) != 0 {
+		err := ImportFile(*fImport)
+		if err != nil {
+			l.Fatalf("Import failed: %s", err)
+		} else {
+			l.Printf("Import successful!")
+		}
+		return
+	}
+
+	// Listen for OS signals.
+	go ListenSignal()
+
+	// Start the Heartbeat.
 	Heartbeat()
 	l.Debug("Heartbeat started\n")
 
