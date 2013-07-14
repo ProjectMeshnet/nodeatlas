@@ -90,6 +90,14 @@ func (db DB) AddNewMapSource(address, name string) (err error) {
 	return
 }
 
+// UpdateMapSourceData updates the name, and possibly other data,
+// of a cached map
+func (db DB) UpdateMapSourceData(address, name string) (err error) {
+	_, err = db.Exec(`UPDATE cached_maps
+SET name=? WHERE hostname=?`, name, address)
+	return
+}
+
 // DumpChildMaps returns a slice containing all known child maps.
 func (db DB) DumpChildMaps() (childMaps []*ChildMap, err error) {
 	childMaps = make([]*ChildMap, 0)
@@ -214,6 +222,11 @@ type nodeDumpWrapper struct {
 	Error interface{}        `json:"error"`
 }
 
+type statusDumpWrapper struct {
+	Data  map[string]interface{} `json:"data"`
+	Error interface{}            `json:"error"`
+}
+
 // GetAllFromChildMaps accepts a list of child map addresses to
 // retrieve nodes from. It does this concurrently, and puts any nodes
 // and newly discovered addresses in the local ID table.
@@ -279,6 +292,27 @@ func appendNodesFromChildMap(dst *[]*Node, address string,
 	wg.Done()
 }
 
+func GetMapStatus(address string) (data map[string]interface{}) {
+	resp, err := http.Get(strings.TrimRight(address, "/") + "/api/status")
+	if err != nil {
+		l.Errf("Querying status of %q produced: %s", address, err)
+		return nil
+	}
+
+	var jresp statusDumpWrapper
+	err = json.NewDecoder(resp.Body).Decode(&jresp)
+	if err != nil {
+		l.Errf("Querying status of %q produced: %s", address, err)
+		return nil
+	} else if jresp.Error != nil {
+		l.Errf("Querying status of %q produced remote error: %s",
+			address, jresp.Error)
+		return nil
+	}
+	data = jresp.Data
+	return
+}
+
 // GetAllFromChildMap retrieves a list of nodes from a single remote
 // address, and localizes them. If it encounters a remote address that
 // is not already known, it safely adds it to the sourceToID map. It
@@ -286,6 +320,9 @@ func appendNodesFromChildMap(dst *[]*Node, address string,
 // it and return nil.
 func GetAllFromChildMap(address string, sourceToID *map[string]int,
 	sourceMutex *sync.RWMutex) (nodes []*Node) {
+	// Query the node's status
+	mapStatus := GetMapStatus(address)
+
 	// Try to get all nodes via the API.
 	resp, err := http.Get(strings.TrimRight(address, "/") + "/api/all")
 	if err != nil {
@@ -321,6 +358,12 @@ func GetAllFromChildMap(address string, sourceToID *map[string]int,
 			source = address
 		}
 
+		// Get the name of the map from the status info
+		name, ok := mapStatus["name"].(string)
+		if !ok {
+			name = ""
+		}
+
 		// First, check if the source is known. If not, then we need
 		// to add it and refresh our map. Make sure all reads and
 		// writes to sourceToID are threadsafe.
@@ -332,7 +375,7 @@ func GetAllFromChildMap(address string, sourceToID *map[string]int,
 			// map under the ID len(sourceToID), because that should
 			// be unique.
 			sourceMutex.Lock()
-			err := Db.AddNewMapSource(source, "")
+			err := Db.AddNewMapSource(source, name)
 			if err != nil {
 				// Uh oh.
 				sourceMutex.Unlock()
@@ -346,6 +389,11 @@ func GetAllFromChildMap(address string, sourceToID *map[string]int,
 
 			l.Debugf("Discovered new source map %q, ID %d\n",
 				source, id)
+		} else {
+			err := Db.UpdateMapSourceData(address, name)
+			if err != nil {
+				l.Errf("Error while updating %q: %s", address, err)
+			}
 		}
 
 		// Once the ID is set, proceed on to add it in all the
