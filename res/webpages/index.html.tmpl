@@ -37,13 +37,12 @@
 <li class="active"><a href="/">Map</a></li>
 <li><a href="/about/">About</a></li>
 </ul>
-<!--<form class="navbar-form pull-right" action="">
-<input type="text" id="search-input" class="col-lg-8" placeholder="Search" data-provide="typeahead" autocomplete="off">
-</form>-->
 <ul class="nav navbar-nav pull-right">
 	<li><a href="#" class="light" onclick="hide(); return false;">Hide</a></li>
 	<li><a href="#" onclick="geoLocate(); return false;">Locate Me</a></li>
 	<li><a href="#" onclick="initDistance();" id="distance" data-toggle="tooltip" data-placement="bottom" data-original-title="Click on the first node, and then the second node." >Calculate Distance</a></li>
+	<li><input type="text" id="search" placeholder="Search"/></li>
+	<li><a href="#" class="sm"></a></li>
 	<li><button href="#" onclick="initRegistration();" class="btn btn-primary navbar-btn" id="addme" data-toggle="tooltip" data-placement="bottom" data-original-title="Click anywhere to add your node!" >Add Node</button></li>
 </ul>
 </div> 
