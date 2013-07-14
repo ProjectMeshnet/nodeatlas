@@ -235,12 +235,33 @@ func ListenSignal() {
 			doHeartbeatTasks()
 		case syscall.SIGUSR2:
 			l.Info("Caught SIGHUP; reloading config\n")
+
+			// Reload the configuration, but keep the old one if
+			// there's an error.
 			conf, err := ReadConfig(*fConf)
 			if err != nil {
 				l.Errf("Could not read conf; using old one: %s", err)
 				continue
 			}
 			Conf = conf
+
+			// Recompile the static directory, but be able to restore
+			// the previous one if there's an error.
+			oldStaticDir := StaticDir
+
+			StaticDir, err = CompileStatic(*fRes, Conf)
+			if err != nil {
+				l.Errf("Error recompiling static directory: %s", err)
+				StaticDir = oldStaticDir
+				continue
+			}
+
+			// Remove the old one, and report if there's an error, but
+			// continue even if there's an error.
+			err = os.RemoveAll(oldStaticDir)
+			if err != nil {
+				l.Errf("Error removing old static directory: %s", err)
+			}
 
 			// Restart the heartbeat ticker.
 			Heartbeat()
