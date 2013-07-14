@@ -8,7 +8,7 @@ To verify your node, visit the below link.{{if .Data.FromNode}} Bear
 in mind that you must visit it from the address you registered on the
 map.{{end}}
 
-{{.Data.Link}}/api/verify?id={{.Data.VerificationID}}
+{{.Data.Link}}/verify/{{.Data.VerificationID}}
 {{if .Data.FromNode}}
 If you can't access the link from the node you placed, such as if it's
 a virtual private server, then you can access it via the command line.

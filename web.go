@@ -69,6 +69,7 @@ func StartServer() (err error) {
 
 	http.HandleFunc("/", HandleRoot)
 	http.HandleFunc("/about/", HandleAbout)
+	http.HandleFunc("/verify/", HandleVerify)
 	http.HandleFunc("/res/", HandleRes)
 	http.Handle("/captcha/", captchaServer)
 	http.HandleFunc("/favicon", HandleIcon)
@@ -126,6 +127,11 @@ func HandleRoot(w http.ResponseWriter, req *http.Request) {
 // HandleAbout serves the "about.html" template.
 func HandleAbout(w http.ResponseWriter, req *http.Request) {
 	http.ServeFile(w, req, path.Join(StaticDir, "webpages/about.html"))
+}
+
+// HandleVerify serves the "verify.html" template.
+func HandleVerify(w http.ResponseWriter, req *http.Request) {
+	http.ServeFile(w, req, path.Join(StaticDir, "webpages/verify.html"))
 }
 
 // HandleRes serves static files from the resources directory (*fRes).
