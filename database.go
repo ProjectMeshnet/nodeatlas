@@ -114,6 +114,7 @@ func (db DB) DumpNodes() (nodes []*Node, err error) {
 		nodes = make([]*Node, n)
 	} else {
 		// Otherwise, error out.
+		l.Errf("Could not count number of nodes in database\n")
 		return nil, errors.New("Could not count number of nodes")
 	}
 
@@ -145,6 +146,7 @@ FROM nodes_cached;`)
 			&contact, &details, &node.PGP,
 			&node.Latitude, &node.Longitude, &node.Status)
 		if err != nil {
+			l.Errf("Error dumping database: %s", err)
 			return
 		}
 
