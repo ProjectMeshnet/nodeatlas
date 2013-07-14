@@ -234,7 +234,7 @@ func ListenSignal() {
 			l.Info("Forced heartbeat\n")
 			doHeartbeatTasks()
 		case syscall.SIGUSR2:
-			l.Info("Caught SIGHUP; reloading config\n")
+			l.Info("Reloading config\n")
 
 			// Reload the configuration, but keep the old one if
 			// there's an error.
