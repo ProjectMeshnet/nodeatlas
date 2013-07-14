@@ -9,6 +9,12 @@ import (
 	"time"
 )
 
+// ChildMap represents a single child map, which is regularly cached.
+type ChildMap struct {
+	ID             int
+	Name, Hostname string
+}
+
 // UpdateMapCache updates the node cache intelligently using
 // Conf.ChildMaps. Any unknown map addresses are added to the database
 // automatically, and errors are logged.
@@ -81,6 +87,32 @@ func (db DB) ClearCache() (err error) {
 func (db DB) AddNewMapSource(address, name string) (err error) {
 	_, err = db.Exec(`INSERT INTO cached_maps
 (hostname,name) VALUES(?, ?)`, address, name)
+	return
+}
+
+// DumpChildMaps returns a slice containing all known child maps.
+func (db DB) DumpChildMaps() (childMaps []*ChildMap, err error) {
+	childMaps = make([]*ChildMap, 0)
+
+	// Retrieve all child maps from the database.
+	rows, err := db.Query(`SELECT name, hostname, id
+FROM cached_maps;`)
+	if err == sql.ErrNoRows {
+		return childMaps, nil
+	} else if err != nil {
+		return
+	}
+
+	// Scan in all of the values.
+	for rows.Next() {
+		childMap := &ChildMap{}
+		if err = rows.Scan(&childMap.Name, &childMap.Hostname,
+			&childMap.ID); err != nil {
+			return
+		}
+		childMaps = append(childMaps, childMap)
+	}
+
 	return
 }
 

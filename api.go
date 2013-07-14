@@ -457,3 +457,13 @@ func (*Api) PostMessage(ctx *jas.Context) {
 	l.Noticef("IP %q sent a message to %q from %q",
 		ctx.Request.RemoteAddr, node.OwnerEmail, from)
 }
+
+func (*Api) GetChildMaps(ctx *jas.Context) {
+	var err error
+	ctx.Data, err = Db.DumpChildMaps()
+	if err != nil {
+		ctx.Error = jas.NewInternalError(err)
+		l.Errf("Error dumping child maps: %s", err)
+	}
+	return
+}
