@@ -5,6 +5,8 @@ var options = {
 	"zoom": {{.Map.Zoom}}
 }
 
+var cachedMaps = {};
+
 var firstLoad = true;
 var attribution = '<a href="https://github.com/ProjectMeshnet/nodeatlas">NodeAtlas {{.Version}}</a> — Map data {{.Map.Attribution}}';
 
@@ -33,6 +35,7 @@ $(document).ready(function() {
 	$('#addme').tooltip();
 	$('#distance').tooltip();
 	
+	loadChildMaps();
 	// Populate the map with nodes from /api/all.
 	addNodes();
 	
@@ -63,6 +66,17 @@ function cancelRegistration() {
 	map.removeEventListener('click', onMapClick);
 }
 
+function loadChildMaps() {
+	$.getJSON("/api/child_maps", function(response) {
+		for (map in response) {
+			cachedMaps[map.ID] = {
+				"name": map.Name,
+				"hostname": map.Hostname
+			}
+		}
+	});
+}
+
 function addNodes() {
 	$.getJSON("/api/all?geojson", function (response) {
 		// TODO: Check for errors here (response.error)
@@ -73,8 +87,18 @@ function addNodes() {
 }
 
 function createMarker(feature, latlng) {
-	var html =  '<h4>'+feature.properties.OwnerName+'</h4>'+
-				'<a href="/node/'+feature.id+'" class="btn btn-small btn-primary">'+feature.id+'</a>';
+	var html =  '<h4>'+feature.properties.OwnerName+'</h4>';
+
+	html += '<a href="/node/'+feature.id+'" class="btn btn-small btn-primary">'+feature.id+'</a>';
+	
+if (feature.properties.SourceID) {
+		if (cachedMaps[feature.properties.SourceID] != null) {
+			sourceMap = cachedMaps[feature.properties.SourceID];
+			html += '<a class="more" href="'+sourceMap.hostname+'/node/'+feature.id+'">Cached from '+sourceMap.name+'</a>';
+		} else {
+			html += '<div class="more">Cached data</div>';
+		}
+	}
 
 	if (feature.properties.Details) {
 		html += '<div class="property">Details</div><div class="more">'+feature.properties.Details+'</div>';

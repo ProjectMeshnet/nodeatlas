@@ -107,6 +107,9 @@ func (n *Node) Feature() (f *geojson.Feature) {
 	if len(n.Details) != 0 {
 		properties["Details"] = n.Details
 	}
+	if n.SourceID != 0 {
+		properties["SourceID"] = n.SourceID
+	}
 
 	// Create and return the feature.
 	return geojson.NewFeature(
