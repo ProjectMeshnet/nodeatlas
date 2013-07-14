@@ -19,14 +19,6 @@ var (
 	ReadOnlyError = jas.NewRequestError("database in readonly mode")
 )
 
-// apiStatus is a simple summary of the current NodeAtlas instance
-// status.
-type apiStatus struct {
-	Name      string `json:"name"`
-	Nodes     int    `json:"nodes"`
-	Available int    `json:"available"`
-}
-
 // RegisterAPI invokes http.Handle() with a JAS router using the
 // default net/http server. It will respond to any URL "<prefix>/api".
 func RegisterAPI(prefix string) {
@@ -50,10 +42,12 @@ func RegisterAPI(prefix string) {
 // map name, total number of nodes, number available (pingable), etc.
 // (Not yet implemented.)
 func (*Api) GetStatus(ctx *jas.Context) {
-	ctx.Data = apiStatus{
-		Name:  Conf.Name,
-		Nodes: Db.LenNodes(false),
-	}
+	dataMap := make(map[string]interface{}, 4)
+	dataMap["Name"] = Conf.Name
+	dataMap["LocalNodes"] = Db.LenNodes(false)
+	dataMap["CachedNodes"] = Db.LenNodes(true) - dataMap["LocalNodes"].(int)
+	dataMap["CachedMaps"] = len(Conf.ChildMaps)
+	ctx.Data = dataMap
 }
 
 // GetKey generates a CAPTCHA ID and returns it. This can be combined
