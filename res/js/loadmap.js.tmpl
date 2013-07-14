@@ -35,9 +35,8 @@ $(document).ready(function() {
 	$('#addme').tooltip();
 	$('#distance').tooltip();
 	
+	// this handles loading the child nodes now
 	loadChildMaps();
-	// Populate the map with nodes from /api/all.
-	addNodes();
 	
 	map.addControl(new L.Control.Scale());
 });
@@ -68,12 +67,14 @@ function cancelRegistration() {
 
 function loadChildMaps() {
 	$.getJSON("/api/child_maps", function(response) {
-		for (map in response) {
-			cachedMaps[map.ID] = {
-				"name": map.Name,
-				"hostname": map.Hostname
+		for (i in response.data) {
+			mapObj = response.data[i]
+			cachedMaps[mapObj.ID] = {
+				"name": mapObj.Name,
+				"hostname": mapObj.Hostname
 			}
 		}
+		addNodes();
 	});
 }
 
@@ -92,11 +93,12 @@ function createMarker(feature, latlng) {
 	html += '<a href="/node/'+feature.id+'" class="btn btn-small btn-primary">'+feature.id+'</a>';
 	
 if (feature.properties.SourceID) {
+	html += '<div class="property">Source</div>';
 		if (cachedMaps[feature.properties.SourceID] != null) {
 			sourceMap = cachedMaps[feature.properties.SourceID];
-			html += '<a class="more" href="'+sourceMap.hostname+'/node/'+feature.id+'">Cached from '+sourceMap.name+'</a>';
+			html += '<div class="more">Retrieved from <a href="'+sourceMap.hostname+'/node/'+feature.id+'">'+(sourceMap.name ? sourceMap.name : 'another map')+'</a>.</div>';
 		} else {
-			html += '<div class="more">Cached data</div>';
+			html += '<div class="more">Retrieved from another map.</div>';
 		}
 	}
 
