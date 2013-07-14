@@ -84,3 +84,25 @@ textarea.contact {
 	font-family: Helvetica;
 	width: 250px;
 }
+
+#bringnavbarback {
+	position: absolute;
+	z-index: 4000;
+	top: -50px;
+	right: 50px;
+	background-color: rgba(233, 233, 233, .6);
+	padding: 10px;
+}
+
+#bringnavbarback:hover {
+	cursor: pointer;
+	background-color: rgba(233, 233, 233, 1);
+}
+
+a.light {
+	color: #AAA !important;	
+}
+
+a.light:hover {
+	color: #999 !important;	
+}

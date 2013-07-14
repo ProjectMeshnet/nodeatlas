@@ -26,3 +26,16 @@ function fixNavbarBrand() {
 		$('.navbar-brand').css('font-size', (--size) + 'px');		
 	}
 }
+
+function hide(x) {
+	$('#bringnavbarback').remove();
+	$('.navbar').animate({top: '-500px'}, 1000);
+	$('#wrap').append('<div id="bringnavbarback">Show</div>');
+	$('#bringnavbarback').animate({top: '0px'}, 500);
+	$('.leaflet-top').animate({top: '0px'}, 500);
+	$('#bringnavbarback').bind('click', function() {
+		$('.navbar').animate({top: '0px'}, 500);
+		$('.leaflet-top').animate({top: '45px'}, 500);
+		$('#bringnavbarback').animate({top: '-500px'}, 1000);
+	});
+}
