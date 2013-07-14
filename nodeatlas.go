@@ -203,12 +203,19 @@ func Heartbeat() {
 				return
 			}
 			// Otherwise, perform scheduled tasks.
-			l.Debug("Heartbeat\n")
-			Db.DeleteExpiredFromQueue()
-			UpdateMapCache()
-			ClearExpiredCAPTCHA()
+			doHeartbeatTasks()
 		}
 	}()
+}
+
+// doHeartbeatTasks is the underlying function which is executed by
+// Heartbeat() at regular intervals. It can be called directly to
+// perform the tasks that are usually performed regularly.
+func doHeartbeatTasks() {
+	l.Debug("Heartbeat\n")
+	Db.DeleteExpiredFromQueue()
+	UpdateMapCache()
+	ClearExpiredCAPTCHA()
 }
 
 // ListenSignal uses os/signal to wait for OS signals, such as SIGHUP
@@ -219,11 +226,14 @@ func ListenSignal() {
 	// Create the channel and use signal.Notify to listen for any
 	// specified signals.
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, syscall.SIGHUP,
+	signal.Notify(c, syscall.SIGUSR1, syscall.SIGUSR2,
 		os.Interrupt, os.Kill, syscall.SIGTERM)
 	for sig := range c {
 		switch sig {
-		case syscall.SIGHUP:
+		case syscall.SIGUSR1:
+			l.Info("Forced heartbeat\n")
+			doHeartbeatTasks()
+		case syscall.SIGUSR2:
 			l.Info("Caught SIGHUP; reloading config\n")
 			conf, err := ReadConfig(*fConf)
 			if err != nil {
