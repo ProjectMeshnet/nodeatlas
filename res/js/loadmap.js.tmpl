@@ -6,6 +6,7 @@ var options = {
 }
 
 var cachedMaps = {};
+var nodes = [];
 
 var firstLoad = true;
 var attribution = '<a href="https://github.com/ProjectMeshnet/nodeatlas">NodeAtlas {{.Version}}</a> — Map data {{.Map.Attribution}}';
@@ -37,6 +38,11 @@ $(document).ready(function() {
 	
 	// this handles loading the child nodes now
 	loadChildMaps();
+	
+	$('#search').keyup(function() {
+		// TODO display these in some fashion
+		var searchResults = search(nodes, $(this).val());
+	});
 	
 	map.addControl(new L.Control.Scale());
 });
@@ -84,6 +90,14 @@ function addNodes() {
 		L.geoJson(response.data, {
 			pointToLayer: createMarker
 		}).addTo(nodelayer);
+
+		for (var i in response.data.features) {
+			nodes[i] = {
+				id: response.data.features[i].id,
+				properties: response.data.features[i].properties
+			};
+
+		}
 	});
 }
 
