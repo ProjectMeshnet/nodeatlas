@@ -67,18 +67,18 @@ func StartServer() (err error) {
 	// We need to set the database tile store.
 	captcha.SetCustomStore(CAPTCHAStore{})
 
-	http.HandleFunc("/", HandleRoot)
-	http.HandleFunc("/about/", HandleAbout)
-	http.HandleFunc("/edit/", HandleEdit)
-	http.HandleFunc("/verify/", HandleVerify)
-	http.HandleFunc("/res/", HandleRes)
+	http.HandleFunc("/", HandleStatic)
 	http.Handle("/captcha/", captchaServer)
-	http.HandleFunc("/favicon", HandleIcon)
-	http.HandleFunc("/robots.txt", HandleMisc)
 
 	// Start the HTTP server and return any errors if it crashes.
 	l.Infof("Starting HTTP server on %q\n", Conf.Web.Addr)
 	return s.Serve(listener)
+}
+
+// HandleStatic serves files directly from <StaticDir>/web using
+// http.ServeFile().
+func HandleStatic(w http.ResponseWriter, req *http.Request) {
+	http.ServeFile(w, req, path.Join(StaticDir, "web", req.URL.Path))
 }
 
 // Handler acts is a simple http.Handler which performs some cleanup
@@ -120,52 +120,10 @@ func (d *Deproxier) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	d.Mux.ServeHTTP(w, r)
 }
 
-// HandleRoot serves the "index.html" template.
-func HandleRoot(w http.ResponseWriter, req *http.Request) {
-	http.ServeFile(w, req, path.Join(StaticDir, "webpages/index.html"))
-}
-
-// HandleAbout serves the "about.html" template.
-func HandleAbout(w http.ResponseWriter, req *http.Request) {
-	http.ServeFile(w, req, path.Join(StaticDir, "webpages/about.html"))
-}
-
-// HandleEdit serves the "edit.html" template.
-func HandleEdit(w http.ResponseWriter, req *http.Request) {
-	http.ServeFile(w, req, path.Join(StaticDir, "webpages/edit.html"))
-}
-
-// HandleVerify serves the "verify.html" template.
-func HandleVerify(w http.ResponseWriter, req *http.Request) {
-	http.ServeFile(w, req, path.Join(StaticDir, "webpages/verify.html"))
-}
-
-// HandleRes serves static files from the resources directory (*fRes).
-func HandleRes(w http.ResponseWriter, req *http.Request) {
-	// Serve the file within the resources directory, but slice off
-	// len("/res") from the req.URL.Path first.
-	http.ServeFile(w, req, path.Join(StaticDir, req.URL.Path[4:]))
-}
-
-// HandleIcon responds to requests for favicon.ico by serving icon.png
-// from the resources directory.
-func HandleIcon(w http.ResponseWriter, req *http.Request) {
-	http.ServeFile(w, req, path.Join(StaticDir, "icon",
-		Conf.Map.Favicon))
-}
-
-// HandleMisc serves files such as robots.txt from
-// <StaticDir>/webpages, using the request path to determine the
-// actual file to serve.
-func HandleMisc(w http.ResponseWriter, req *http.Request) {
-	http.ServeFile(w, req, path.Join(StaticDir, "webpages",
-		req.URL.Path))
-}
-
-// RegisterTemplates loads templates from <StaticDir>/emails/*.txt
-// into the global variable t.
+// RegisterTemplates loads templates from <StaticDir>/email/*.txt into
+// the global variable t.
 func RegisterTemplates() (err error) {
-	t, err = template.ParseGlob(path.Join(StaticDir, "emails/*.txt"))
+	t, err = template.ParseGlob(path.Join(StaticDir, "email/*.txt"))
 	return
 }
 
