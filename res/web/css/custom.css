@@ -14,25 +14,25 @@ a.close {
 }
 
 .leaflet-control-geoloc {
-	background-image: url(/res/img/location.png);
+	background-image: url(/img/location.png);
 	-webkit-border-radius: 5px 5px 5px 5px;
 	border-radius: 5px 5px 5px 5px;
 }
 
 .leaflet-control-node {
-	background-image: url(/res/img/node.png);
+	background-image: url(/img/node.png);
 	-webkit-border-radius: 5px 5px 5px 5px;
 	border-radius: 5px 5px 5px 5px;
 }
 
 .leaflet-control-about {
-	background-image: url(/res/img/info.png);
+	background-image: url(/img/info.png);
 	-webkit-border-radius: 5px 5px 5px 5px;
 	border-radius: 5px 5px 5px 5px;
 }
 
 .leaflet-control-distance {
-	background-image: url(/res/img/ruler.png);
+	background-image: url(/img/ruler.png);
 	-webkit-border-radius: 5px 5px 5px 5px;
 	border-radius: 5px 5px 5px 5px;
 }
