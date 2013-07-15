@@ -287,7 +287,7 @@
 }
 
 .leaflet-control-layers-toggle {
-	background-image: url(/res/img/layers.png);
+	background-image: url(/img/layers.png);
 	width: 36px;
 	height: 36px;
 }
