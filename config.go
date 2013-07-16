@@ -154,7 +154,7 @@ type Config struct {
 		// Attribution is the "map data" copyright notice placed at
 		// the bottom right of the map, meant to credit the
 		// maintainers of the tileserver.
-		Attribution string
+		Attribution template.HTML
 	}
 
 	// Verify contains the list of steps used to ensure that new nodes
