@@ -86,6 +86,11 @@ type Config struct {
 	// documentation for time.ParseDuration for format information.
 	VerificationExpiration Duration
 
+	// ExtraVerificationFlags can be specified to add additional flags
+	// (such as "-6") to the curl and wget instructions in the
+	// verification email.
+	ExtraVerificationFlags string
+
 	// SMTP contains the information necessary to connect to a mail
 	// relay, so as to send verification email to registered nodes.
 	SMTP *struct {

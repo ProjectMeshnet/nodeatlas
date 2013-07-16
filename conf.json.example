@@ -20,6 +20,7 @@
 	"HeartbeatRate": "10m",
 	"CacheExpiration": "168h",
 	"VerificationExpiration": "48h",
+	"ExtraVerificationFlags": "-6",
 	"SMTP": {
 		"VerifyDisabled": false,
 		"EmailAddress": "nodeatlas@example.com",
