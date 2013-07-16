@@ -22,6 +22,14 @@ type Config struct {
 	// 0123ABCD"
 	AdminContact template.HTML
 
+	// AdminAddresses is a slice of addresses which are considered
+	// fully authenticated. Connections originating from those
+	// addresses will not be required to verify or perform any sort of
+	// authentication, meaning that they can edit or register any
+	// node. If it is not specified, no addresses are granted this
+	// ability.
+	AdminAddresses []IP
+
 	// Web is the structure which contains information relating to the
 	// backend of the HTTP webserver.
 	Web struct {

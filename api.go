@@ -165,8 +165,9 @@ func (*Api) PostNode(ctx *jas.Context) {
 		return
 	}
 
-	// If SMTP verification is not explicitly disabled, send an email.
-	if !Conf.SMTP.VerifyDisabled {
+	// If SMTP verification is not explicitly disabled, and the
+	// connecting address is not an admin, send an email.
+	if !Conf.SMTP.VerifyDisabled && !IsAdmin(ctx.Request) {
 		id := rand.Int63() // Pseudo-random positive int64
 
 		emailsent := true
@@ -243,8 +244,9 @@ func (*Api) PostUpdateNode(ctx *jas.Context) {
 	}
 
 	// Check to make sure that the Node is the one sending the
-	// address. If not, return an error.
-	if !net.IP(ip).Equal(net.ParseIP(ctx.RemoteAddr)) {
+	// address, or an admin. If not, return an error.
+	if !net.IP(ip).Equal(net.ParseIP(ctx.RemoteAddr)) ||
+		IsAdmin(ctx.Request) {
 		ctx.Error = jas.NewRequestError(
 			RemoteAddressDoesNotMatchError.Error())
 		return
@@ -386,11 +388,14 @@ func (*Api) GetAll(ctx *jas.Context) {
 // CAPTCHA pair be given.
 func (*Api) PostMessage(ctx *jas.Context) {
 	// First, ensure that the given CAPTCHA pair is correct. If it is
-	// not, then return the explanation.
-	err := VerifyCAPTCHA(ctx.Request)
-	if err != nil {
-		ctx.Error = jas.NewRequestError(err.Error())
-		return
+	// not, then return the explanation. This is bypassed if the
+	// request comes from an admin address.
+	if !IsAdmin(ctx.Request) {
+		err := VerifyCAPTCHA(ctx.Request)
+		if err != nil {
+			ctx.Error = jas.NewRequestError(err.Error())
+			return
+		}
 	}
 
 	// Next, retrieve the IP of the node the user is attempting to
@@ -460,4 +465,15 @@ func (*Api) GetChildMaps(ctx *jas.Context) {
 		l.Errf("Error dumping child maps: %s", err)
 	}
 	return
+}
+
+// IsAdmin is a small wrapper function to check if the given address
+// belongs to an admin, as specified in Conf.AdminAddresses.
+func IsAdmin(req *http.Request) bool {
+	for _, adminAddr := range Conf.AdminAddresses {
+		if net.IP(adminAddr).Equal(net.ParseIP(req.RemoteAddr)) {
+			return true
+		}
+	}
+	return false
 }

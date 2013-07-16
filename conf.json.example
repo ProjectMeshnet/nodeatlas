@@ -1,6 +1,7 @@
 {
 	"Name": "Meshnet",
 	"AdminContact": "John Doe &lt;<a href=\"mailto:johndoe@example.com\">johndoe@example.com</a>&gt; 0123ABCD",
+	"AdminAddresses": [ "127.0.0.1" ],
 	"Web": {
 		"Hostname": "http://localhost",
 		"Prefix": "",
