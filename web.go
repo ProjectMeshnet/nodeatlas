@@ -68,6 +68,7 @@ func StartServer() (err error) {
 	captcha.SetCustomStore(CAPTCHAStore{})
 
 	http.HandleFunc("/", HandleStatic)
+	http.HandleFunc("/node/", HandleMap)
 	http.Handle("/captcha/", captchaServer)
 
 	// Start the HTTP server and return any errors if it crashes.
@@ -79,6 +80,11 @@ func StartServer() (err error) {
 // http.ServeFile().
 func HandleStatic(w http.ResponseWriter, req *http.Request) {
 	http.ServeFile(w, req, path.Join(StaticDir, "web", req.URL.Path))
+}
+
+// HandleMap always serves <StaticDir>/web/index.html.
+func HandleMap(w http.ResponseWriter, req *http.Request) {
+	http.ServeFile(w, req, path.Join(StaticDir, "web", "index.html"))
 }
 
 // Handler acts is a simple http.Handler which performs some cleanup
