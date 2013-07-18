@@ -13,11 +13,11 @@ map.{{end}}
 If you can't access the link from the node you placed, such as if it's
 a virtual private server, then you can access it via the command line.
 
-    curl {{.ExtraVerificationFlags}} {{.Data.Link}}/api/verify?id={{.Data.VerificationID}}
+    curl {{.Data.Flags}} {{.Data.Link}}/api/verify?id={{.Data.VerificationID}}
 
 If you don't have cURL, try the following.
 
-    wget {{.ExtraVerificationFlags}} -qO- {{.Data.Link}}/api/verify?id={{.Data.VerificationID}}
+    wget {{.Data.Flags}} -qO- {{.Data.Link}}/api/verify?id={{.Data.VerificationID}}
 {{end}}
 If you didn't place this node and your email address was entered by
 mistake, then please ignore this email. We're sorry.

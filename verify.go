@@ -129,12 +129,16 @@ func SendVerificationEmail(id int64, recipientEmail string) (err error) {
 		Subject: Conf.Name + " Node Registration",
 	}
 
-	e.Data = make(map[string]interface{}, 3)
+	e.Data = make(map[string]interface{}, 4)
 	e.Data["Link"] = Conf.Web.Hostname + Conf.Web.Prefix
 	e.Data["VerificationID"] = id
 	e.Data["FromNode"] = Conf.Verify.FromNode
+	e.Data["Flags"] = Conf.ExtraVerificationFlags
 
-	return e.Send("verification.txt")
+	if err = e.Send("verification.txt"); err == nil {
+		l.Debugf("Sent verification email to %d", id)
+	}
+	return
 }
 
 // ResendVerificationEmails attempts to resend a verification email to
@@ -166,7 +170,6 @@ WHERE verifysent = 0;`)
 		if err = SendVerificationEmail(id, email); err != nil {
 			l.Warningf("Could not send verification email to %q: %s", email, err)
 		} else {
-			l.Debugf("Sent verification email to %d", id)
 			verifysent = append(verifysent, id)
 		}
 	}
