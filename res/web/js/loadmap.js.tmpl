@@ -91,7 +91,7 @@ function addNodes() {
 		// TODO: Check for errors here (response.error)
 		L.geoJson(response.data, {
 			pointToLayer: createMarker
-		}).addTo(nodelayer).on('mouseover', nodeInfoMouseOver).on('mouseout', nodeInfoMouseOut);
+		}).addTo(nodelayer).on('mouseover', nodeInfoMouseOver).on('mouseout', nodeInfoMouseOut).on('click', nodeInfoClick);
 
 		for (var i in response.data.features) {
 			nodes[i] = {
@@ -263,6 +263,8 @@ function onMapClick(e) {
 	
 	$('#wrap').append(getForm(e));
 	
+	$('.node').remove();
+	
 	$('#inputform').animate({
 		top: '60px'
 	}, 500);
@@ -378,4 +380,10 @@ function nodeInfoMouseOut(e) {
 	$('.node').fadeOut(500, function() {
 		$('.node').remove();
 	});
+}
+
+function nodeInfoClick(e) {
+	e.layer.closePopup();
+	e.layer.off('mouseover');
+	e.layer.off('mouseout');
 }
