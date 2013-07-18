@@ -117,3 +117,71 @@ func VerifyRequest(node *Node, r *http.Request) error {
 	}
 	return nil
 }
+
+// SendVerificationEmail uses the fields in Conf.SMTP to send a
+// templated email (verification.txt) to the given email address. If
+// the email could not be sent, it returns an error.
+func SendVerificationEmail(id int64, recipientEmail string) (err error) {
+	// Prepare an Email type.
+	e := &Email{
+		To:      recipientEmail,
+		From:    Conf.SMTP.EmailAddress,
+		Subject: Conf.Name + " Node Registration",
+	}
+
+	e.Data = make(map[string]interface{}, 3)
+	e.Data["Link"] = Conf.Web.Hostname + Conf.Web.Prefix
+	e.Data["VerificationID"] = id
+	e.Data["FromNode"] = Conf.Verify.FromNode
+
+	return e.Send("verification.txt")
+}
+
+// ResendVerificationEmails attempts to resend a verification email to
+// every node in the verification queue that is marked as not yet
+// notified. It logs errors.
+func ResendVerificationEmails() {
+	rows, err := Db.Query(`SELECT id,email
+FROM nodes_verify_queue
+WHERE verifysent = 0;`)
+	if err != nil {
+		l.Errf("Error resending verification emails: %s", err)
+		return
+	}
+
+	// Allocate slice so that rows can be updated later.
+	verifysent := make([]int64, 0)
+
+	for rows.Next() {
+		var (
+			id    int64
+			email string
+		)
+
+		if err = rows.Scan(&id, &email); err != nil {
+			l.Errf("Error resending verification email: %s", err)
+			continue
+		}
+
+		if err = SendVerificationEmail(id, email); err != nil {
+			l.Warningf("Could not send verification email to %q: %s", email, err)
+		} else {
+			l.Debugf("Sent verification email to %d", id)
+			verifysent = append(verifysent, id)
+		}
+	}
+
+	setVerifysent, err := Db.Prepare(`UPDATE nodes_verify_queue
+SET verifysent = 1
+WHERE id = ?;`)
+	if err != nil {
+		l.Errf("Error preparing verifysent statement: %s", err)
+		return
+	}
+
+	for _, id := range verifysent {
+		if _, err = setVerifysent.Exec(id); err != nil {
+			l.Warningf("Could not set verifysent for %d: %s", id, err)
+		}
+	}
+}

@@ -229,6 +229,7 @@ func doHeartbeatTasks() {
 	Db.DeleteExpiredFromQueue()
 	UpdateMapCache()
 	ClearExpiredCAPTCHA()
+	ResendVerificationEmails()
 }
 
 // ListenSignal uses os/signal to wait for OS signals, such as SIGHUP

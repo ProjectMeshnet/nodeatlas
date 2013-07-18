@@ -85,26 +85,6 @@ func PrepareEmail(from, to string) (c *smtp.Client, err error) {
 	return c, nil
 }
 
-// SendVerificationEmail uses the fields in Conf.SMTP to send a
-// templated email (verification.txt) to the email address specified
-// by the given node. If the email could not be sent, it returns an
-// error.
-func SendVerificationEmail(id int64, n *Node) (err error) {
-	// Prepare an Email type.
-	e := &Email{
-		To:      n.OwnerEmail,
-		From:    Conf.SMTP.EmailAddress,
-		Subject: Conf.Name + " Node Registration",
-	}
-
-	e.Data = make(map[string]interface{}, 3)
-	e.Data["Link"] = Conf.Web.Hostname + Conf.Web.Prefix
-	e.Data["VerificationID"] = id
-	e.Data["FromNode"] = Conf.Verify.FromNode
-
-	return e.Send("verification.txt")
-}
-
 // Email simplifies the process of crafting and sending emails via
 // SMTP. It makes use of the global *template.Template t.
 type Email struct {
