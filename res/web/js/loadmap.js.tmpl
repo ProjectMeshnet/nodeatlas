@@ -39,7 +39,7 @@ $(document).ready(function() {
 	// this handles loading the child nodes now
 	loadChildMaps();
 	
-	map.on('popupopen', nodeInfo);
+	//map.on('popupopen', nodeInfo);
 	
 	$('#search').keyup(function() {
 		// TODO display these in some fashion
@@ -91,7 +91,7 @@ function addNodes() {
 		// TODO: Check for errors here (response.error)
 		L.geoJson(response.data, {
 			pointToLayer: createMarker
-		}).addTo(nodelayer);
+		}).addTo(nodelayer).on('mouseover', nodeInfoMouseOver).on('mouseout', nodeInfoMouseOut);
 
 		for (var i in response.data.features) {
 			nodes[i] = {
@@ -105,7 +105,7 @@ function addNodes() {
 
 function createMarker(feature, latlng) {
 	var html = '<div class="node">';
-	html +=  '<h4>'+feature.properties.OwnerName+'&nbsp;<button class="btn btn-mini btn-warning">Message Me</button></h4>';
+	html +=  '<h4>'+feature.properties.OwnerName+'&nbsp;<button class="btn btn-mini btn-info">Message</button></h4>';
 	html += '<a href="/node/'+feature.id+'" class="btn btn-small btn-primary">'+feature.id+'</a>';
 	
 if (feature.properties.SourceID) {
@@ -365,8 +365,17 @@ function next(which) {
 	}
 }
 
-function nodeInfo(e) {
-	e.popup._close();
-	var html = e.popup._content;
+function nodeInfoMouseOver(e) {
+	$('.node').remove();
+	e.layer.closePopup();
+	var html = e.layer._popup._content;
 	$('#wrap').append(html);
+	$('.node').hide();
+	$('.node').fadeIn(500);
+}
+
+function nodeInfoMouseOut(e) {
+	$('.node').fadeOut(500, function() {
+		$('.node').remove();
+	});
 }
