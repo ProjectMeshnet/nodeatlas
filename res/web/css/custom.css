@@ -110,3 +110,24 @@ a.light:hover {
 #search {
 	margin-top: 6px;	
 }
+
+.node {
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	position: absolute;
+	top: 75px;
+	right: 25px;
+	background: rgba(255, 255, 255, .8);
+	padding: 5px 25px 25px 25px;
+	overflow: hidden;
+	z-index: 4000;
+	font-family: Helvetica;
+	width: 300px;
+	font-size: 12px;
+}
+
+.btn-mini {
+    padding: 0px 2px;
+    font-size: 10px;
+}

@@ -39,6 +39,8 @@ $(document).ready(function() {
 	// this handles loading the child nodes now
 	loadChildMaps();
 	
+	map.on('popupopen', nodeInfo);
+	
 	$('#search').keyup(function() {
 		// TODO display these in some fashion
 		var searchResults = search(nodes, $(this).val());
@@ -102,8 +104,8 @@ function addNodes() {
 }
 
 function createMarker(feature, latlng) {
-	var html =  '<h4>'+feature.properties.OwnerName+'</h4>';
-
+	var html = '<div class="node">';
+	html +=  '<h4>'+feature.properties.OwnerName+'&nbsp;<button class="btn btn-mini btn-warning">Message Me</button></h4>';
 	html += '<a href="/node/'+feature.id+'" class="btn btn-small btn-primary">'+feature.id+'</a>';
 	
 if (feature.properties.SourceID) {
@@ -125,6 +127,8 @@ if (feature.properties.SourceID) {
 	if (feature.properties.PGP) {
 		html += '<div class="property">PGP</div><div class="more">'+(feature.properties.PGP).toUpperCase()+'</div>';
 	}
+	
+	html += '</div>';
 	
 	var p = L.popup();
 	p.setLatLng(latlng);
@@ -359,4 +363,10 @@ function next(which) {
 		$('#three').css('display', 'none');
 		$('#four').css('display', 'block');
 	}
+}
+
+function nodeInfo(e) {
+	e.popup._close();
+	var html = e.popup._content;
+	$('#wrap').append(html);
 }
