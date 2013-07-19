@@ -408,7 +408,7 @@ function createMessageForm(name, ipv6) {
 	html += '<h6>Send Message to '+name+'</h6>';
 	html += '<form action="/api/message" method="post">';
 	html += '<input type="email" placeholder="Email" id="from" required>';
-	html += '<br/><input type="text" value="'+ipv6+'" disabled>';
+	html += '<input type="text" value="'+ipv6+'" disabled class="hidden">';
 	html += '<br/><input type="text" placeholder="Subject" id="subject" required>';
 	html += '<br/><textarea placeholder="Body" id="message" required></textarea>';
 	html += '<br/><div class="row"><div class="col col-lg-6" style="text-align:center;">';
