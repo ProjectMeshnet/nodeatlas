@@ -38,9 +38,7 @@ $(document).ready(function() {
 	
 	// this handles loading the child nodes now
 	loadChildMaps();
-	
-	//map.on('popupopen', nodeInfo);
-	
+		
 	$('#search').keyup(function() {
 		// TODO display these in some fashion
 		var searchResults = search(nodes, $(this).val());
@@ -106,7 +104,7 @@ function addNodes() {
 
 function createMarker(feature, latlng) {
 	var html = '<div class="node">';
-	html +=  '<h4>'+feature.properties.OwnerName+'&nbsp;<button class="btn btn-mini btn-info">Message</button>';
+	html +=  '<h4>'+feature.properties.OwnerName+'&nbsp;<button class="btn btn-mini btn-info" id="sendMessage">Message</button>';
 	html += '&nbsp;<button class="btn btn-mini btn-success" disabled>Edit</button></h4>';
 	html += '<div class="text-center"><a href="/node/'+feature.id+'" class="btn btn-small btn-primary">'+feature.id+'</a></div><hr>';
 	
@@ -385,9 +383,30 @@ function nodeInfoMouseOut(e) {
 
 function nodeInfoClick(e) {
 	$('.node').remove();
+	$('#messageCreate').remove();
 	e.layer.closePopup();
 	var html = e.layer._popup._content;
 	$('#wrap').append(html);
-	$('.node').hide();
+	$('.node').hide(); 
 	$('.node').fadeIn(500);
+	$('#sendMessage').bind('click', function(e) {
+		var form = createMessageForm();
+		$('#wrap').append(form);
+		$('#messageCreate').hide();
+		var h = $('.node').css('height');
+		$('#messageCreate').css('top', (parseInt(h.substring(0,h.length-2))+100)+'px');
+		$('#messageCreate').fadeIn(500);
+	});
+}
+
+function createMessageForm() {
+	var html = '<div id="messageCreate">';
+	html += 'hi';
+	html += '';
+	html += '';
+	html += '';
+	html += '';
+	html += '';
+	html += '</div>';
+	return html;
 }

@@ -111,7 +111,7 @@ a.light:hover {
 	margin-top: 6px;	
 }
 
-.node, #node {
+.node, #messageCreate {
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
