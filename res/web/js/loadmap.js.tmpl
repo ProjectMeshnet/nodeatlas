@@ -390,23 +390,32 @@ function nodeInfoClick(e) {
 	$('.node').hide(); 
 	$('.node').fadeIn(500);
 	$('#sendMessage').bind('click', function(e) {
-		var form = createMessageForm();
-		$('#wrap').append(form);
-		$('#messageCreate').hide();
-		var h = $('.node').css('height');
-		$('#messageCreate').css('top', (parseInt(h.substring(0,h.length-2))+100)+'px');
-		$('#messageCreate').fadeIn(500);
+		$('.node').fadeOut(500, function() {
+			$('.node').remove();
+			var name = html.substring(html.indexOf('<h4>')+4, html.indexOf('&nbsp;'));
+			ipv6 = html.substring(html.indexOf('a href')+14);
+			ipv6 = ipv6.substring(0, ipv6.indexOf('"'));
+			var form = createMessageForm(name, ipv6);
+			$('#wrap').append(form);
+			$('#messageCreate').hide();
+			$('#messageCreate').fadeIn(500);
+		});
 	});
 }
 
-function createMessageForm() {
+function createMessageForm(name, ipv6) {
 	var html = '<div id="messageCreate">';
-	html += 'hi';
-	html += '';
-	html += '';
-	html += '';
-	html += '';
-	html += '';
+	html += '<h6>Send Message to '+name+'</h6>';
+	html += '<form action="/api/message" method="post">';
+	html += '<input type="email" placeholder="Email" id="from" required>';
+	html += '<br/><input type="text" value="'+ipv6+'" disabled>';
+	html += '<br/><input type="text" placeholder="Subject" id="subject" required>';
+	html += '<br/><textarea placeholder="Body" id="message" required></textarea>';
+	html += '<br/><div class="row"><div class="col col-lg-6" style="text-align:center;">';
+	html += '<input type="reset" class="btn btn-small" value="Cancel Message"></div>';
+	html += '<div class="col col-lg-6" style="text-align:center;">';
+	html += '<input type="submit" class="btn btn-small btn-primary" value="Send Message"></div></div>';
+	html += '</form>';
 	html += '</div>';
 	return html;
 }
