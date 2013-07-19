@@ -91,7 +91,8 @@ function addNodes() {
 		// TODO: Check for errors here (response.error)
 		L.geoJson(response.data, {
 			pointToLayer: createMarker
-		}).addTo(nodelayer).on('mouseover', nodeInfoMouseOver).on('mouseout', nodeInfoMouseOut).on('click', nodeInfoClick);
+		}).addTo(nodelayer).on('click', nodeInfoClick);
+		//.on('mouseover', nodeInfoMouseOver).on('mouseout', nodeInfoMouseOut)
 
 		for (var i in response.data.features) {
 			nodes[i] = {
@@ -105,8 +106,9 @@ function addNodes() {
 
 function createMarker(feature, latlng) {
 	var html = '<div class="node">';
-	html +=  '<h4>'+feature.properties.OwnerName+'&nbsp;<button class="btn btn-mini btn-info">Message</button></h4>';
-	html += '<a href="/node/'+feature.id+'" class="btn btn-small btn-primary">'+feature.id+'</a>';
+	html +=  '<h4>'+feature.properties.OwnerName+'&nbsp;<button class="btn btn-mini btn-info">Message</button>';
+	html += '&nbsp;<button class="btn btn-mini btn-success" disabled>Edit</button></h4>';
+	html += '<div class="text-center"><a href="/node/'+feature.id+'" class="btn btn-small btn-primary">'+feature.id+'</a></div><br/>';
 	
 if (feature.properties.SourceID) {
 	html += '<div class="property">Source</div>';
@@ -369,7 +371,6 @@ function next(which) {
 
 function nodeInfoMouseOver(e) {
 	$('.node').remove();
-	e.layer.closePopup();
 	var html = e.layer._popup._content;
 	$('#wrap').append(html);
 	$('.node').hide();
@@ -383,7 +384,10 @@ function nodeInfoMouseOut(e) {
 }
 
 function nodeInfoClick(e) {
+	$('.node').remove();
 	e.layer.closePopup();
-	e.layer.off('mouseover');
-	e.layer.off('mouseout');
+	var html = e.layer._popup._content;
+	$('#wrap').append(html);
+	$('.node').hide();
+	$('.node').fadeIn(500);
 }
