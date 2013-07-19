@@ -407,7 +407,7 @@ function createMessageForm(name, ipv6) {
 	var html = '<div id="messageCreate">';
 	html += '<h6>Send Message to '+name+'</h6>';
 	html += '<form action="/api/message" method="post">';
-	html += '<input type="email" placeholder="Email" id="from" required>';
+	html += '<input type="email" placeholder="Your Email" id="from" required>';
 	html += '<input type="text" value="'+ipv6+'" disabled class="hidden">';
 	html += '<br/><input type="text" placeholder="Subject" id="subject" required>';
 	html += '<br/><textarea placeholder="Body" id="message" required></textarea>';
