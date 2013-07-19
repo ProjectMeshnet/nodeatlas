@@ -397,6 +397,45 @@ function nodeInfoClick(e) {
 			ipv6 = ipv6.substring(0, ipv6.indexOf('"'));
 			var form = createMessageForm(name, ipv6);
 			$('#wrap').append(form);
+			loadCAPTCHA($('#captcha_img'));
+			$('#cancelmessage').bind('click', function(e) {
+				$('#messageCreate').fadeOut(500, function() {
+					$('#messageCreate').remove();
+				});
+			});
+			$('#sendmessage').bind('click', function(e) {
+				$('#messageCreate').fadeOut(500, function() {
+					var from = $('#from').val();
+					var address = $('#address').val();
+					var subject = $('#subject').val();
+					var message = $('#message').val();
+					var captcha = $('#captcha').val();
+					var key = $('#captcha_img').attr('src');
+					key = key.substring(9, key.length-4);
+					captcha = key + ':' + captcha;
+					var msg = {
+						'from': from,
+						'address': address,
+						'subject': subject,
+						'message': message,
+						'captcha': captcha
+					};
+					$.ajax({
+						type: "POST",
+						url: "/api/message",
+						data: msg,
+						success: function(response) {
+							// TODO
+							alert('success');
+						},
+						error: function(data) {
+							// TODO
+							alert('error');
+						}
+					});
+					$('#messageCreate').remove();
+				});
+			});
 			$('#messageCreate').hide();
 			$('#messageCreate').fadeIn(500);
 		});
@@ -406,16 +445,16 @@ function nodeInfoClick(e) {
 function createMessageForm(name, ipv6) {
 	var html = '<div id="messageCreate">';
 	html += '<h6>Send Message to '+name+'</h6>';
-	html += '<form action="/api/message" method="post">';
 	html += '<input type="email" placeholder="Your Email" id="from" required>';
-	html += '<input type="text" value="'+ipv6+'" disabled class="hidden">';
+	html += '<input type="text" id="address" value="'+ipv6+'" disabled class="hidden">';
 	html += '<br/><input type="text" placeholder="Subject" id="subject" required>';
 	html += '<br/><textarea placeholder="Body" id="message" required></textarea>';
-	html += '<br/><div class="row"><div class="col col-lg-6" style="text-align:center;">';
-	html += '<input type="reset" class="btn btn-small" value="Cancel Message"></div>';
+	html += '<br/><input type="text" placeholder="Captcha" id="captcha" required>';
+	html += '<img id="captcha_img">';
+	html += '<br/><br/><div class="row"><div class="col col-lg-6" style="text-align:center;">';
+	html += '<input type="reset" id="cancelmessage" class="btn btn-small" value="Cancel Message"></div>';
 	html += '<div class="col col-lg-6" style="text-align:center;">';
-	html += '<input type="submit" class="btn btn-small btn-primary" value="Send Message"></div></div>';
-	html += '</form>';
+	html += '<input type="submit" id="sendmessage" class="btn btn-small btn-primary" value="Send Message"></div></div>';
 	html += '</div>';
 	return html;
 }
