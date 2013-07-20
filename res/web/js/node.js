@@ -211,11 +211,18 @@ function nodeInfoClick(e) {
 			ipv6 = ipv6.substring(0, ipv6.indexOf('"'));
 			var form = createMessageForm(name, ipv6);
 			$('#wrap').append(form);
-			loadCAPTCHA($('#captcha_img'));
 			$('#cancelmessage').bind('click', function(e) {
 				$('#messageCreate').fadeOut(500, function() {
 					$('#messageCreate').remove();
 				});
+			});
+			$('#nextpagesubmit').bind('click', function(e) {
+				loadCAPTCHA($('#captcha_img'));
+				$('#cancel').bind('click', function(e) {
+					$('#messageCreate').fadeOut(500, function() {
+						$('#messageCreate').remove();
+					});
+			});
 			});
 			$('#sendmessage').bind('click', function(e) {
 				$('#messageCreate').fadeOut(500, function() {
@@ -270,17 +277,23 @@ function nodeInfoClick(e) {
 
 function createMessageForm(name, ipv6) {
 	var html = '<div id="messageCreate">';
-	html += '<h6>Send Message to '+name+'</h6>';
-	html += '<input type="email" placeholder="Your Email" id="from" required>';
-	html += '<input type="text" id="address" value="'+ipv6+'" disabled class="hidden">';
-	html += '<br/><input type="text" placeholder="Subject" id="subject" required>';
-	html += '<br/><textarea placeholder="Body" id="message" required></textarea>';
-	html += '<br/><input type="text" placeholder="Captcha" id="captcha" required>';
-	html += '<img id="captcha_img">';
-	html += '<br/><br/><div class="row"><div class="col col-lg-6" style="text-align:center;">';
-	html += '<input type="reset" id="cancelmessage" class="btn btn-small" value="Cancel Message"></div>';
-	html += '<div class="col col-lg-6" style="text-align:center;">';
-	html += '<input type="submit" id="sendmessage" class="btn btn-small btn-primary" value="Send Message"></div></div>';
-	html += '</div>';
+		html += '<div id="one">';
+			html += '<h6>Send Message to '+name+'</h6>';
+			html += '<input type="email" placeholder="Your Email" id="from" required>';
+			html += '<input type="text" id="address" value="'+ipv6+'" disabled class="hidden">';
+			html += '<br/><input type="text" placeholder="Subject" id="subject" required>';
+			html += '<br/><textarea placeholder="Body" id="message" required></textarea>';
+			html += '<br/><br/><div class="row"><div class="col col-lg-6" style="text-align:center;">';
+			html += '<input type="reset" id="cancelmessage" class="btn btn-small" value="Cancel Message"></div>';
+			html += '<div class="col col-lg-6" style="text-align:center;">';
+			html += '<input type="submit" id="nextpagesubmit" class="btn btn-small btn-primary" value="Next Page" onclick="next(2); return false;"></div></div>';
+		html += '</div><div id="two">';
+			html += '<img id="captcha_img">';
+			html += '<br/><input type="text" placeholder="Captcha" id="captcha" required>';
+			html += '<br/><div class="row"><div class="col col-lg-6" style="text-align:center;">';
+			html += '<input type="reset" id="cancel" class="btn btn-small" value="Cancel Message"></div>';
+			html += '<div class="col col-lg-6" style="text-align:center;">';
+			html += '<input type="submit" id="sendmessage" class="btn btn-small btn-primary" value="Send Message"></div></div>';
+	html += '</div></div>';
 	return html;
 }
