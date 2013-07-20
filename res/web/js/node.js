@@ -244,7 +244,15 @@ function nodeInfoClick(e) {
 						},
 						error: function(data) {
 							// TODO
-							alert('error');
+							//alert('error');
+							var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+							error += JSON.parse(data.responseText).error+'</div>';
+							$('#wrap').append(error);
+							setTimeout(function() {
+								$('#alert').fadeOut(500, function() {
+									$('#alert').remove();
+								});
+							}, 3000);
 						}
 					});
 					$('#messageCreate').remove();
