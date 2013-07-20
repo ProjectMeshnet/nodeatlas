@@ -31,6 +31,8 @@ var map = new L.Map('map', {
 
 $(document).ready(function() {
 
+	addJSFiles();
+	
 	$.ajaxSetup({cache:true});
 	
 	$('#addme').tooltip();
@@ -38,7 +40,7 @@ $(document).ready(function() {
 	
 	// this handles loading the child nodes now
 	loadChildMaps();
-	
+		
 	$('#search').keyup(function() {
 		// TODO display these in some fashion
 		var searchResults = search(nodes, $(this).val());
@@ -56,19 +58,6 @@ function geoLocate() {
 	map.on('locationfound', function() {
 		map.off('locationfound');
 	});
-}
-
-function initRegistration() {
-	$('#map').css('cursor', 'crosshair');
-	map.addEventListener('click', onMapClick);
-	return false;
-}
-
-function cancelRegistration() {
-	newUser.clearLayers();
-	$('#map').css('cursor', '');
-	$('#inputform').remove();
-	map.removeEventListener('click', onMapClick);
 }
 
 function loadChildMaps() {
@@ -89,7 +78,8 @@ function addNodes() {
 		// TODO: Check for errors here (response.error)
 		L.geoJson(response.data, {
 			pointToLayer: createMarker
-		}).addTo(nodelayer);
+		}).addTo(nodelayer).on('click', nodeInfoClick);
+		//.on('mouseover', nodeInfoMouseOver).on('mouseout', nodeInfoMouseOut)
 
 		for (var i in response.data.features) {
 			nodes[i] = {
@@ -102,9 +92,10 @@ function addNodes() {
 }
 
 function createMarker(feature, latlng) {
-	var html =  '<h4>'+feature.properties.OwnerName+'</h4>';
-
-	html += '<a href="/node/'+feature.id+'" class="btn btn-small btn-primary">'+feature.id+'</a>';
+	var html = '<div class="node">';
+	html +=  '<h4>'+feature.properties.OwnerName+'&nbsp;<button class="btn btn-mini btn-info" id="sendMessage">Message</button>';
+	html += '&nbsp;<button class="btn btn-mini btn-success" disabled>Edit</button></h4>';
+	html += '<div class="text-center"><a href="/node/'+feature.id+'" class="btn btn-small btn-primary">'+feature.id+'</a></div><hr>';
 	
 if (feature.properties.SourceID) {
 	html += '<div class="property">Source</div>';
@@ -125,6 +116,8 @@ if (feature.properties.SourceID) {
 	if (feature.properties.PGP) {
 		html += '<div class="property">PGP</div><div class="more">'+(feature.properties.PGP).toUpperCase()+'</div>';
 	}
+	
+	html += '</div>';
 	
 	var p = L.popup();
 	p.setLatLng(latlng);
@@ -147,8 +140,7 @@ if (feature.properties.SourceID) {
 	
 	// If we have /node/xxx then center the map on it
 	if (nodexxx(feature.id)) {
-		map.setView(latlng, 8);
-		p.openOn(map);
+		map.setView(latlng, 8);		
 	}
 		
 	return m;
@@ -160,97 +152,6 @@ function nodexxx(node) {
 	return (path[2] == node);
 }
 
-function insertUser() {
-	var address = $("#address").val();
-	var name = $("#name").val();
-	var email = $("#email").val();
-	var details = $("#details").val();
-	
-	var pgp = $("#pgp").val();
-	var contact = $("#contact").val();
-	
-	// ^[a-zA-Z0-9]{8}{0,2}$
-	// TODO ^ USE REGEX TO CHECK PGP
-	
-	var latitude = $("#latitude").val();
-	var longitude = $("#longitude").val();
-	
-	var active = 0, residential = 0, internet = 0, wireless = 0, wired = 0;
-	
-	if ($("#active").is(':checked')) {
-		active = STATUS_ACTIVE;
-	}
-	
-	if ($("#residential").is(':checked')) {
-		residential = STATUS_PHYSICAL;
-	}
-	
-	if ($("#internet").is(':checked')) {
-		internet = STATUS_INTERNET;
-	}
-	
-	if ($("#wireless").is(':checked')) {
-		wireless = STATUS_INTERNET;
-	}
-	
-	if ($("#wired").is(':checked')) {
-		wired = STATUS_WIRED;
-	}
-	
-	var status = active|residential|internet|wireless|wired;
-
-	if (name.length == 0) {
-		alert("Name is required!");
-		return false;
-	}
-	
-	if (email.length == 0) {
-		alert("Email is required!");
-		return false;
-	}
-	
-	var dataObject = {
-		'name': name,
-		'email': email,
-		'address': address,
-		'latitude': latitude,
-		'longitude': longitude,
-		'status': status,
-		'contact': contact,
-		'details': details,
-		'pgp': pgp
-	};
-	
-	$.ajax({
-		type: "POST",
-		url: "/api/node",
-		data: dataObject,
-		success: function(response) {
-			if (response.error == null) {
-				cancelRegistration();
-				nodelayer.clearLayers();
-				addNodes();
-				if (response.data == 'node registered')
-					$('#insertSuccessModalNoVerify').modal('show');
-				else
-					$('#insertSuccessModal').modal('show');
-			} else {
-				if (response.error == 'addressInvalid') {
-					alert("Unable to create node; the address you have entered is invalid.");
-				} else {
-					alert("Unable to create node: " + response.error);
-				}
-			}
-		},
-		error: function(data) {
-			alert("Something went wrong! If you try again, it might work. If it doesn't, contact the admin from the About Page.");
-			$("#loading-mask").hide();
-			$("#loading").hide();
-		}
-	});
-	return false;
-}
-
 function onMapClick(e) {
 	var markerLocation = new L.LatLng(e.latlng.lat, e.latlng.lng);
 	var marker = new L.Marker(markerLocation, {icon: newUserIcon, draggable: true});
@@ -258,6 +159,8 @@ function onMapClick(e) {
 	newUser.addLayer(marker);
 	
 	$('#wrap').append(getForm(e));
+	
+	$('.node').remove();
 	
 	$('#inputform').animate({
 		top: '60px'
@@ -267,96 +170,13 @@ function onMapClick(e) {
 	$('#name').focus();
 }
 
-
-function getForm(e) {
-	var form =  '<form id="inputform" enctype="multipart/form-data">';
-	form += '<div class="tabby">';
-		form += '<div class="tab" id="one">';
-			form += '<label><strong>Name</strong> <span class="desc">Marker title</span></label>';
-			form += '<input type="text" class="input-medium" placeholder="Required" id="name" name="name" maxlength="255" />';
-			form += '<label><strong>Email</strong> <span class="desc">Never shared</span></label>';
-			form += '<input type="email" class="input-medium" placeholder="Required" id="email" name="email" />';
-			form += '<label><strong>Address</strong> <span class="desc">Network-specific IP</span></label>';
-			form += '<input type="text" class="input-medium" id="address" name="address" placeholder="Required" maxlength="39"/>';
-			form += '<label><strong>Details</strong></label>';
-			form += '<input type="text" class="input-medium" placeholder="Home, Work, ..." id="details" maxlength="255"/><br/>';
-			form += '<div class="row"><div class="col col-lg-6" style="text-align:center;">';
-			form += '<button class="btn btn-small" href="#" onclick="cancelRegistration(); return false;">Cancel</button></div>';
-			form += '<div class="col col-lg-6" style="text-align:center;">';
-			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(2); return false;">Next</button></div></div>';
-		form += '</div>';
-		form += '<div class="tab" id="two">';
-			form += '<p><strong>Status</strong><br><small>Check all that apply.</small></p>';
-			form += '<label>';
-					form += '<input type="checkbox" id="active"> ';
-					form += 'Active node';
-				form += '</label><br/>';
-				form += '<label>';
-					form += '<input type="checkbox" id="residential"> ';
-					form += 'Residential node';
-				form += '</label><br/><br/>';
-			form += '<div class="row"><div class="col col-lg-6" style="text-align:center;">';
-			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(1); return false;">Back</button></div>';
-			form += '<div class="col col-lg-6" style="text-align:center;">';
-			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(3); return false;">Next</button></div></div>';
-		form += '</div>';
-		form += '<div class="tab" id="three">';
-			form += '<p><strong>Status</strong><br/><small>Check all that apply.</small></p>';
-				form += '<label>';
-					form += '<input type="checkbox" id="internet"> ';
-					form += 'Internet access';
-				form += '</label><br/>';
-				form += '<label>';
-					form += '<input type="checkbox" id="wireless"> ';
-					form += 'Wireless access';
-				form += '</label><br/>';
-				form += '<label>';
-					form += '<input type="checkbox" id="wired"> ';
-					form += 'Wired (eth) access';
-				form += '</label><br/><br/>';
-			form += '<div class="row">';
-			form += '<div class="col col-lg-6" style="text-align:center;">';
-			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(2); return false;">Back</button></div>';
-			form += '<div class="col col-lg-6" style="text-align:center;">';
-			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(4); return false;">Next</button></div></div>';
-		form += '</div>';
-		form += '<div class="tab" id="four">';
-			form += '<p><strong>PGP</strong><br/><small>8 digit or 16 digit.</small></p>';
-			form += '<input type="text" class="input-medium" placeholder="CAFEBABE" id="pgp" name="pgp" maxlength="16" />';
-			form += '<label><strong>Contact</strong></label>';
-			form += '<textarea class="contact" id="contact" placeholder="XMPP username, Reddit username, ..." maxlength="255"></textarea><br/>';
-			form += '<input style="display: none;" type="text" id="latitude" name="latitude" value="'+e.latlng.lat.toFixed(6)+'"/>';
-			form += '<input style="display: none;" type="text" id="longitude" name="longitude" value="'+e.latlng.lng.toFixed(6)+'"/>';
-			form += '<div class="row"><div class="col col-lg-6" style="text-align:center;">';
-			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(3); return false;">Back</button></div>';
-			form += '<div class="col col-lg-6" style="text-align:center;">';
-			form += '<button class="btn btn-small btn-info" href="#" onclick="insertUser(); return false;">Submit</button></div></div>';
-		form += '</div>';
-	form += '</div>';
-	form += '</form>';
-	return form;
-}
-
-function next(which) {
-	if (which == 1) {
-		$('#one').css('display', 'block');
-		$('#two').css('display', 'none');
-		$('#three').css('display', 'none');
-		$('#four').css('display', 'none');
-	} else if (which == 2) {
-		$('#one').css('display', 'none');
-		$('#two').css('display', 'block');
-		$('#three').css('display', 'none');
-		$('#four').css('display', 'none');
-	} else if (which == 3) {
-		$('#one').css('display', 'none');
-		$('#two').css('display', 'none');
-		$('#three').css('display', 'block');
-		$('#four').css('display', 'none');
-	} else if (which == 4) {
-		$('#one').css('display', 'none');
-		$('#two').css('display', 'none');
-		$('#three').css('display', 'none');
-		$('#four').css('display', 'block');
-	}
+function addJSFiles() {
+	var html = '<script type="text/javascript" src="/js/distance.js"></script>';
+	html += '<script type="text/javascript" src="/js/icon.js"></script>';
+	html += '<script type="text/javascript" src="/js/status.js"></script>';
+	html += '<script type="text/javascript" src="/js/common.js"></script>';
+	html += '<script type="text/javascript" src="/js/search.js"></script>';
+	html += '<script type="text/javascript" src="/js/captcha.js"></script>';
+	html += '<script type="text/javascript" src="/js/node.js"></script>';
+	$('head').append(html);
 }
