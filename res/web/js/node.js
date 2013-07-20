@@ -239,12 +239,16 @@ function nodeInfoClick(e) {
 						url: "/api/message",
 						data: msg,
 						success: function(response) {
-							// TODO
-							alert('success');
+							var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
+							success += 'message sent';
+							$('#wrap').append(success);
+							setTimeout(function() {
+								$('#alert').fadeOut(500, function() {
+									$('#alert').remove();
+								});
+							}, 1000);
 						},
 						error: function(data) {
-							// TODO
-							//alert('error');
 							var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
 							error += JSON.parse(data.responseText).error+'</div>';
 							$('#wrap').append(error);
