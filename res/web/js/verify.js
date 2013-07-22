@@ -1,19 +1,31 @@
-function verifyNode(key) {
+function verifyNode(id) {
 	// verifyNode submits POST /api/verify with the ID being the last
 	// element of the current URL, (e.g. /verify/012345).
-
 	// Once the ID has been retrieved, POST it to /api/verify.
 	$.ajax({
-		type: "GET",
+		type: "POST",
 		url: "/api/verify",
-		data: { "id": key },
+		data: { "id": id },	
 		success: function() {
-			//$('#status').text("Successful").hide().fadeIn(1000);
-			alert('success');
+			var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
+			success += 'node verified';
+			$('#wrap').append(success);
+			setTimeout(function() {
+				$('#alert').fadeOut(500, function() {
+					$('#alert').remove();
+					window.location.replace('/');
+				});
+			}, 1000);
 		},
-		error: function(response) {
-			//$('#status').text("Unsuccessful").hide().fadeIn(1000);
-			alert('error');
+		error: function(data) {
+			var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+			error += JSON.parse(data.responseText).error+'</div>';
+			$('#wrap').append(error);
+			setTimeout(function() {
+				$('#alert').fadeOut(500, function() {
+					$('#alert').remove();
+				});
+			}, 3000);
 		}
 	});
 }
