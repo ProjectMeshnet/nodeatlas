@@ -69,6 +69,7 @@ func StartServer() (err error) {
 
 	http.HandleFunc("/", HandleStatic)
 	http.HandleFunc("/node/", HandleMap)
+	http.HandleFunc("/verify/", HandleMap)
 	http.Handle("/captcha/", captchaServer)
 
 	// Start the HTTP server and return any errors if it crashes.
