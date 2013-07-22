@@ -1,9 +1,9 @@
 function verifyNode(id) {
-	// verifyNode submits POST /api/verify with the ID being the last
-	// element of the current URL, (e.g. /verify/012345).
-	// Once the ID has been retrieved, POST it to /api/verify.
+	// verifyNode submits GET /api/verify with the ID being the last
+	// element of the current URL, (e.g. /verify/012345). Once the ID
+	// has been retrieved, GET it to /api/verify.
 	$.ajax({
-		type: "POST",
+		type: "GET",
 		url: "/api/verify",
 		data: { "id": id },	
 		success: function() {
