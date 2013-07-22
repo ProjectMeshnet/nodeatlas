@@ -47,6 +47,12 @@ $(document).ready(function() {
 	});
 	
 	map.addControl(new L.Control.Scale());
+	
+	// If you're at /verify/xxx
+	var key = verifying();
+	if (key != '') {
+		verifyNode(key);
+	}
 });
 
 $(window).resize(function () {
@@ -147,9 +153,15 @@ if (feature.properties.SourceID) {
 }
 
 function nodexxx(node) {
-	var path = window.location.pathname.split( '/' );
+	var path = window.location.pathname.split('/');
 	if (path[1] != "node") return false;
 	return (path[2] == node);
+}
+
+function verifying() {
+	var path = window.location.pathname.split('/');
+	if (path[1] != "verify") return '';
+	else return path[2];
 }
 
 function onMapClick(e) {
@@ -178,5 +190,6 @@ function addJSFiles() {
 	html += '<script type="text/javascript" src="/js/search.js"></script>';
 	html += '<script type="text/javascript" src="/js/captcha.js"></script>';
 	html += '<script type="text/javascript" src="/js/node.js"></script>';
+	html += '<script type="text/javascript" src="/js/verify.js"></script>';
 	$('head').append(html);
 }
