@@ -11,6 +11,10 @@ import (
 	"time"
 )
 
+const (
+	APIDocs = "https://github.com/ProjectMeshnet/nodeatlas/blob/master/API.md"
+)
+
 // Api is the JAS-required type which is passed to all API-related
 // functions.
 type Api struct{}
@@ -36,6 +40,14 @@ func RegisterAPI(prefix string) {
 
 	// Handle "<prefix>/api/". Note that it must begin and end with /.
 	http.Handle(path.Join("/", prefix, "api")+"/", router)
+}
+
+// Get responds on the root API handler ("/api/") with 303 SeeOther
+// and a link to the API documentation on the project homepage.
+func (*Api) Get(ctx *jas.Context) {
+	ctx.Status = http.StatusSeeOther
+	ctx.ResponseHeader.Set("Location", APIDocs)
+	ctx.Data = http.StatusText(http.StatusSeeOther) + ": " + APIDocs
 }
 
 // GetStatus responds with a status summary of the map, including the
