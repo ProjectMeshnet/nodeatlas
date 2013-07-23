@@ -195,11 +195,13 @@ function next(which) {
 	}
 }
 
-function nodeInfoClick(e) {
+function nodeInfoClick(e, on) {
+	var html;
 	$('.node').remove();
 	$('#messageCreate').remove();
-	e.layer.closePopup();
-	var html = e.layer._popup._content;
+	if (!on) e.layer.closePopup();
+	if (on) html = e;
+	else html = e.layer._popup._content;
 	$('#wrap').append(html);
 	$('.node').hide(); 
 	$('.node').fadeIn(500);

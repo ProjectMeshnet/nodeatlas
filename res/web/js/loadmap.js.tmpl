@@ -85,7 +85,6 @@ function addNodes() {
 		L.geoJson(response.data, {
 			pointToLayer: createMarker
 		}).addTo(nodelayer).on('click', nodeInfoClick);
-		//.on('mouseover', nodeInfoMouseOver).on('mouseout', nodeInfoMouseOut)
 
 		for (var i in response.data.features) {
 			nodes[i] = {
@@ -146,7 +145,8 @@ if (feature.properties.SourceID) {
 	
 	// If we have /node/xxx then center the map on it
 	if (nodexxx(feature.id)) {
-		map.setView(latlng, 8);		
+		map.setView(latlng, 8);
+		nodeInfoClick(html, true);
 	}
 		
 	return m;
