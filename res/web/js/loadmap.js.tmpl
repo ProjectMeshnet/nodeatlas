@@ -98,7 +98,12 @@ function addNodes() {
 
 function createMarker(feature, latlng) {
 	var html = '<div class="node">';
-	html +=  '<h4>'+feature.properties.OwnerName+'&nbsp;<button class="btn btn-mini btn-info" id="sendMessage">Message</button>';
+	html +=  '<h4>'+feature.properties.OwnerName+'&nbsp;';
+	if (feature.properties.SourceID) {
+		html += '<a href="'+cachedMaps[feature.properties.SourceID].hostname+'/node/'+feature.id+'" class="btn btn-mini btn-info" id="sendMessage">Message</a>';
+	} else {
+		html += '<button class="btn btn-mini btn-info" id="sendMessage">Message</button>';
+	}
 	html += '&nbsp;<button class="btn btn-mini btn-success" disabled>Edit</button></h4>';
 	html += '<div class="text-center"><a href="/node/'+feature.id+'" class="btn btn-small btn-primary">'+feature.id+'</a></div><hr>';
 	
