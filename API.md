@@ -18,7 +18,7 @@ they're adding. This will allow them to verify their remote node from
 its own address, which is required on certain instances.
 
 This document describes API behavior as of version
-`v0.5.3-7-gfdf6c9f`, and possibly later. Major changes will likely not
+`v0.5.5-2-g3bb5af1`, and possibly later. Major changes will likely not
 be left undocumented, but there may be minor discrepancies.
 
 
@@ -44,6 +44,20 @@ hand. The API expects only HTTP GET and POST requests.
 API endpoints are paths such as `/api/status` which return data of the
 aforementioned form. All API outputs given below are piped through
 `python -mjson.tool` for readability.
+
+### / ###
+
+`GET /api/` redirects (`303 See Other`) to this document as hosted on
+the GitHub home page. It attaches the HTTP header `Location` in order
+to do so, but also gives the URL in the `data` field.
+
+```json
+// curl -s "http://localhost:8077/api/"
+{
+    "data": "See Other: https://github.com/ProjectMeshnet/nodeatlas/blob/master/API.md", 
+    "error": null
+}
+```
 
 ### all ###
 
