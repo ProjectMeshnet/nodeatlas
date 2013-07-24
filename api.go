@@ -421,7 +421,7 @@ func (*Api) PostMessage(ctx *jas.Context) {
 
 	// Find the appropriate variables. If any of these are not
 	// found, JAS will return a request error.
-	from := ctx.RequireString("from")
+	replyto := ctx.RequireString("from")
 	subject := ctx.RequireString("subject")
 	message := ctx.RequireString("message")
 
@@ -447,10 +447,11 @@ func (*Api) PostMessage(ctx *jas.Context) {
 	// Create and send an email. Log any errors.
 	e := &Email{
 		To:      node.OwnerEmail,
-		From:    from,
+		From:    Conf.SMTP.EmailAddress,
 		Subject: subject,
 	}
-	e.Data = make(map[string]interface{}, 3)
+	e.Data = make(map[string]interface{}, 4)
+	e.Data["ReplyTo"] = replyto
 	e.Data["Message"] = message
 	e.Data["Link"] = Conf.Web.Hostname + Conf.Web.Prefix
 	e.Data["AdminContact"] = Conf.AdminContact
@@ -459,14 +460,14 @@ func (*Api) PostMessage(ctx *jas.Context) {
 	if err != nil {
 		ctx.Error = jas.NewInternalError(err)
 		l.Errf("Error messaging %q from %q: %s",
-			node.OwnerEmail, from, err)
+			node.OwnerEmail, replyto, err)
 		return
 	}
 
 	// Even if there is no error, log the to and from info, in case it
 	// is abusive or spam.
 	l.Noticef("IP %q sent a message to %q from %q",
-		ctx.Request.RemoteAddr, node.OwnerEmail, from)
+		ctx.Request.RemoteAddr, node.OwnerEmail, replyto)
 }
 
 func (*Api) GetChildMaps(ctx *jas.Context) {
