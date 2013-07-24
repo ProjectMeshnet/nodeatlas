@@ -75,7 +75,8 @@ textarea.contact {
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 	position: absolute;
-	top: -1000px;
+	top: 75px;
+	display: none;
 	right: 25px;
 	background: rgba(255, 255, 255, .8);
 	padding: 25px;

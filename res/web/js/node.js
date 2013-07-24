@@ -7,7 +7,7 @@ function initRegistration() {
 function cancelRegistration() {
 	newUser.clearLayers();
 	$('#map').css('cursor', '');
-	$('#inputform').remove();
+	$('#inputform').fadeOut(500);
 	map.removeEventListener('click', onMapClick);
 }
 
