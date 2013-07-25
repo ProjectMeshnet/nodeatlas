@@ -32,7 +32,7 @@ pgp BINARY(8),
 lat FLOAT NOT NULL,
 lon FLOAT NOT NULL,
 status INT NOT NULL,
-updated DATETIME DEFAULT CURRENT_TIMESTAMP);`)
+updated INT NOT NULL);`)
 	if err != nil {
 		return
 	}
@@ -44,8 +44,7 @@ lat FLOAT NOT NULL,
 lon FLOAT NOT NULL,
 status INT NOT NULL,
 source INT NOT NULL,
-retrieved DATETIME DEFAULT CURRENT_TIMESTAMP,
-expiration DATETIME);`)
+retrieved INT NOT NULL);`)
 	if err != nil {
 		return
 	}
@@ -61,7 +60,7 @@ lat FLOAT NOT NULL,
 lon FLOAT NOT NULL,
 status INT NOT NULL,
 verifysent BOOL NOT NULL,
-expiration DATETIME);`)
+expiration INT NOT NULL);`)
 	if err != nil {
 		return
 	}
@@ -77,7 +76,7 @@ name VARCHAR(255) NOT NULL);`)
 	_, err = db.Query(`CREATE TABLE IF NOT EXISTS captcha (
 id BINARY(32) NOT NULL,
 solution BINARY(6) NOT NULL,
-expiration DATETIME);`)
+expiration INT NOT NULL);`)
 	if err != nil {
 		return
 	}
@@ -156,6 +155,56 @@ FROM nodes_cached;`)
 	return
 }
 
+// DumpLocal returns a slice containing all of the local nodes in the
+// database.
+func (db DB) DumpLocal() (nodes []*Node, err error) {
+	// Begin by getting the required length of the array. If we get
+	// -1, then there has been an error.
+	if n := db.LenNodes(true); n != -1 {
+		// If successful, initialize the array with the length.
+		nodes = make([]*Node, n)
+	} else {
+		// Otherwise, error out.
+		l.Errf("Could not count number of nodes in database\n")
+		return nil, errors.New("Could not count number of nodes")
+	}
+
+	// Perform the query.
+	rows, err := db.Query(`
+SELECT address,owner,contact,details,pgp,lat,lon,status
+FROM nodes;`)
+	if err != nil {
+		l.Errf("Error dumping database: %s", err)
+		return
+	}
+	defer rows.Close()
+
+	// Now, loop through, initialize the nodes, and fill them out
+	// using only the selected columns.
+	for i := 0; rows.Next(); i++ {
+		// Initialize the node and put it in the table.
+		node := new(Node)
+		nodes[i] = node
+
+		// Create temporary values to simplify scanning.
+		contact := sql.NullString{}
+		details := sql.NullString{}
+
+		// Scan all of the values into it.
+		err = rows.Scan(&node.Addr, &node.OwnerName,
+			&contact, &details, &node.PGP,
+			&node.Latitude, &node.Longitude, &node.Status)
+		if err != nil {
+			l.Errf("Error dumping database: %s", err)
+			return
+		}
+
+		node.Contact = contact.String
+		node.Details = details.String
+	}
+	return
+}
+
 // DumpChanges returns all nodes, both local and cached, which have
 // been updated or retrieved more recently than the given time.
 func (db DB) DumpChanges(time time.Time) (nodes []*Node, err error) {
@@ -196,22 +245,23 @@ FROM nodes_cached WHERE retrieved >= ?;`, time, time)
 func (db DB) AddNode(node *Node) (err error) {
 	// Inserts a new node into the database
 	stmt, err := db.Prepare(`INSERT INTO nodes
-(address, owner, email, contact, details, pgp, lat, lon, status)
-VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+(address, owner, email, contact, details, pgp, lat, lon, status, updated)
+VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		return
 	}
 	_, err = stmt.Exec([]byte(node.Addr), node.OwnerName, node.OwnerEmail,
 		node.Contact, node.Details, []byte(node.PGP),
-		node.Latitude, node.Longitude, node.Status)
+		node.Latitude, node.Longitude, node.Status,
+		time.Now())
 	stmt.Close()
 	return
 }
 
 func (db DB) AddNodes(nodes []*Node) (err error) {
 	stmt, err := db.Prepare(`INSERT INTO nodes
-(address, owner, email, contact, details, pgp, lat, lon, status)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`)
+(address, owner, email, contact, details, pgp, lat, lon, status, updated)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`)
 	if err != nil {
 		return
 	}
@@ -220,7 +270,8 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`)
 		_, err = stmt.Exec([]byte(node.Addr),
 			node.OwnerName, node.OwnerEmail,
 			node.Contact, node.Details, []byte(node.PGP),
-			node.Latitude, node.Longitude, node.Status)
+			node.Latitude, node.Longitude, node.Status,
+			time.Now())
 		if err != nil {
 			return
 		}

@@ -39,15 +39,21 @@ func UpdateMapCache() {
 	}
 }
 
-func (db DB) CacheNode(node *Node, expiry int) (err error) {
+func (db DB) CacheNode(node *Node) (err error) {
 	stmt, err := db.Prepare(`INSERT INTO nodes_cached
-(address, owner, details, lat, lon, status, expiration)
-VALUES(?, ?, ?, ?, ?, ?, ?)`)
+(address, owner, details, lat, lon, status, expiration, updated)
+VALUES(?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		return
 	}
+
+	if node.RetrieveTime == 0 {
+		node.RetrieveTime = time.Now().Unix()
+	}
+
 	_, err = stmt.Exec(node.Addr, node.OwnerName, node.Details,
-		node.Latitude, node.Longitude, node.SourceID, node.Status)
+		node.Latitude, node.Longitude, node.SourceID, node.Status,
+		node.RetrieveTime)
 	stmt.Close()
 	return
 }
@@ -61,14 +67,14 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
 	}
 
 	for _, node := range nodes {
-		retrieved := node.RetrieveTime
-		if retrieved == 0 {
-			retrieved = time.Now().Unix()
+		if node.RetrieveTime == 0 {
+			node.RetrieveTime = time.Now().Unix()
 		}
+
 		_, err = stmt.Exec([]byte(node.Addr), node.OwnerName,
 			node.Details,
 			node.Latitude, node.Longitude,
-			node.Status, node.SourceID, retrieved)
+			node.Status, node.SourceID, node.RetrieveTime)
 		if err != nil {
 			return
 		}
