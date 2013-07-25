@@ -175,7 +175,7 @@ function onMapClick(e) {
 	newUser.clearLayers();
 	newUser.addLayer(marker);
 	
-	$('#wrap').append(getForm(e));
+	$('#wrap').append(getForm(e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6)));
 	
 	$('.node').remove();
 	

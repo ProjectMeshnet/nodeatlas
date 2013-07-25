@@ -102,7 +102,7 @@ function insertUser() {
 	return false;
 }
 
-function getForm(e) {
+function getForm(lat, lng) {
 	var form =  '<form id="inputform" enctype="multipart/form-data">';
 	form += '<div class="tabby">';
 		form += '<div class="tab" id="one">';
@@ -159,8 +159,8 @@ function getForm(e) {
 			form += '<input type="text" class="input-medium" placeholder="CAFEBABE" id="pgp" name="pgp" maxlength="16" />';
 			form += '<label><strong>Contact</strong></label>';
 			form += '<textarea class="contact" id="contact" placeholder="XMPP username, Reddit username, ..." maxlength="255"></textarea><br/>';
-			form += '<input style="display: none;" type="text" id="latitude" name="latitude" value="'+e.latlng.lat.toFixed(6)+'"/>';
-			form += '<input style="display: none;" type="text" id="longitude" name="longitude" value="'+e.latlng.lng.toFixed(6)+'"/>';
+			form += '<input style="display: none;" type="text" id="latitude" name="latitude" value="'+lat+'"/>';
+			form += '<input style="display: none;" type="text" id="longitude" name="longitude" value="'+lng+'"/>';
 			form += '<div class="row"><div class="col col-lg-6" style="text-align:center;">';
 			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(3); return false;">Back</button></div>';
 			form += '<div class="col col-lg-6" style="text-align:center;">';
@@ -206,8 +206,15 @@ function nodeInfoClick(e, on) {
 	$('.node').hide(); 
 	$('.node').fadeIn(500);
 	// EDIT NODE
-	$('#edit').bind('click', function(e) {
-		alert('edit that bitch!');
+	$('#edit').bind('click', function(x) {
+		$('.node').fadeOut(500, function() {
+			$('.node').remove();
+			alert(getForm(''));
+			$('#wrap').append(x);
+			
+			$('#inputform').fadeIn(500);
+			$('#name').focus();
+		});
 	});
 	// SEND MESSAGE
 	$('#sendMessage').bind('click', function(e) {
