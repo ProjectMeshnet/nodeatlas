@@ -225,6 +225,10 @@ func (*Api) PostNode(ctx *jas.Context) {
 			l.Err(err)
 			return
 		}
+
+		// Add the new node to the RSS feed.
+		AddNodeToRSS(node, time.Now())
+
 		ctx.Data = "node registered"
 		l.Infof("Node %q registered\n", ip)
 	}

@@ -72,7 +72,10 @@ WHERE id = ?;`, id)
 		l.Errf("Could not clear verified node %d: %s", id, err)
 	}
 
-	// Add the node to the regular database.
+	// Add it to the RSS feed. The feed will be refreshed at the next
+	// heartbeat.
+	AddNodeToRSS(node, time.Now())
+
 	return node.Addr, nil, nil
 }
 
