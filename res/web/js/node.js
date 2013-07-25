@@ -205,6 +205,11 @@ function nodeInfoClick(e, on) {
 	$('#wrap').append(html);
 	$('.node').hide(); 
 	$('.node').fadeIn(500);
+	// EDIT NODE
+	$('#edit').bind('click', function(e) {
+		alert('edit that bitch!');
+	});
+	// SEND MESSAGE
 	$('#sendMessage').bind('click', function(e) {
 		$('.node').fadeOut(500, function() {
 			$('.node').remove();

@@ -104,7 +104,7 @@ function createMarker(feature, latlng) {
 	} else {
 		html += '<button class="btn btn-mini btn-info" id="sendMessage">Message</button>';
 	}
-	html += '&nbsp;<button class="btn btn-mini btn-success" disabled>Edit</button></h4>';
+	html += '&nbsp;<button class="btn btn-mini btn-success" id="edit">Edit</button></h4>';
 	html += '<div class="text-center"><a href="/node/'+feature.id+'" class="btn btn-small btn-primary">'+feature.id+'</a></div><hr>';
 	
 if (feature.properties.SourceID) {
