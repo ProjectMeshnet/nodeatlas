@@ -216,6 +216,11 @@ function nodeInfoClick(e, on) {
 			// Now we want to set
 			$.getJSON('/api/node?address='+ipv6, function(response) {
 				$('#name').val(response.data.OwnerName);
+				$('#email').prop('disabled', 'disabled');
+				$('#email').val('Can\'t change.');
+				$('#').val();
+				$('#').val();
+				$('#').val();
 			});
 			
 			
