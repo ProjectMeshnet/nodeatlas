@@ -1,13 +1,22 @@
 package main
 
 import (
+	"encoding/xml"
 	"errors"
+	"github.com/baliw/moverss"
 	"github.com/dchest/captcha"
 	"html/template"
 	"net"
 	"net/http"
+	"os"
 	"path"
 	"strings"
+	"time"
+)
+
+var (
+	NodeRSS     *moverss.Channel
+	NodeXMLName xml.Name
 )
 
 var (
@@ -158,4 +167,62 @@ func VerifyCAPTCHA(req *http.Request) error {
 	// If we get to this point, then it was successfully validated and
 	// we can return nil.
 	return nil
+}
+
+// GenerateNodeRSS creates an RSS feed of nodes from the database and
+// returns any errors.
+func GenerateNodeRSS() (err error) {
+	NodeRSS = moverss.ChannelFactory(
+		Conf.Name+" NodeAtlas",
+		Conf.Web.Hostname,
+		"New local node feed")
+
+	NodeXMLName = xml.Name{
+		Space: Conf.Web.Hostname,
+		Local: "nodes",
+	}
+
+	// We need to use some custom SQL here in order to retrieve the
+	// timestamps.
+	rows, err := Db.Query(`
+SELECT updated,address,owner
+FROM nodes;`)
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		// Initialize the variables.
+		var updated int64
+		node := new(Node)
+
+		// Scan all of the values into them.
+		err = rows.Scan(&updated, &node.Addr, &node.OwnerName)
+		if err != nil {
+			return
+		}
+
+		// Add the Node to the RSS feed.
+		AddNodeToRSS(node, time.Unix(updated, 0))
+	}
+	return
+}
+
+// AddNodeToRSS adds a Node to the existing NodeRSS channel with the
+// given time.
+func AddNodeToRSS(n *Node, t time.Time) {
+	in := n.Item()
+	in.SetPubDate(t)
+	NodeRSS.AddItem(in)
+}
+
+func writeNodeRSS() {
+	f, err := os.Create(StaticDir + "/web/rss")
+	if err != nil {
+		l.Errf("Error writing NodeRSS feed: %s", err)
+	}
+
+	f.Write(NodeRSS.Publish())
+	f.Close()
 }
