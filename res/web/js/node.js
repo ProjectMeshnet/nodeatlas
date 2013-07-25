@@ -219,6 +219,7 @@ function nodeInfoClick(e, on) {
 				$('#email').prop('disabled', 'disabled');
 				$('#email').val('Can\'t change');
 				$('#address').val(response.data.Addr);
+				$('#address').prop('disabled', 'disabled');
 				$('#details').val(response.data.Details);
 				$('#pgp').val(response.data.PGP);
 				$('#contact').val(response.data.Contact);
