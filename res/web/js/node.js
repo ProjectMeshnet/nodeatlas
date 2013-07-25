@@ -205,14 +205,19 @@ function nodeInfoClick(e, on) {
 	$('#wrap').append(html);
 	$('.node').hide(); 
 	$('.node').fadeIn(500);
+	var name = html.substring(html.indexOf('<h4>')+4, html.indexOf('&nbsp;'));
+	ipv6 = html.substring(html.indexOf('a href')+14);
+	ipv6 = ipv6.substring(0, ipv6.indexOf('"'));
 	// EDIT NODE
-	$('#edit').bind('click', function(x) {
+	$('#edit').bind('click', function() {
 		$('.node').fadeOut(500, function() {
 			$('.node').remove();
-			$('#wrap').append(getForm());
-			// Before we do anything else, we need to remove some elements
-			// and then add the current values into the empty values.
-			alert(e.layer.getLatLng().lat);
+			$('#wrap').append(getForm(e.layer.getLatLng().lat, e.layer.getLatLng().lng));
+			// Now we want to set
+			$.getJSON('/api/node?address='+ipv6, function(response) {
+				$('#name').val(response.data.OwnerName);
+			});
+			
 			
 			$('#inputform').fadeIn(500);
 			$('#name').focus();
@@ -222,9 +227,6 @@ function nodeInfoClick(e, on) {
 	$('#sendMessage').bind('click', function(e) {
 		$('.node').fadeOut(500, function() {
 			$('.node').remove();
-			var name = html.substring(html.indexOf('<h4>')+4, html.indexOf('&nbsp;'));
-			ipv6 = html.substring(html.indexOf('a href')+14);
-			ipv6 = ipv6.substring(0, ipv6.indexOf('"'));
 			var form = createMessageForm(name, ipv6);
 			$('#wrap').append(form);
 			$('#cancelmessage').bind('click', function(e) {
