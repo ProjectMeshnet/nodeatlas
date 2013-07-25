@@ -217,10 +217,11 @@ function nodeInfoClick(e, on) {
 			$.getJSON('/api/node?address='+ipv6, function(response) {
 				$('#name').val(response.data.OwnerName);
 				$('#email').prop('disabled', 'disabled');
-				$('#email').val('Can\'t change.');
-				$('#').val();
-				$('#').val();
-				$('#').val();
+				$('#email').val('Can\'t change');
+				$('#address').val(response.data.Addr);
+				$('#details').val(response.data.Details);
+				$('#pgp').val(response.data.PGP);
+				$('#contact').val(response.data.Contact);
 			});
 			
 			
