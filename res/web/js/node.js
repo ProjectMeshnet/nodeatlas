@@ -209,8 +209,10 @@ function nodeInfoClick(e, on) {
 	$('#edit').bind('click', function(x) {
 		$('.node').fadeOut(500, function() {
 			$('.node').remove();
-			alert(getForm(''));
-			$('#wrap').append(x);
+			$('#wrap').append(getForm());
+			// Before we do anything else, we need to remove some elements
+			// and then add the current values into the empty values.
+			alert(e.layer.getLatLng().lat);
 			
 			$('#inputform').fadeIn(500);
 			$('#name').focus();
