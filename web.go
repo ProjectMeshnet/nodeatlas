@@ -218,7 +218,7 @@ func AddNodeToRSS(n *Node, t time.Time) {
 }
 
 func writeNodeRSS() {
-	f, err := os.Create(StaticDir + "/web/rss")
+	f, err := os.Create(StaticDir + "/web/index.rss")
 	if err != nil {
 		l.Errf("Error writing NodeRSS feed: %s", err)
 	}
