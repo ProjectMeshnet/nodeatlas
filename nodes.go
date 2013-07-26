@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"github.com/baliw/moverss"
 	"github.com/kpawlik/geojson"
 	"net"
 )
@@ -119,6 +120,16 @@ func (n *Node) Feature() (f *geojson.Feature) {
 			geojson.CoordType(n.Latitude)}),
 		properties,
 		n.Addr)
+}
+
+// Item returns the Node as a *moverss.Item. It does not set the
+// timestamp.
+func (n *Node) Item() (i *moverss.Item) {
+	return &moverss.Item{
+		Link:    Conf.Web.Hostname + "/node/" + n.Addr.String(),
+		Title:   n.OwnerName,
+		XMLName: NodeXMLName,
+	}
 }
 
 // IP is a wrapper for net.IP which implements the json.Marshaler and
