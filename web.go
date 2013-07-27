@@ -204,20 +204,28 @@ FROM nodes;`)
 		}
 
 		// Add the Node to the RSS feed.
-		AddNodeToRSS(node, time.Unix(updated, 0))
+		in := node.Item()
+		in.SetPubDate(time.Unix(updated, 0))
+		NodeRSS.AddItem(in)
 	}
+
+	// Write the feed to the file, and log any errors.
+	WriteNodeRSS()
+
 	return
 }
 
 // AddNodeToRSS adds a Node to the existing NodeRSS channel with the
-// given time.
+// given time and invokes WriteNodeRSS to write it to a file and log
+// any errors.
 func AddNodeToRSS(n *Node, t time.Time) {
 	in := n.Item()
 	in.SetPubDate(t)
 	NodeRSS.AddItem(in)
+	WriteNodeRSS()
 }
 
-func writeNodeRSS() {
+func WriteNodeRSS() {
 	f, err := os.Create(StaticDir + "/web/index.rss")
 	if err != nil {
 		l.Errf("Error writing NodeRSS feed: %s", err)

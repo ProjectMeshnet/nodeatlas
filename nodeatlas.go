@@ -193,8 +193,6 @@ func main() {
 	// online. If there is an error, log it, but continue starting up.
 	if err = GenerateNodeRSS(); err != nil {
 		l.Errf("Error generating Node RSS feed: %s", err)
-	} else {
-		writeNodeRSS()
 	}
 
 	// Start the Heartbeat.
@@ -256,7 +254,6 @@ func doHeartbeatTasks() {
 	UpdateMapCache()
 	ClearExpiredCAPTCHA()
 	ResendVerificationEmails()
-	writeNodeRSS()
 }
 
 // ListenSignal uses os/signal to wait for OS signals, such as SIGHUP
