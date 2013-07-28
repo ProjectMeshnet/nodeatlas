@@ -2,13 +2,17 @@ From: {{.From}}
 Subject: {{.Subject}}
 Date: {{.Header.Date}}
 To: {{.To}}
-MIME-version: 1.0;\nContent-Type: text/plain; charset=\"UTF-8\";
+MIME-version: 1.0
+Content-Type: multipart/alternative; boundary="========{{.Data.Boundary}}=="
+
+--========{{.Data.Boundary}}==
+Content-Type: text/plain; charset=us-ascii
 
 To verify your node, visit the below link.{{if .Data.FromNode}} Bear
 in mind that you must visit it from the address you registered on the
 map.{{end}}
 
-{{.Data.Link}}/verify/{{.Data.VerificationID}}
+    {{.Data.Link}}/verify/{{.Data.VerificationID}}
 {{if .Data.FromNode}}
 If you can't access the link from the node you placed, such as if it's
 a virtual private server, then you can access it via the command line.
@@ -25,3 +29,31 @@ mistake, then please ignore this email. We're sorry.
 --
 Automated email by NodeAtlas
 https://github.com/ProjectMeshnet/nodeatlas
+
+--========{{.Data.Boundary}}==
+Content-Type: text/html; charset=UTF-8
+
+<p>To verify your node, visit the below link.{{if .Data.FromNode}} Bear
+in mind that you must visit it from the address you registered on the
+map.{{end}}</p>
+
+    <p><a href="{{.Data.Link}}/verify/{{.Data.VerificationID}}">{{.Data.Link}}/verify/{{.Data.VerificationID}}</a></p>
+
+{{if .Data.FromNode}}
+<p>If you can't access the link from the node you placed, such as if it's
+a virtual private server, then you can access it via the command line.</p>
+
+    <code>curl {{.Data.Flags}} {{.Data.Link}}/api/verify?id={{.Data.VerificationID}}</code>
+
+<p>If you don't have cURL, try the following.</p>
+
+    <code>wget {{.Data.Flags}} -qO- {{.Data.Link}}/api/verify?id={{.Data.VerificationID}}</code>
+{{end}}
+<p>If you didn't place this node and your email address was entered by
+mistake, then please ignore this email. We're sorry.</p>
+
+--<br/>
+Automated email by NodeAtlas<br/>
+<a href="https://github.com/ProjectMeshnet/nodeatlas">NodeAtlas GitHub</a><br/>
+
+--========{{.Data.Boundary}}==--

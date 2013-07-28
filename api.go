@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/coocood/jas"
 	"github.com/dchest/captcha"
+	"html/template"
 	"math/rand"
 	"net"
 	"net/http"
@@ -454,11 +455,16 @@ func (*Api) PostMessage(ctx *jas.Context) {
 		From:    Conf.SMTP.EmailAddress,
 		Subject: subject,
 	}
-	e.Data = make(map[string]interface{}, 4)
+	e.Data = make(map[string]interface{}, 6)
 	e.Data["ReplyTo"] = replyto
 	e.Data["Message"] = message
-	e.Data["Link"] = Conf.Web.Hostname + Conf.Web.Prefix
+	e.Data["Name"] = Conf.Name
+	e.Data["Link"] = template.HTML(Conf.Web.Hostname + Conf.Web.Prefix)
 	e.Data["AdminContact"] = Conf.AdminContact
+
+	// Generate a random number for use as a boundary marker in the
+	// multipart/alternative email.
+	e.Data["Boundary"] = rand.Int31()
 
 	err = e.Send("message.txt")
 	if err != nil {
