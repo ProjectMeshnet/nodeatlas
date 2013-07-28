@@ -27,8 +27,7 @@ https://github.com/ProjectMeshnet/nodeatlas
 --========{{.Data.Boundary}}==
 Content-Type: text/html; charset=UTF-8
 
-<p>{{.Data.Message}}</p>
-
+<p>{{html .Data.Message | markdownify}}</p>
 
 --<br/>
 This email was sent through NodeAtlas by another user because your
