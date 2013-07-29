@@ -30,7 +30,7 @@ function insertUser() {
 	
 	if ($("#active").is(':checked')) {
 		active = STATUS_ACTIVE;
-	}
+	}	
 	
 	if ($("#residential").is(':checked')) {
 		residential = STATUS_PHYSICAL;
@@ -164,7 +164,7 @@ function getForm(lat, lng) {
 			form += '<div class="row"><div class="col col-lg-6" style="text-align:center;">';
 			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(3); return false;">Back</button></div>';
 			form += '<div class="col col-lg-6" style="text-align:center;">';
-			form += '<button class="btn btn-small btn-info" href="#" onclick="insertUser(); return false;">Submit</button></div></div>';
+			form += '<button class="btn btn-small btn-info" onclick="insertUser(); return false;" id="submitatlas">Submit</button></div></div>';
 		form += '</div>';
 	form += '</div>';
 	form += '</form>';
@@ -213,7 +213,8 @@ function nodeInfoClick(e, on) {
 		$('.node').fadeOut(500, function() {
 			$('.node').remove();
 			$('#wrap').append(getForm(e.layer.getLatLng().lat, e.layer.getLatLng().lng));
-			// Now we want to set
+			$('#submitatlas').prop('onclick', '');
+			// Now we want to set shit that is already there.
 			$.getJSON('/api/node?address='+ipv6, function(response) {
 				$('#name').val(response.data.OwnerName);
 				$('#email').prop('disabled', 'disabled');
@@ -223,9 +224,29 @@ function nodeInfoClick(e, on) {
 				$('#details').val(response.data.Details);
 				$('#pgp').val(response.data.PGP);
 				$('#contact').val(response.data.Contact);
+				
+				var status = response.data.Status;
+				
+				if ((status&STATUS_ACTIVE) > 0) $('#active').prop('checked', true);
+				else $('#active').prop('checked', false);
+				
+				if ((status&STATUS_PHYSICAL) > 0) $('#residential').prop('checked', true);
+				else $('#residential').prop('checked', false);
+				
+				if ((status&STATUS_INTERNET) > 0) $('#internet').prop('checked', true);
+				else $('#internet').prop('checked', false);
+				
+				if ((status&STATUS_WIRELESS) > 0) $('#wireless').prop('checked', true);
+				else $('#wireless').prop('checked', false);
+				
+				if ((status&STATUS_WIRED) > 0) $('#wired').prop('checked', true);
+				else $('#wired').prop('checked', false);
+				
+				// Click submit
+				$('#submitatlas').bind('click', function() {
+					alert('hi');
+				});
 			});
-			
-			
 			$('#inputform').fadeIn(500);
 			$('#name').focus();
 		});
