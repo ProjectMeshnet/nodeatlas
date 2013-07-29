@@ -22,7 +22,8 @@ function createMessageForm(name, ipv6) {
 }
 
 function getForm(lat, lng) {
-	var form =  '<form id="inputform" enctype="multipart/form-data">';
+	$('#inputform').remove();
+	var form =  '<div id="inputform">';
 	form += '<div class="tabby">';
 		form += '<div class="tab" id="one">';
 			form += '<label><strong>Name</strong> <span class="desc">Marker title</span></label>';
@@ -86,7 +87,7 @@ function getForm(lat, lng) {
 			form += '<button class="btn btn-small btn-info" onclick="insertUser(); return false;" id="submitatlas">Submit</button></div></div>';
 		form += '</div>';
 	form += '</div>';
-	form += '</form>';
+	form += '</div>';
 	return form;
 }
 

@@ -20,35 +20,10 @@ function insertUser() {
 	var pgp = $("#pgp").val();
 	var contact = $("#contact").val();
 	
-	// ^[a-zA-Z0-9]{8}{0,2}$
-	// TODO ^ USE REGEX TO CHECK PGP
-	
 	var latitude = $("#latitude").val();
 	var longitude = $("#longitude").val();
 	
-	var active = 0, residential = 0, internet = 0, wireless = 0, wired = 0;
-	
-	if ($("#active").is(':checked')) {
-		active = STATUS_ACTIVE;
-	}	
-	
-	if ($("#residential").is(':checked')) {
-		residential = STATUS_PHYSICAL;
-	}
-	
-	if ($("#internet").is(':checked')) {
-		internet = STATUS_INTERNET;
-	}
-	
-	if ($("#wireless").is(':checked')) {
-		wireless = STATUS_INTERNET;
-	}
-	
-	if ($("#wired").is(':checked')) {
-		wired = STATUS_WIRED;
-	}
-	
-	var status = active|residential|internet|wireless|wired;
+	var status = getSTATUS();
 
 	if (name.length == 0) {
 		alert("Name is required!");
@@ -77,26 +52,27 @@ function insertUser() {
 		url: "/api/node",
 		data: dataObject,
 		success: function(response) {
-			if (response.error == null) {
-				cancelRegistration();
-				nodelayer.clearLayers();
-				addNodes();
-				if (response.data == 'node registered')
-					$('#insertSuccessModalNoVerify').modal('show');
-				else
-					$('#insertSuccessModal').modal('show');
-			} else {
-				if (response.error == 'addressInvalid') {
-					alert("Unable to create node; the address you have entered is invalid.");
-				} else {
-					alert("Unable to create node: " + response.error);
-				}
-			}
+			cancelRegistration();
+			nodelayer.clearLayers();
+			addNodes();
+			var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
+			success += 'node added';
+			$('#wrap').append(success);
+			setTimeout(function() {
+				$('#alert').fadeOut(500, function() {
+					$('#alert').remove();
+				});
+			}, 1000);
 		},
 		error: function(data) {
-			alert("Something went wrong! If you try again, it might work. If it doesn't, contact the admin from the About Page.");
-			$("#loading-mask").hide();
-			$("#loading").hide();
+			var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+			error += JSON.parse(data.responseText).error+'</div>';
+			$('#wrap').append(error);
+			setTimeout(function() {
+				$('#alert').fadeOut(500, function() {
+					$('#alert').remove();
+				});
+			}, 3000);
 		}
 	});
 	return false;
@@ -132,26 +108,63 @@ function nodeInfoClick(e, on) {
 				$('#pgp').val(response.data.PGP);
 				$('#contact').val(response.data.Contact);
 				
-				var status = response.data.Status;
+				var STATUS = response.data.Status;
 				
-				if ((status&STATUS_ACTIVE) > 0) $('#active').prop('checked', true);
+				if ((STATUS&STATUS_ACTIVE) > 0) $('#active').prop('checked', true);
 				else $('#active').prop('checked', false);
 				
-				if ((status&STATUS_PHYSICAL) > 0) $('#residential').prop('checked', true);
+				if ((STATUS&STATUS_PHYSICAL) > 0) $('#residential').prop('checked', true);
 				else $('#residential').prop('checked', false);
 				
-				if ((status&STATUS_INTERNET) > 0) $('#internet').prop('checked', true);
+				if ((STATUS&STATUS_INTERNET) > 0) $('#internet').prop('checked', true);
 				else $('#internet').prop('checked', false);
 				
-				if ((status&STATUS_WIRELESS) > 0) $('#wireless').prop('checked', true);
+				if ((STATUS&STATUS_WIRELESS) > 0) $('#wireless').prop('checked', true);
 				else $('#wireless').prop('checked', false);
 				
-				if ((status&STATUS_WIRED) > 0) $('#wired').prop('checked', true);
+				if ((STATUS&STATUS_WIRED) > 0) $('#wired').prop('checked', true);
 				else $('#wired').prop('checked', false);
 				
 				// Click submit
 				$('#submitatlas').bind('click', function() {
-					alert('hi');
+					var data = {
+						'name': $("#name").val(),
+						'address': $("#address").val(),
+						'latitude': $("#latitude").val(),
+						'longitude': $("#longitude").val(),
+						'status': getSTATUS(),
+						'contact': $("#contact").val(),
+						'details': $("#details").val(),
+						'pgp': $("#php").val()
+					};
+					$.ajax({
+						type: "POST",
+						url: "/api/update_node",
+						data: data,
+						success: function(response) {
+							nodelayer.clearLayers();
+							addNodes();
+							var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
+							success += 'node updated';
+							$('#wrap').append(success);
+							setTimeout(function() {
+								$('#alert').fadeOut(500, function() {
+									$('#alert').remove();
+								});
+							}, 1000);
+						},
+						error: function(data) {
+							var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+							error += JSON.parse(data.responseText).error+'</div>';
+							$('#wrap').append(error);
+							setTimeout(function() {
+								$('#alert').fadeOut(500, function() {
+									$('#alert').remove();
+								});
+							}, 3000);
+						}
+					});
+					
 				});
 			});
 			$('#inputform').fadeIn(500);
@@ -226,4 +239,30 @@ function nodeInfoClick(e, on) {
 			$('#messageCreate').fadeIn(500);
 		});
 	});
+}
+
+function getSTATUS() {
+	var active = 0, residential = 0, internet = 0, wireless = 0, wired = 0;
+	
+	if ($("#active").is(':checked')) {
+		active = STATUS_ACTIVE;
+	}	
+	
+	if ($("#residential").is(':checked')) {
+		residential = STATUS_PHYSICAL;
+	}
+	
+	if ($("#internet").is(':checked')) {
+		internet = STATUS_INTERNET;
+	}
+	
+	if ($("#wireless").is(':checked')) {
+		wireless = STATUS_INTERNET;
+	}
+	
+	if ($("#wired").is(':checked')) {
+		wired = STATUS_WIRED;
+	}
+	
+	return (active|residential|internet|wireless|wired);
 }

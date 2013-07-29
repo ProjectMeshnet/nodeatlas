@@ -125,15 +125,24 @@ func (*Api) PostNode(ctx *jas.Context) {
 	}
 	var err error
 
-	// Initialize the node and retrieve fields.
-	node := new(Node)
-
 	ip := IP(net.ParseIP(ctx.RequireString("address")))
 	if ip == nil {
 		// If the address is invalid, return that error.
 		ctx.Error = jas.NewRequestError("addressInvalid")
 		return
 	}
+
+	node, err := Db.GetNode(ip)
+	if err != nil {
+		// TODO(DuoNoxSol) validate that this is the correct form
+		// from lukevers
+		ctx.Error = err.Error()
+	}
+
+	if node == nil {
+		ctx.Error = jas.NewRequestError("no matching node")
+	}
+
 	node.Addr = ip
 	node.Latitude = ctx.RequireFloat("latitude")
 	node.Longitude = ctx.RequireFloat("longitude")
@@ -268,7 +277,6 @@ func (*Api) PostUpdateNode(ctx *jas.Context) {
 	node.Latitude = ctx.RequireFloat("latitude")
 	node.Longitude = ctx.RequireFloat("longitude")
 	node.OwnerName = ctx.RequireString("name")
-	node.OwnerEmail = ctx.RequireString("email")
 	node.Contact, _ = ctx.FindString("contact")
 	node.Details, _ = ctx.FindString("details")
 
