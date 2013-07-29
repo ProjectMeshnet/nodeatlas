@@ -134,13 +134,13 @@ func (*Api) PostNode(ctx *jas.Context) {
 
 	node, err := Db.GetNode(ip)
 	if err != nil {
-		// TODO(DuoNoxSol) validate that this is the correct form
-		// from lukevers
-		ctx.Error = err.Error()
+		ctx.Error = jas.NewInternalError(err.Error())
+		return
 	}
 
 	if node == nil {
 		ctx.Error = jas.NewRequestError("no matching node")
+		return
 	}
 
 	node.Addr = ip
