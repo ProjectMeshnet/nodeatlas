@@ -297,7 +297,8 @@ WHERE address = ?`)
 	return
 }
 
-// DeleteNode removes the node with the matching IP from the database.
+// DeleteNode removes the node with the matching IP from the 'nodes'
+// table in the database.
 func (db DB) DeleteNode(addr IP) (err error) {
 	// Deletes the given node from the database
 	stmt, err := db.Prepare("DELETE FROM nodes WHERE address = ?")
