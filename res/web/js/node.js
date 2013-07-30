@@ -26,15 +26,35 @@ function insertUser() {
 	var status = getSTATUS();
 
 	if (name.length == 0) {
-		alert("Name is required!");
+		$('#inputform').fadeOut(500, function(){
+			var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+			error += 'name is required</div>';
+			$('#wrap').append(error);
+			setTimeout(function() {
+				$('#alert').fadeOut(500, function() {
+					$('#alert').remove();
+					$('#inputform').fadeIn(500);
+				});
+			}, 3000);
+		});
 		return false;
 	}
 	
 	if (email.length == 0) {
-		alert("Email is required!");
+		$('#inputform').fadeOut(500, function(){
+			var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+			error += 'email is required</div>';
+			$('#wrap').append(error);
+			setTimeout(function() {
+				$('#alert').fadeOut(500, function() {
+					$('#alert').remove();
+					$('#inputform').fadeIn(500);
+				});
+			}, 3000);
+		});
 		return false;
 	}
-	
+
 	var dataObject = {
 		'name': name,
 		'email': email,
@@ -46,34 +66,36 @@ function insertUser() {
 		'details': details,
 		'pgp': pgp
 	};
-	
-	$.ajax({
-		type: "POST",
-		url: "/api/node",
-		data: dataObject,
-		success: function(response) {
-			cancelRegistration();
-			nodelayer.clearLayers();
-			addNodes();
-			var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
-			success += 'node added';
-			$('#wrap').append(success);
-			setTimeout(function() {
-				$('#alert').fadeOut(500, function() {
-					$('#alert').remove();
-				});
-			}, 1000);
-		},
-		error: function(data) {
-			var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
-			error += JSON.parse(data.responseText).error+'</div>';
-			$('#wrap').append(error);
-			setTimeout(function() {
-				$('#alert').fadeOut(500, function() {
-					$('#alert').remove();
-				});
-			}, 3000);
-		}
+	$('#inputform').fadeOut(500, function() {
+		$.ajax({
+			type: "POST",
+			url: "/api/node",
+			data: dataObject,
+			success: function(response) {
+				cancelRegistration();
+				nodelayer.clearLayers();
+				addNodes();
+				var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
+				success += 'node added';
+				$('#wrap').append(success);
+				setTimeout(function() {
+					$('#alert').fadeOut(500, function() {
+						$('#alert').remove();
+					});
+				}, 1000);
+			},
+			error: function(data) {
+				var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+				error += JSON.parse(data.responseText).error+'</div>';
+				$('#wrap').append(error);
+				setTimeout(function() {
+					$('#alert').fadeOut(500, function() {
+						$('#alert').remove();
+						$('#inputform').fadeIn(500);
+					});
+				}, 3000);
+			}
+		});
 	});
 	return false;
 }
@@ -127,6 +149,7 @@ function nodeInfoClick(e, on) {
 				
 				// Click submit
 				$('#submitatlas').bind('click', function() {
+					$('#inputform').fadeOut(500);
 					var data = {
 						'name': $("#name").val(),
 						'address': $("#address").val(),
@@ -160,6 +183,7 @@ function nodeInfoClick(e, on) {
 							setTimeout(function() {
 								$('#alert').fadeOut(500, function() {
 									$('#alert').remove();
+									$('#inputform').fadeIn(500);
 								});
 							}, 3000);
 						}
