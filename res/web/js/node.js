@@ -158,7 +158,7 @@ function nodeInfoClick(e, on) {
 						'status': getSTATUS(),
 						'contact': $("#contact").val(),
 						'details': $("#details").val(),
-						'pgp': $("#php").val()
+						'pgp': $("#pgp").val()
 					};
 					$.ajax({
 						type: "POST",
