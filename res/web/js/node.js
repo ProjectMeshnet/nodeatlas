@@ -20,46 +20,41 @@ function insertUser() {
 	var pgp = $("#pgp").val();
 	var contact = $("#contact").val();
 	
-	// ^[a-zA-Z0-9]{8}{0,2}$
-	// TODO ^ USE REGEX TO CHECK PGP
-	
 	var latitude = $("#latitude").val();
 	var longitude = $("#longitude").val();
 	
-	var active = 0, residential = 0, internet = 0, wireless = 0, wired = 0;
-	
-	if ($("#active").is(':checked')) {
-		active = STATUS_ACTIVE;
-	}
-	
-	if ($("#residential").is(':checked')) {
-		residential = STATUS_PHYSICAL;
-	}
-	
-	if ($("#internet").is(':checked')) {
-		internet = STATUS_INTERNET;
-	}
-	
-	if ($("#wireless").is(':checked')) {
-		wireless = STATUS_INTERNET;
-	}
-	
-	if ($("#wired").is(':checked')) {
-		wired = STATUS_WIRED;
-	}
-	
-	var status = active|residential|internet|wireless|wired;
+	var status = getSTATUS();
 
 	if (name.length == 0) {
-		alert("Name is required!");
+		$('#inputform').fadeOut(500, function(){
+			var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+			error += 'name is required</div>';
+			$('#wrap').append(error);
+			setTimeout(function() {
+				$('#alert').fadeOut(500, function() {
+					$('#alert').remove();
+					$('#inputform').fadeIn(500);
+				});
+			}, 3000);
+		});
 		return false;
 	}
 	
 	if (email.length == 0) {
-		alert("Email is required!");
+		$('#inputform').fadeOut(500, function(){
+			var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+			error += 'email is required</div>';
+			$('#wrap').append(error);
+			setTimeout(function() {
+				$('#alert').fadeOut(500, function() {
+					$('#alert').remove();
+					$('#inputform').fadeIn(500);
+				});
+			}, 3000);
+		});
 		return false;
 	}
-	
+
 	var dataObject = {
 		'name': name,
 		'email': email,
@@ -71,128 +66,38 @@ function insertUser() {
 		'details': details,
 		'pgp': pgp
 	};
-	
-	$.ajax({
-		type: "POST",
-		url: "/api/node",
-		data: dataObject,
-		success: function(response) {
-			if (response.error == null) {
+	$('#inputform').fadeOut(500, function() {
+		$.ajax({
+			type: "POST",
+			url: "/api/node",
+			data: dataObject,
+			success: function(response) {
 				cancelRegistration();
 				nodelayer.clearLayers();
 				addNodes();
-				if (response.data == 'node registered')
-					$('#insertSuccessModalNoVerify').modal('show');
-				else
-					$('#insertSuccessModal').modal('show');
-			} else {
-				if (response.error == 'addressInvalid') {
-					alert("Unable to create node; the address you have entered is invalid.");
-				} else {
-					alert("Unable to create node: " + response.error);
-				}
+				var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
+				success += 'node added';
+				$('#wrap').append(success);
+				setTimeout(function() {
+					$('#alert').fadeOut(500, function() {
+						$('#alert').remove();
+					});
+				}, 1000);
+			},
+			error: function(data) {
+				var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+				error += JSON.parse(data.responseText).error+'</div>';
+				$('#wrap').append(error);
+				setTimeout(function() {
+					$('#alert').fadeOut(500, function() {
+						$('#alert').remove();
+						$('#inputform').fadeIn(500);
+					});
+				}, 3000);
 			}
-		},
-		error: function(data) {
-			alert("Something went wrong! If you try again, it might work. If it doesn't, contact the admin from the About Page.");
-			$("#loading-mask").hide();
-			$("#loading").hide();
-		}
+		});
 	});
 	return false;
-}
-
-function getForm(e) {
-	var form =  '<form id="inputform" enctype="multipart/form-data">';
-	form += '<div class="tabby">';
-		form += '<div class="tab" id="one">';
-			form += '<label><strong>Name</strong> <span class="desc">Marker title</span></label>';
-			form += '<input type="text" class="input-medium" placeholder="Required" id="name" name="name" maxlength="255" />';
-			form += '<label><strong>Email</strong> <span class="desc">Never shared</span></label>';
-			form += '<input type="email" class="input-medium" placeholder="Required" id="email" name="email" />';
-			form += '<label><strong>Address</strong> <span class="desc">Network-specific IP</span></label>';
-			form += '<input type="text" class="input-medium" id="address" name="address" placeholder="Required" maxlength="39"/>';
-			form += '<label><strong>Details</strong></label>';
-			form += '<input type="text" class="input-medium" placeholder="Home, Work, ..." id="details" maxlength="255"/><br/>';
-			form += '<div class="row"><div class="col col-lg-6" style="text-align:center;">';
-			form += '<button class="btn btn-small" href="#" onclick="cancelRegistration(); return false;">Cancel</button></div>';
-			form += '<div class="col col-lg-6" style="text-align:center;">';
-			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(2); return false;">Next</button></div></div>';
-		form += '</div>';
-		form += '<div class="tab" id="two">';
-			form += '<p><strong>Status</strong><br><small>Check all that apply.</small></p>';
-			form += '<label>';
-					form += '<input type="checkbox" id="active"> ';
-					form += 'Active node';
-				form += '</label><br/>';
-				form += '<label>';
-					form += '<input type="checkbox" id="residential"> ';
-					form += 'Residential node';
-				form += '</label><br/><br/>';
-			form += '<div class="row"><div class="col col-lg-6" style="text-align:center;">';
-			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(1); return false;">Back</button></div>';
-			form += '<div class="col col-lg-6" style="text-align:center;">';
-			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(3); return false;">Next</button></div></div>';
-		form += '</div>';
-		form += '<div class="tab" id="three">';
-			form += '<p><strong>Status</strong><br/><small>Check all that apply.</small></p>';
-				form += '<label>';
-					form += '<input type="checkbox" id="internet"> ';
-					form += 'Internet access';
-				form += '</label><br/>';
-				form += '<label>';
-					form += '<input type="checkbox" id="wireless"> ';
-					form += 'Wireless access';
-				form += '</label><br/>';
-				form += '<label>';
-					form += '<input type="checkbox" id="wired"> ';
-					form += 'Wired (eth) access';
-				form += '</label><br/><br/>';
-			form += '<div class="row">';
-			form += '<div class="col col-lg-6" style="text-align:center;">';
-			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(2); return false;">Back</button></div>';
-			form += '<div class="col col-lg-6" style="text-align:center;">';
-			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(4); return false;">Next</button></div></div>';
-		form += '</div>';
-		form += '<div class="tab" id="four">';
-			form += '<p><strong>PGP</strong><br/><small>8 digit or 16 digit.</small></p>';
-			form += '<input type="text" class="input-medium" placeholder="CAFEBABE" id="pgp" name="pgp" maxlength="16" />';
-			form += '<label><strong>Contact</strong></label>';
-			form += '<textarea class="contact" id="contact" placeholder="XMPP username, Reddit username, ..." maxlength="255"></textarea><br/>';
-			form += '<input style="display: none;" type="text" id="latitude" name="latitude" value="'+e.latlng.lat.toFixed(6)+'"/>';
-			form += '<input style="display: none;" type="text" id="longitude" name="longitude" value="'+e.latlng.lng.toFixed(6)+'"/>';
-			form += '<div class="row"><div class="col col-lg-6" style="text-align:center;">';
-			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(3); return false;">Back</button></div>';
-			form += '<div class="col col-lg-6" style="text-align:center;">';
-			form += '<button class="btn btn-small btn-info" href="#" onclick="insertUser(); return false;">Submit</button></div></div>';
-		form += '</div>';
-	form += '</div>';
-	form += '</form>';
-	return form;
-}
-
-function next(which) {
-	if (which == 1) {
-		$('#one').css('display', 'block');
-		$('#two').css('display', 'none');
-		$('#three').css('display', 'none');
-		$('#four').css('display', 'none');
-	} else if (which == 2) {
-		$('#one').css('display', 'none');
-		$('#two').css('display', 'block');
-		$('#three').css('display', 'none');
-		$('#four').css('display', 'none');
-	} else if (which == 3) {
-		$('#one').css('display', 'none');
-		$('#two').css('display', 'none');
-		$('#three').css('display', 'block');
-		$('#four').css('display', 'none');
-	} else if (which == 4) {
-		$('#one').css('display', 'none');
-		$('#two').css('display', 'none');
-		$('#three').css('display', 'none');
-		$('#four').css('display', 'block');
-	}
 }
 
 function nodeInfoClick(e, on) {
@@ -205,12 +110,95 @@ function nodeInfoClick(e, on) {
 	$('#wrap').append(html);
 	$('.node').hide(); 
 	$('.node').fadeIn(500);
+	var name = html.substring(html.indexOf('<h4>')+4, html.indexOf('&nbsp;'));
+	ipv6 = html.substring(html.indexOf('a href')+14);
+	ipv6 = ipv6.substring(0, ipv6.indexOf('"'));
+	// EDIT NODE
+	$('#edit').bind('click', function() {
+		$('.node').fadeOut(500, function() {
+			$('.node').remove();
+			$('#wrap').append(getForm(e.layer.getLatLng().lat, e.layer.getLatLng().lng));
+			$('#submitatlas').prop('onclick', '');
+			// Now we want to set shit that is already there.
+			$.getJSON('/api/node?address='+ipv6, function(response) {
+				$('#name').val(response.data.OwnerName);
+				$('#email').prop('disabled', 'disabled');
+				$('#email').val('Can\'t change');
+				$('#address').val(response.data.Addr);
+				$('#address').prop('disabled', 'disabled');
+				$('#details').val(response.data.Details);
+				$('#pgp').val(response.data.PGP);
+				$('#contact').val(response.data.Contact);
+				
+				var STATUS = response.data.Status;
+				
+				if ((STATUS&STATUS_ACTIVE) > 0) $('#active').prop('checked', true);
+				else $('#active').prop('checked', false);
+				
+				if ((STATUS&STATUS_PHYSICAL) > 0) $('#residential').prop('checked', true);
+				else $('#residential').prop('checked', false);
+				
+				if ((STATUS&STATUS_INTERNET) > 0) $('#internet').prop('checked', true);
+				else $('#internet').prop('checked', false);
+				
+				if ((STATUS&STATUS_WIRELESS) > 0) $('#wireless').prop('checked', true);
+				else $('#wireless').prop('checked', false);
+				
+				if ((STATUS&STATUS_WIRED) > 0) $('#wired').prop('checked', true);
+				else $('#wired').prop('checked', false);
+				
+				// Click submit
+				$('#submitatlas').bind('click', function() {
+					$('#inputform').fadeOut(500);
+					var data = {
+						'name': $("#name").val(),
+						'address': $("#address").val(),
+						'latitude': $("#latitude").val(),
+						'longitude': $("#longitude").val(),
+						'status': getSTATUS(),
+						'contact': $("#contact").val(),
+						'details': $("#details").val(),
+						'pgp': $("#pgp").val()
+					};
+					$.ajax({
+						type: "POST",
+						url: "/api/update_node",
+						data: data,
+						success: function(response) {
+							nodelayer.clearLayers();
+							addNodes();
+							var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
+							success += 'node updated';
+							$('#wrap').append(success);
+							setTimeout(function() {
+								$('#alert').fadeOut(500, function() {
+									$('#alert').remove();
+								});
+							}, 1000);
+						},
+						error: function(data) {
+							var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+							error += JSON.parse(data.responseText).error+'</div>';
+							$('#wrap').append(error);
+							setTimeout(function() {
+								$('#alert').fadeOut(500, function() {
+									$('#alert').remove();
+									$('#inputform').fadeIn(500);
+								});
+							}, 3000);
+						}
+					});
+					
+				});
+			});
+			$('#inputform').fadeIn(500);
+			$('#name').focus();
+		});
+	});
+	// SEND MESSAGE
 	$('#sendMessage').bind('click', function(e) {
 		$('.node').fadeOut(500, function() {
 			$('.node').remove();
-			var name = html.substring(html.indexOf('<h4>')+4, html.indexOf('&nbsp;'));
-			ipv6 = html.substring(html.indexOf('a href')+14);
-			ipv6 = ipv6.substring(0, ipv6.indexOf('"'));
 			var form = createMessageForm(name, ipv6);
 			$('#wrap').append(form);
 			$('#cancelmessage').bind('click', function(e) {
@@ -277,25 +265,28 @@ function nodeInfoClick(e, on) {
 	});
 }
 
-function createMessageForm(name, ipv6) {
-	var html = '<div id="messageCreate">';
-		html += '<div id="one">';
-			html += '<h6>Send Message to '+name+'</h6>';
-			html += '<input type="email" placeholder="Your Email" id="from" required>';
-			html += '<input type="text" id="address" value="'+ipv6+'" disabled class="hidden">';
-			html += '<br/><input type="text" placeholder="Subject" id="subject" required>';
-			html += '<br/><textarea placeholder="Body" id="message" required></textarea>';
-			html += '<br/><br/><div class="row"><div class="col col-lg-6" style="text-align:center;">';
-			html += '<input type="reset" id="cancelmessage" class="btn btn-small" value="Cancel Message"></div>';
-			html += '<div class="col col-lg-6" style="text-align:center;">';
-			html += '<input type="submit" id="nextpagesubmit" class="btn btn-small btn-primary" value="Next Page" onclick="next(2); return false;"></div></div>';
-		html += '</div><div id="two">';
-			html += '<img id="captcha_img">';
-			html += '<br/><input type="text" placeholder="Captcha" id="captcha" required>';
-			html += '<br/><div class="row"><div class="col col-lg-6" style="text-align:center;">';
-			html += '<input type="reset" id="cancel" class="btn btn-small" value="Cancel Message"></div>';
-			html += '<div class="col col-lg-6" style="text-align:center;">';
-			html += '<input type="submit" id="sendmessage" class="btn btn-small btn-primary" value="Send Message"></div></div>';
-	html += '</div></div>';
-	return html;
+function getSTATUS() {
+	var active = 0, residential = 0, internet = 0, wireless = 0, wired = 0;
+	
+	if ($("#active").is(':checked')) {
+		active = STATUS_ACTIVE;
+	}	
+	
+	if ($("#residential").is(':checked')) {
+		residential = STATUS_PHYSICAL;
+	}
+	
+	if ($("#internet").is(':checked')) {
+		internet = STATUS_INTERNET;
+	}
+	
+	if ($("#wireless").is(':checked')) {
+		wireless = STATUS_INTERNET;
+	}
+	
+	if ($("#wired").is(':checked')) {
+		wired = STATUS_WIRED;
+	}
+	
+	return (active|residential|internet|wireless|wired);
 }

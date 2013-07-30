@@ -249,9 +249,8 @@ func (*Api) PostUpdateNode(ctx *jas.Context) {
 	}
 	var err error
 
-	// Initialize the node and retrieve fields.
-	node := new(Node)
-
+	// Retrieve the given IP address, check that it's sane, and check
+	// that it exists in the *local* database.
 	ip := IP(net.ParseIP(ctx.RequireString("address")))
 	if ip == nil {
 		// If the address is invalid, return that error.
@@ -259,10 +258,21 @@ func (*Api) PostUpdateNode(ctx *jas.Context) {
 		return
 	}
 
+	node, err := Db.GetNode(ip)
+	if err != nil {
+		ctx.Error = jas.NewInternalError(err.Error())
+		return
+	}
+
+	if node == nil || len(node.OwnerEmail) == 0 {
+		ctx.Error = jas.NewRequestError("no matching local node")
+		return
+	}
+
 	// Check to make sure that the Node is the one sending the
 	// address, or an admin. If not, return an error.
-	if !net.IP(ip).Equal(net.ParseIP(ctx.RemoteAddr)) ||
-		IsAdmin(ctx.Request) {
+	if !net.IP(ip).Equal(net.ParseIP(ctx.RemoteAddr)) &&
+		!IsAdmin(ctx.Request) {
 		ctx.Error = jas.NewRequestError(
 			RemoteAddressDoesNotMatchError.Error())
 		return
@@ -272,7 +282,6 @@ func (*Api) PostUpdateNode(ctx *jas.Context) {
 	node.Latitude = ctx.RequireFloat("latitude")
 	node.Longitude = ctx.RequireFloat("longitude")
 	node.OwnerName = ctx.RequireString("name")
-	node.OwnerEmail = ctx.RequireString("email")
 	node.Contact, _ = ctx.FindString("contact")
 	node.Details, _ = ctx.FindString("details")
 
@@ -487,8 +496,9 @@ func (*Api) GetChildMaps(ctx *jas.Context) {
 // IsAdmin is a small wrapper function to check if the given address
 // belongs to an admin, as specified in Conf.AdminAddresses.
 func IsAdmin(req *http.Request) bool {
+	remoteIP := net.ParseIP(req.RemoteAddr)
 	for _, adminAddr := range Conf.AdminAddresses {
-		if net.IP(adminAddr).Equal(net.ParseIP(req.RemoteAddr)) {
+		if net.IP(adminAddr).Equal(remoteIP) {
 			return true
 		}
 	}

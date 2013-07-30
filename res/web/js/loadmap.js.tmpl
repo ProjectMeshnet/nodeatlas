@@ -104,7 +104,7 @@ function createMarker(feature, latlng) {
 	} else {
 		html += '<button class="btn btn-mini btn-info" id="sendMessage">Message</button>';
 	}
-	html += '&nbsp;<button class="btn btn-mini btn-success" disabled>Edit</button></h4>';
+	html += '&nbsp;<button class="btn btn-mini btn-success" id="edit">Edit</button></h4>';
 	html += '<div class="text-center"><a href="/node/'+feature.id+'" class="btn btn-small btn-primary">'+feature.id+'</a></div><hr>';
 	
 if (feature.properties.SourceID) {
@@ -175,7 +175,7 @@ function onMapClick(e) {
 	newUser.clearLayers();
 	newUser.addLayer(marker);
 	
-	$('#wrap').append(getForm(e));
+	$('#wrap').append(getForm(e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6)));
 	
 	$('.node').remove();
 	
@@ -193,5 +193,6 @@ function addJSFiles() {
 	html += '<script type="text/javascript" src="/js/captcha.js"></script>';
 	html += '<script type="text/javascript" src="/js/node.js"></script>';
 	html += '<script type="text/javascript" src="/js/verify.js"></script>';
+	html += '<script type="text/javascript" src="/js/form.js"></script>';
 	$('head').append(html);
 }
