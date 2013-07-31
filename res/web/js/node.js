@@ -106,34 +106,38 @@ function nodeInfoClick(e, on) {
 	ipv6 = ipv6.substring(0, ipv6.indexOf('"'));
 	// DELETE NODE
 	$('#delete').bind('click', function() {
-		$('.node').fadeOut(500, function() {
-			$('.node').remove();
-			$.ajax({
-				type: "POST",
-				url: "/api/delete_node",
-				data: {address: ipv6},
-				success: function(response) {
-					nodelayer.clearLayers();
-					addNodes();
-					var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
-					success += 'node deleted';
-					$('#wrap').append(success);
-					setTimeout(function() {
-						$('#alert').fadeOut(500, function() {
-							$('#alert').remove();
-						});
-					}, 1000);
-				},
-				error: function(data) {
-					var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
-					error += JSON.parse(data.responseText).error+'</div>';
-					$('#wrap').append(error);
-					setTimeout(function() {
-						$('#alert').fadeOut(500, function() {
-							$('#alert').remove();
-						});
-					}, 3000);
-				}
+		$('#delete').prop('id', 'reallydelete');
+		$('#reallydelete').html('Are you sure?');
+		$('#reallydelete').bind('click', function() {
+			$('.node').fadeOut(500, function() {
+				$('.node').remove();
+				$.ajax({
+					type: "POST",
+					url: "/api/delete_node",
+					data: {address: ipv6},
+					success: function(response) {
+						nodelayer.clearLayers();
+						addNodes();
+						var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
+						success += 'node deleted';
+						$('#wrap').append(success);
+						setTimeout(function() {
+							$('#alert').fadeOut(500, function() {
+								$('#alert').remove();
+							});
+						}, 1000);
+					},
+					error: function(data) {
+						var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+						error += JSON.parse(data.responseText).error+'</div>';
+						$('#wrap').append(error);
+						setTimeout(function() {
+							$('#alert').fadeOut(500, function() {
+								$('#alert').remove();
+							});
+						}, 3000);
+					}
+				});
 			});
 		});
 	});
