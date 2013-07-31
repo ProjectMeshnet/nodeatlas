@@ -322,6 +322,53 @@ func (*Api) PostUpdateNode(ctx *jas.Context) {
 	ctx.Data = "successful"
 }
 
+// PostDeleteNode removes a node with the given address from the
+// database. This must be done from that node's address, or an admin
+// address.
+func (*Api) PostDeleteNode(ctx *jas.Context) {
+	if Db.ReadOnly {
+		// If the database is readonly, set that as the error and
+		// return.
+		ctx.Error = ReadOnlyError
+		return
+	}
+	var err error
+
+	// Retrieve the given IP address, check that it's sane, and check
+	// that it exists in the *local* database.
+	ip := IP(net.ParseIP(ctx.RequireString("address")))
+	if ip == nil {
+		// If the address is invalid, return that error.
+		ctx.Error = jas.NewRequestError("addressInvalid")
+		return
+	}
+
+	// Check to make sure that the Node is the one sending the
+	// address, or an admin. If not, return an error.
+	if !net.IP(ip).Equal(net.ParseIP(ctx.RemoteAddr)) &&
+		!IsAdmin(ctx.Request) {
+		ctx.Error = jas.NewRequestError(
+			RemoteAddressDoesNotMatchError.Error())
+		return
+	}
+
+	// If all is well, then delete it.
+	err = Db.DeleteNode(ip)
+	if err == sql.ErrNoRows {
+		// If there are no rows with that IP, explain that in the
+		// error.
+		//
+		// I'm not actually sure this can happen. (DuoNoxSol)
+		ctx.Error = jas.NewRequestError("no matching node")
+	} else if err != nil {
+		ctx.Error = jas.NewInternalError(err)
+		l.Errf("Error deleting node: %s\n")
+	} else {
+		l.Infof("Node %q deleted\n", ip)
+		ctx.Data = "deleted"
+	}
+}
+
 // GetVerify moves a node from the verification queue to the normal
 // database, as identified by its long random ID.
 func (*Api) GetVerify(ctx *jas.Context) {
