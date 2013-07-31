@@ -231,6 +231,7 @@ function nodeInfoClick(e, on) {
 			$('.node').remove();
 			var form = createMessageForm(name, ipv6);
 			$('#wrap').append(form);
+			$('#from').focus();
 			$('#cancelmessage').bind('click', function(e) {
 				$('#messageCreate').fadeOut(500, function() {
 					$('#messageCreate').remove();
