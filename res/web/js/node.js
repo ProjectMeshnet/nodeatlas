@@ -11,47 +11,37 @@ function cancelRegistration() {
 	map.removeEventListener('click', onMapClick);
 }
 
+function addError(fadewhat, err) {
+	$(fadewhat).fadeOut(500, function(){
+		var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+		error += err+'</div>';
+		$('#wrap').append(error);
+		setTimeout(function() {
+			$('#alert').fadeOut(500, function() {
+				$('#alert').remove();
+				$(fadewhat).fadeIn(500);
+			});
+		}, 3000);
+	});
+}
+
 function insertUser() {
 	var address = $("#address").val();
 	var name = $("#name").val();
 	var email = $("#email").val();
-	var details = $("#details").val();
-	
-	var pgp = $("#pgp").val();
-	var contact = $("#contact").val();
-	
-	var latitude = $("#latitude").val();
-	var longitude = $("#longitude").val();
-	
-	var status = getSTATUS();
-
+			
 	if (name.length == 0) {
-		$('#inputform').fadeOut(500, function(){
-			var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
-			error += 'name is required</div>';
-			$('#wrap').append(error);
-			setTimeout(function() {
-				$('#alert').fadeOut(500, function() {
-					$('#alert').remove();
-					$('#inputform').fadeIn(500);
-				});
-			}, 3000);
-		});
+		addError('#inputform', 'a name is required');
 		return false;
 	}
 	
 	if (email.length == 0) {
-		$('#inputform').fadeOut(500, function(){
-			var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
-			error += 'email is required</div>';
-			$('#wrap').append(error);
-			setTimeout(function() {
-				$('#alert').fadeOut(500, function() {
-					$('#alert').remove();
-					$('#inputform').fadeIn(500);
-				});
-			}, 3000);
-		});
+		addError('#inputform', 'an email is required');
+		return false;
+	}
+	
+	if (address.length == 0) {
+		addError('#inputform', 'an address is required');
 		return false;
 	}
 
@@ -59,13 +49,14 @@ function insertUser() {
 		'name': name,
 		'email': email,
 		'address': address,
-		'latitude': latitude,
-		'longitude': longitude,
-		'status': status,
-		'contact': contact,
-		'details': details,
-		'pgp': pgp
+		'latitude': $("#latitude").val(),
+		'longitude': $("#longitude").val(),
+		'status': getSTATUS(),
+		'contact': $("#contact").val(),
+		'details': $("#details").val(),
+		'pgp': $("#pgp").val()
 	};
+	
 	$('#inputform').fadeOut(500, function() {
 		$.ajax({
 			type: "POST",
@@ -113,6 +104,10 @@ function nodeInfoClick(e, on) {
 	var name = html.substring(html.indexOf('<h4>')+4, html.indexOf('&nbsp;'));
 	ipv6 = html.substring(html.indexOf('a href')+14);
 	ipv6 = ipv6.substring(0, ipv6.indexOf('"'));
+	// DELETE NODE
+	$('#delete').bind('click', function() {
+		alert('delete');
+	});
 	// EDIT NODE
 	$('#edit').bind('click', function() {
 		$('.node').fadeOut(500, function() {
