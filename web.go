@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/baliw/moverss"
 	"github.com/dchest/captcha"
+	"github.com/russross/blackfriday"
 	"html/template"
 	"net"
 	"net/http"
@@ -139,7 +140,16 @@ func (d *Deproxier) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // RegisterTemplates loads templates from <StaticDir>/email/*.txt into
 // the global variable t.
 func RegisterTemplates() (err error) {
-	t, err = template.ParseGlob(path.Join(StaticDir, "email/*.txt"))
+	t = template.New("")
+
+	t.Funcs(template.FuncMap{
+		"markdownify": func(s string) template.HTML {
+			return template.HTML(
+				string(blackfriday.MarkdownBasic([]byte(s))))
+		},
+	})
+
+	t, err = t.ParseGlob(path.Join(StaticDir, "email/*.txt"))
 	return
 }
 
