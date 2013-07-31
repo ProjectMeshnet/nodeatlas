@@ -364,6 +364,7 @@ func (*Api) PostDeleteNode(ctx *jas.Context) {
 		ctx.Error = jas.NewInternalError(err)
 		l.Errf("Error deleting node: %s\n")
 	} else {
+		l.Infof("Node %q deleted\n", ip)
 		ctx.Data = "deleted"
 	}
 }
