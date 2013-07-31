@@ -17,6 +17,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/
 //
 package main
+// Copyright (C) 2013 Alexander Bauer, Luke Evers, Daniel Supernault,
+// Dylan Whichard, and contributors; (GPLv3) see LICENSE or doc.go
 
 import (
 	"database/sql"
