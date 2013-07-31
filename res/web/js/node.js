@@ -107,6 +107,8 @@ function nodeInfoClick(e, on) {
 	// DELETE NODE
 	$('#delete').bind('click', function() {
 		$('#delete').prop('id', 'reallydelete');
+		$('#reallydelete').removeClass('btn-warning');
+		$('#reallydelete').addClass('btn-danger');
 		$('#reallydelete').html('Are you sure?');
 		$('#reallydelete').bind('click', function() {
 			$('.node').fadeOut(500, function() {
