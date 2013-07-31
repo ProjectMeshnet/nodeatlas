@@ -3,7 +3,11 @@ Subject: {{.Subject}}
 Date: {{.Header.Date}}
 To: {{.To}}
 Reply-To: {{.Data.ReplyTo}}
-MIME-version: 1.0;\nContent-Type: text/plain; charset=\"UTF-8\";
+MIME-version: 1.0
+Content-Type: multipart/alternative; boundary="========{{.Data.Boundary}}=="
+
+--========{{.Data.Boundary}}==
+Content-Type: text/plain; charset=us-ascii
 
 {{.Data.Message}}
 
@@ -19,3 +23,22 @@ If this email was abusive or spam, please email
     {{.Data.AdminContact}}
 
 https://github.com/ProjectMeshnet/nodeatlas
+
+--========{{.Data.Boundary}}==
+Content-Type: text/html; charset=UTF-8
+
+<p>{{html .Data.Message | markdownify}}</p>
+
+--<br/>
+This email was sent through NodeAtlas by another user because your
+node is listed on <a href="{{.Data.Link}}">{{.Data.Name}}</a>.<br/>
+
+If you choose to reply, make sure that you reply to <a
+href="mailto:{{.Data.ReplyTo}}">{{.Data.ReplyTo}}</a>.<br/>
+
+If this email was abusive or spam, please email
+{{.Data.AdminContact}}.<br/>
+
+<a href="https://github.com/ProjectMeshnet/nodeatlas">NodeAtlas GitHub</a></br>
+
+--========{{.Data.Boundary}}==--

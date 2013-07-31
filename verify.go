@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"math/rand"
 	"net"
 	"net/http"
 	"time"
@@ -132,11 +133,15 @@ func SendVerificationEmail(id int64, recipientEmail string) (err error) {
 		Subject: Conf.Name + " Node Registration",
 	}
 
-	e.Data = make(map[string]interface{}, 4)
+	e.Data = make(map[string]interface{}, 5)
 	e.Data["Link"] = Conf.Web.Hostname + Conf.Web.Prefix
 	e.Data["VerificationID"] = id
 	e.Data["FromNode"] = Conf.Verify.FromNode
 	e.Data["Flags"] = Conf.ExtraVerificationFlags
+
+	// Generate a random number for use as a boundary marker in the
+	// multipart/alternative email.
+	e.Data["Boundary"] = rand.Int31()
 
 	if err = e.Send("verification.txt"); err == nil {
 		l.Debugf("Sent verification email to %d", id)
