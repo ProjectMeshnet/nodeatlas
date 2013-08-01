@@ -1,1 +1,3 @@
 res/web/js/leaflet.js http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js
+res/web/css/leaflet.css http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css
+res/web/css/leaflet.ie.css http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css

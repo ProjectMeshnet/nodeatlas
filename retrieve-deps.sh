@@ -41,6 +41,9 @@ DOWNLOADER=
 DEFAULT_DEPFILE='depslist'
 DEFAULT_DOWNLOADERS='curl -s -o,wget -qO'
 
+COLOR_RED="\033[1;31m"
+COLOR_DEFAULT="\033[0m"
+
 #########################
 # On to the actual code #
 #########################
@@ -89,33 +92,34 @@ RETRIEVE_ALL=0
 # line.
 i=0
 successes=0
-while read line; do
+while read outfile url; do
 	i=$(($i + 1))
-	OUTFILE="$(echo $line | cut -d\  -f1)"
-	URL="$(echo $line | cut -d\  -f2)"
 
 	# If either field is missing, explain that it is misformatted and
 	# denote the failure, but continue.
-	if [ -z "OUTFILE" -o -z "$URL" ]; then
-		echo "line $i: misformatted"
+	if [ -z "$outfile" -o -z "$url" ]; then
+		echo " $COLOR_RED MISFORMATTED$COLOR_DEFAULT (line $i)"
 		RETRIEVE_ALL=1
 		continue
 	fi
 
-	# The downloader should function such that '$DOWNLOADER $OUTFILE
-	# $URL' will retrieve a file at $URL and place it in $OUTFILE.
-	$DOWNLOADER "$OUTFILE" "$URL" 1>&2
+	# Report the status as we go.
+	echo -n "  $outfile..."
+
+	# The downloader should function such that '$DOWNLOADER $outfile
+	# $url' will retrieve a file at $url and place it in $outfile.
+	$DOWNLOADER "$outfile" "$url" 1>&2
 
 	# Check the exit status from the $DOWNLOADER, and make sure it's
 	# zero. If it's not, denote the failure and continue.
 	if [ "$?" -ne 0 ]; then
-		echo "line $i: could not retrieve $OUTFILE"
+		echo " $COLOR_RED FAILED$COLOR_DEFAULT (line $i)"
 		RETRIEVE_ALL=1
 		continue
 	fi
 	
 	# If all is well, state the success.
-	echo "$OUTFILE downloaded"
+	echo " downloaded"
 	successes=$(($successes + 1))
 done < "$DEFAULT_DEPFILE"
 
