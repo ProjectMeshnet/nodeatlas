@@ -4,3 +4,4 @@ res/web/assets/leaflet.ie.css http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.
 res/web/assets/jquery.js http://code.jquery.com/jquery-2.0.3.min.js
 res/web/assets/bootstrap.css http://netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css
 res/web/assets/bootstrap.js http://netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js
+res/web/assets/leaflet.markercluster.js http://leaflet.github.io/Leaflet.markercluster/dist/leaflet.markercluster.js
