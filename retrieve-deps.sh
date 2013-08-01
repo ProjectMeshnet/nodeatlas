@@ -38,6 +38,7 @@ DOWNLOADER=
 # Constants #
 #############
 
+DEFAULT_ASSETSDIR='res/web/assets'
 DEFAULT_DEPFILE='depslist'
 DEFAULT_DOWNLOADERS='curl -s -o,wget -qO'
 
@@ -106,9 +107,10 @@ while read outfile url; do
 	# Report the status as we go.
 	echo -n "  $outfile..."
 
-	# The downloader should function such that '$DOWNLOADER $outfile
-	# $url' will retrieve a file at $url and place it in $outfile.
-	$DOWNLOADER "$outfile" "$url" 1>&2
+	# The downloader should function such that '$DOWNLOADER
+	# $DEFAULT_ASSETSDIR/$outfile $url' will retrieve a file at $url
+	# and place it in the $DEFAULT_ASSETSDIR at $outfile.
+	$DOWNLOADER "$DEFAULT_ASSETSDIR/$outfile" "$url" 1>&2
 
 	# Check the exit status from the $DOWNLOADER, and make sure it's
 	# zero. If it's not, denote the failure and continue.
