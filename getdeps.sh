@@ -90,6 +90,7 @@ if [ -z "$DOWNLOADER" ]; then
 	fi
 fi
 
+# RETRIEVE_ALL will be used to record the success status.
 RETRIEVE_ALL=0
 
 # Once the downloader has been selected, loop through the file line by
