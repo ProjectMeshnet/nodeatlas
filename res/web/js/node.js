@@ -93,6 +93,7 @@ function insertUser() {
 
 function nodeInfoClick(e, on) {
 	var html;
+	$('#inputform').remove();
 	$('.node').remove();
 	$('#messageCreate').remove();
 	if (!on) e.layer.closePopup();

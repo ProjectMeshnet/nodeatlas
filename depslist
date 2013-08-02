@@ -1,0 +1,7 @@
+leaflet.js http://cdn.leafletjs.com/leaflet-0.5/leaflet.js
+leaflet.css http://cdn.leafletjs.com/leaflet-0.5/leaflet.css
+leaflet.ie.css http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css
+jquery.js http://code.jquery.com/jquery-2.0.3.min.js
+bootstrap.css http://netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css
+bootstrap.js http://netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js
+leaflet.markercluster.js https://raw.github.com/Leaflet/Leaflet.markercluster/0.2/dist/leaflet.markercluster.js
