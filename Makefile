@@ -7,7 +7,7 @@ GOFLAGS	+= -ldflags "-X main.Version $(shell git describe --dirty=+)"
 
 all: $(PROGRAM_NAME)
 
-$(PROGRAM_NAME):
+$(PROGRAM_NAME): $(wildcard *.go)
 	$(GOCOMPILER) $(GOFLAGS)
 
 clean:
