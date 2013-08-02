@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-## retrieve-deps.sh
+## getdeps.sh
 #
 # This script is included as part of NodeAtlas for retrieving static
 # dependencies from content distribution networks (CDNs) or whatever
@@ -16,10 +16,13 @@
 # Dependencies should be listed in a file called `deps.txt` in the
 # following format, one per line.
 #
-#     path/to/output/file.ext http://example.com/downloads/file.ext
+#     file.ext http://example.com/downloads/file.min.ext
 #
-# If a dependency can not be retrieved, its intended filename will be
-# given on `stderr` with a warning that it could not be downloaded,
+# If the file is downloaded successfully, it will be placed in the
+# assets directory, which is `res/web/assets`.
+#
+# If a dependency cannot be retrieved, its intended filename will be
+# given on `stdout` with a warning that it could not be downloaded,
 # and the script will continue. When it exits, however, and at least
 # one dependency could not be retrieved, it will exit with status 3.
 #
