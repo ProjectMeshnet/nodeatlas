@@ -19,34 +19,66 @@
 		{{.Web.HeaderSnippet}}
 	</head>
 	<body>
-<div id="wrap">
-<div class="navbar">
-<div class="container">
-<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-<span class="icon-bar"></span>
-<span class="icon-bar"></span>
-<span class="icon-bar"></span>
-</button>
-<a class="navbar-brand" href="/">{{.Name}}</a>
-<div class="nav-collapse collapse navbar-responsive-collapse">
-<ul class="nav navbar-nav">
-<li class="active"><a href="/">Map</a></li>
-<li><a href="/about/">About</a></li>
-</ul>
-<ul class="nav navbar-nav pull-right">
-	<li><a href="#" class="light" onclick="hide(); return false;">Hide</a></li>
-	<li><a href="#" onclick="geoLocate(); return false;">Locate Me</a></li>
-	<li><a href="#" onclick="initDistance();" id="distance" data-toggle="tooltip" data-placement="bottom" data-original-title="Click on the first node, and then the second node." >Calculate Distance</a></li>
-	<li><input type="text" id="search" placeholder="Search"/></li>
-	<li><a href="#" class="sm"></a></li>
-	<li><button href="#" onclick="initRegistration();" class="btn btn-primary navbar-btn" id="addme" data-toggle="tooltip" data-placement="bottom" data-original-title="Click anywhere to add your node!" >Add Node</button></li>
-</ul>
-</div> 
-</div> 
-</div>
-	<noscript><div class="alert alert-warning"><h1>Please enable Javascript</h1><p>This website requires javascript to be viewed properly.</p></noscript>
-		<div id="map"></div>
-	</div>
+		<div id="wrap">
+			<div class="navbar">
+				<div class="container">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="/">{{.Name}}</a>
+					<div class="nav-collapse collapse navbar-responsive-collapse">
+						<ul class="nav navbar-nav">
+							<li class="active"><a href="/">Map</a></li>
+							<li><a href="/about/">About</a></li>
+						</ul>
+						<ul class="nav navbar-nav pull-right">
+							
+							<li class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+									Map
+									<b class="caret"></b>
+								</a>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu" role="menu">
+									<li><a href="#" onclick="zoomIn(); return false;">Zoom In</a></li>
+									<li><a href="#" onclick="zoomOut(); return false;">Zoom Out</a></li>
+									<li class="divider"></li>
+									<li><a href="#" onclick="hide(); return false;">Hide Navbar</a></li>
+								</ul>
+							</li>
+							
+							<li class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+									Layers
+									<b class="caret"></b>
+								</a>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu" role="menu">
+									<li><a href="#" onclick="return false;">Active Nodes</a></li>
+								</ul>
+							</li>
+							
+							<li class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+									Tools
+									<b class="caret"></b>
+								</a>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenu" role="menu">
+									<li><a href="#" onclick="geoLocate(); return false;">Locate Me</a></li>
+									<li><a href="#" onclick="initDistance();" id="distance" data-toggle="tooltip" data-placement="bottom" data-original-title="Click on the first node, and then the second node." >Calculate Distance</a></li>
+									<li class="divider"></li>
+									<li><a href="#" onclick="search(); return false;">Search</a></li>
+								</ul>
+							</li>
+							
+							<li><button href="#" onclick="initRegistration();" class="btn btn-primary navbar-btn" id="addme" data-toggle="tooltip" data-placement="bottom" data-original-title="Click anywhere to add your node!" >Add Node</button></li>
+						</ul>
+					</div> 
+				</div> 
+			</div>
+			<noscript><div class="alert alert-warning"><h1>Please enable Javascript</h1><p>This website requires javascript to be viewed properly.</p></noscript>
+			<div id="map"></div>
+		</div>
 		<script type="text/javascript" src="/js/loadmap.js"></script>
 	</body>
 </html>

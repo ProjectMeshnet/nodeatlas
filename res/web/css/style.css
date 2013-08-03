@@ -1,11 +1,10 @@
 @charset "Utf-8";
 
 body {
-	font-family: 'Lucida Grande', "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 16px;
+	font-family: Helvetica, sans-seirf;
+	font-size: 14px;
 	font-weight: 400;
-	line-height: 1.428571429;
-	color: #333333;
+	color: #333;
 }
 
 a.btn {
@@ -64,10 +63,15 @@ textarea.contact {
 	font-weight: 900;
 }
 
+li.active a, li.open a {
+	background-color: rgba(255, 255, 255, 1) !important;
+}
+
 .navbar {
     position: absolute;
     z-index: 2000;
     width: 100%;
+	background-color: rgba(255, 255, 255, .8);
 }
 
 .leaflet-top {
@@ -106,14 +110,6 @@ textarea.contact {
 #bringnavbarback:hover {
 	cursor: pointer;
 	background-color: rgba(233, 233, 233, 1);
-}
-
-a.light {
-	color: #AAA !important;	
-}
-
-a.light:hover {
-	color: #999 !important;	
 }
 
 #search {
