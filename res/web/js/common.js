@@ -15,7 +15,8 @@ function fixNavbarBrand() {
 	// If it's too big, then decrease the font size
 	// on the navbar-brand until we get a nice same
 	// height on all navbars
-	for (;;) {
+	
+	if ($('.container').css('max-width') != 'none') for (;;) {
 		var wrong = $('.navbar-brand').css('height');
 		var correct = $('.navbar-nav').css('height');
 		wrong = parseFloat(wrong.substring(0, wrong.length-2));

@@ -33,46 +33,55 @@
 							<li class="active"><a href="/">Map</a></li>
 							<li><a href="/about/">About</a></li>
 						</ul>
-						<ul class="nav navbar-nav pull-right">
-							
-							<li class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-									Map
-									<b class="caret"></b>
-								</a>
-								<ul class="dropdown-menu" aria-labelledby="dropdownMenu" role="menu">
-									<li><a href="#" onclick="map.zoomIn(1); return false;">Zoom In</a></li>
-									<li><a href="#" onclick="map.zoomOut(1); return false;">Zoom Out</a></li>
-									<li class="divider"></li>
-									<li><a href="#" onclick="hide(); return false;">Hide Navbar</a></li>
-								</ul>
-							</li>
-							
-							<li class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-									Layers
-									<b class="caret"></b>
-								</a>
-								<ul class="dropdown-menu" aria-labelledby="dropdownMenu" role="menu">
-									<li><a href="#" onclick="return false;">Active Nodes</a></li>
-								</ul>
-							</li>
-							
-							<li class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-									Tools
-									<b class="caret"></b>
-								</a>
-								<ul class="dropdown-menu" aria-labelledby="dropdownMenu" role="menu">
-									<li><a href="#" onclick="geoLocate(); return false;">Locate Me</a></li>
-									<li><a href="#" onclick="initDistance();" id="distance" data-toggle="tooltip" data-placement="bottom" data-original-title="Click on the first node, and then the second node." >Calculate Distance</a></li>
-									<li class="divider"></li>
-									<li><a href="#" onclick="search(); return false;">Search</a></li>
-								</ul>
-							</li>
-							
-							<li><button href="#" onclick="initRegistration();" class="btn btn-primary navbar-btn" id="addme" data-toggle="tooltip" data-placement="bottom" data-original-title="Click anywhere to add your node!" >Add Node</button></li>
-						</ul>
+						<div class="hidden-sm">
+							<ul class="nav navbar-nav pull-right">
+								<li class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+										Map
+										<b class="caret"></b>
+									</a>
+									<ul class="dropdown-menu" aria-labelledby="dropdownMenu" role="menu">
+										<li><a href="#" onclick="map.zoomIn(1); return false;">Zoom In</a></li>
+										<li><a href="#" onclick="map.zoomOut(1); return false;">Zoom Out</a></li>
+										<li class="divider"></li>
+										<li><a href="#" onclick="hide(); return false;">Hide Navbar</a></li>
+									</ul>
+								</li>
+								<li class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+										Layers
+										<b class="caret"></b>
+									</a>
+									<ul class="dropdown-menu" aria-labelledby="dropdownMenu" role="menu">
+										<li><a href="#" onclick="return false;">Active Nodes</a></li>
+									</ul>
+								</li>
+								<li class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+										Tools
+										<b class="caret"></b>
+									</a>
+									<ul class="dropdown-menu" aria-labelledby="dropdownMenu" role="menu">
+										<li><a href="#" onclick="geoLocate(); return false;">Locate Me</a></li>
+										<li><a href="#" onclick="initDistance();" id="distance" data-toggle="tooltip" data-placement="bottom" data-original-title="Click on the first node, and then the second node." >Calculate Distance</a></li>
+										<li class="divider"></li>
+										<li><a href="#" onclick="search(); return false;">Search</a></li>
+									</ul>
+								</li>
+								<li><button href="#" onclick="initRegistration();" class="btn btn-primary navbar-btn" id="addme" data-toggle="tooltip" data-placement="bottom" data-original-title="Click anywhere to add your node!" >Add Node</button></li>
+							</ul>
+						</div>
+						<div class="visible-sm">
+							<ul class="nav navbar-nav">
+																
+								<li><a href="#" onclick="geoLocate(); return false;">Locate Me</a></li>
+								<li><a href="#" onclick="initDistance();" id="distance" data-toggle="tooltip" data-placement="bottom" data-original-title="Click on the first node, and then the second node." >Calculate Distance</a></li>
+																
+								<li><a href="#" onclick="search(); return false;">Search</a></li>
+								
+								<li><a href="#" onclick="initRegistration();" id="addme">Add Node</a></li>
+							</ul>
+						</div>
 					</div> 
 				</div> 
 			</div>
