@@ -24,6 +24,7 @@ var tilelayer = L.tileLayer(options.tileserver, {styleId: 22677, attribution: at
 var map = new L.Map('map', {
 	center: options.center,
 	zoom: options.zoom,
+	zoomControl: false,
 	maxZoom: 16,
 	minZoom: 2,
 	layers: [tilelayer, nodelayer, newUser]

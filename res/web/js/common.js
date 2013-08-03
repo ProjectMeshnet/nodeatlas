@@ -29,13 +29,14 @@ function fixNavbarBrand() {
 
 function hide(x) {
 	$('#bringnavbarback').remove();
-	$('.navbar').animate({top: '-500px'}, 1000);
-	$('#wrap').append('<div id="bringnavbarback">Show</div>');
-	$('#bringnavbarback').animate({top: '0px'}, 500);
-	$('.leaflet-top').animate({top: '0px'}, 500);
-	$('#bringnavbarback').bind('click', function() {
-		$('.navbar').animate({top: '0px'}, 500);
-		$('.leaflet-top').animate({top: '45px'}, 500);
-		$('#bringnavbarback').animate({top: '-500px'}, 1000);
+	$('.navbar').fadeOut(500, function() {
+		$('#wrap').append('<div id="bringnavbarback">Show</div>');
+		$('#bringnavbarback').fadeIn(500, function() {
+			$('#bringnavbarback').bind('click', function() {
+				$('#bringnavbarback').fadeOut(500, function() {
+					$('.navbar').fadeIn(500);
+				});
+			});
+		});
 	});
 }
