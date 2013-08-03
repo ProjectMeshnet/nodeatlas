@@ -21,6 +21,7 @@ $(PROGRAM_NAME): $(wildcard *.go)
 # Download dependencies if the dependency list has changed more
 # recently than the directory (or the directory is empty).
 $(DEPS): $(DEPSFILE)
+	@- $(RM) $(wildcard $(DEPS))
 	- ./getdeps.sh
 
 clean:
