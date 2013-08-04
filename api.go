@@ -489,9 +489,8 @@ func (*Api) PostMessage(ctx *jas.Context) {
 
 	// Find the appropriate variables. If any of these are not
 	// found, JAS will return a request error.
-	replyto := ctx.RequireString("from")
-	subject := ctx.RequireString("subject")
-	message := ctx.RequireString("message")
+	replyto := ctx.RequireStringMatch(EmailRegexp, "from")
+	message := ctx.RequireStringLen(0, 1000, "message")
 
 	// Retrieve the appropriate node from the database.
 	node, err := Db.GetNode(ip)
@@ -516,7 +515,7 @@ func (*Api) PostMessage(ctx *jas.Context) {
 	e := &Email{
 		To:      node.OwnerEmail,
 		From:    Conf.SMTP.EmailAddress,
-		Subject: subject,
+		Subject: "Message via " + Conf.Name,
 	}
 	e.Data = make(map[string]interface{}, 6)
 	e.Data["ReplyTo"] = replyto
