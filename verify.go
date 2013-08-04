@@ -1,4 +1,5 @@
 package main
+
 // Copyright (C) 2013 Alexander Bauer, Luke Evers, Daniel Supernault,
 // Dylan Whichard, and contributors; (GPLv3) see LICENSE or doc.go
 
@@ -111,11 +112,13 @@ var (
 // performed if they are enabled in the configuration. If all checks
 // are successful, it returns nil.
 //
-// - Ensure that remote address matches the Node's address.
+// - Ensure that remote address matches the Node's address, OR it is
+//   an address specified in AdminAddresses in the config.
 func VerifyRequest(node *Node, r *http.Request) error {
 	// Ensure that r.RemoteAddr matches node.Addr.
 	if Conf.Verify.FromNode {
-		if !net.IP(node.Addr).Equal(net.ParseIP(r.RemoteAddr)) {
+		if !net.IP(node.Addr).Equal(net.ParseIP(r.RemoteAddr)) &&
+			!IsAdmin(r) {
 			// If the node address and remote address don't match,
 			// then this verify step has failed.
 			return RemoteAddressDoesNotMatchError
