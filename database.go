@@ -1,4 +1,5 @@
 package main
+
 // Copyright (C) 2013 Alexander Bauer, Luke Evers, Daniel Supernault,
 // Dylan Whichard, and contributors; (GPLv3) see LICENSE or doc.go
 
@@ -6,12 +7,48 @@ import (
 	_ "code.google.com/p/go-sqlite/go1/sqlite3"
 	"database/sql"
 	"errors"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"time"
 )
 
 var (
 	Db DB
+)
+
+const (
+	NodesNormal      = uint32(1 << iota) // << 0 normal local nodes
+	NodesPotential                       // potential local nodes
+	NodesCached                          // cached nodes
+	NodesVerifyQueue                     // unverified nodes
+	_                                    // << 4
+	_
+	_
+	_
+	_ // << 8
+	_
+	_
+	_
+	_ // << 12
+	_
+	_
+	_
+	_ // << 16
+	_
+	_
+	_
+	_ // << 20
+	_
+	_
+	_
+	_ // << 24
+	_
+	_
+	_
+	_ // << 28
+	_
+	_
+	_
 )
 
 type DB struct {
@@ -38,6 +75,22 @@ updated INT NOT NULL);`)
 	if err != nil {
 		return
 	}
+
+	_, err = db.Query(`CREATE TABLE IF NOT EXISTS nodes_potential (
+id BINARY(16) PRIMARY KEY,
+owner VARCHAR(255) NOT NULL,
+email VARCHAR(255) NOT NULL,
+contact VARCHAR(255),
+details VARCHAR(255),
+pgp BINARY(16),
+lat FLOAT NOT NULL,
+lon FLOAT NOT NULL,
+status INT NOT NULL,
+updated INT NOT NULL);`)
+	if err != nil {
+		return
+	}
+
 	_, err = db.Query(`CREATE TABLE IF NOT EXISTS nodes_cached (
 address BINARY(16) PRIMARY KEY,
 owner VARCHAR(255) NOT NULL,
@@ -86,22 +139,26 @@ expiration INT NOT NULL);`)
 	return
 }
 
-// LenNodes returns the number of nodes in the database. If there is
-// an error, it returns -1 and logs the incident.
-func (db DB) LenNodes(useCached bool) (n int) {
-	// Count the number of rows in the 'nodes' table.
-	var row *sql.Row
-	if useCached {
-		row = db.QueryRow("SELECT COUNT(*) FROM (SELECT address FROM nodes UNION SELECT address FROM nodes_cached);")
-	} else {
-		row = db.QueryRow("SELECT COUNT(*) FROM nodes;")
+// NodesCount returns the count of all nodes specified
+// by the flags passed to it, in any combination.
+func (db DB) NodesCount(types uint32) (n int) {
+	query := "SELECT COUNT(*) FROM %s;"
+	tables := [...]string{"nodes", "nodes_potential", "nodes_cached", "nodes_verify_queue"}
+	for i := uint32(0); i < 4; i++ {
+		var tmpCount int
+		var flag = uint32(1) << i
+		if types&flag > 0 {
+			row := db.QueryRow(fmt.Sprintf(query, tables[i]))
+			err := row.Scan(&tmpCount)
+			if err != nil {
+				l.Errf("Could not count nodes in table %s: %s", tables[i], err)
+				n = -1
+				return
+			}
+			n += tmpCount
+		}
 	}
-	// Write that number to n, and return if there is no
-	// error. Otherwise, log it and return zero.
-	if err := row.Scan(&n); err != nil {
-		l.Errf("Error counting the number of nodes: %s", err)
-		n = -1
-	}
+
 	return
 }
 
@@ -110,7 +167,7 @@ func (db DB) LenNodes(useCached bool) (n int) {
 func (db DB) DumpNodes() (nodes []*Node, err error) {
 	// Begin by getting the required length of the array. If we get
 	// -1, then there has been an error.
-	if n := db.LenNodes(true); n != -1 {
+	if n := db.NodesCount(NodesNormal | NodesCached); n != -1 {
 		// If successful, initialize the array with the length.
 		nodes = make([]*Node, n)
 	} else {
@@ -162,7 +219,7 @@ FROM nodes_cached;`)
 func (db DB) DumpLocal() (nodes []*Node, err error) {
 	// Begin by getting the required length of the array. If we get
 	// -1, then there has been an error.
-	if n := db.LenNodes(true); n != -1 {
+	if n := db.NodesCount(NodesNormal); n != -1 {
 		// If successful, initialize the array with the length.
 		nodes = make([]*Node, n)
 	} else {

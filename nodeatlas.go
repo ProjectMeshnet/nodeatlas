@@ -17,6 +17,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/
 //
 package main
+
 // Copyright (C) 2013 Alexander Bauer, Luke Evers, Daniel Supernault,
 // Dylan Whichard, and contributors; (GPLv3) see LICENSE or doc.go
 
@@ -175,7 +176,10 @@ func main() {
 		l.Fatalf("Could not initialize database: %s", err)
 	}
 	l.Debug("Initialized database\n")
-	l.Infof("Nodes: %d (%d local)\n", Db.LenNodes(true), Db.LenNodes(false))
+	l.Infof("Nodes: %d (%d Active, %d Potential, %d Cached)\n",
+		Db.NodesCount(NodesNormal|NodesPotential|NodesCached),
+		Db.NodesCount(NodesNormal), Db.NodesCount(NodesPotential),
+		Db.NodesCount(NodesCached))
 
 	// Check action flags and abandon normal startup if any are set.
 	if len(*fImport) != 0 {
@@ -375,7 +379,7 @@ func TestDatabase(db DB) {
 		l.Debug("Successfully added node\n")
 	}
 
-	l.Debugf("Nodes: %d", db.LenNodes(false))
+	l.Debugf("Nodes: %d", db.NodesCount(NodesNormal|NodesPotential))
 
 	node.Status = StatusActive
 	err = db.UpdateNode(node)

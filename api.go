@@ -1,4 +1,5 @@
 package main
+
 // Copyright (C) 2013 Alexander Bauer, Luke Evers, Daniel Supernault,
 // Dylan Whichard, and contributors; (GPLv3) see LICENSE or doc.go
 
@@ -59,8 +60,8 @@ func (*Api) Get(ctx *jas.Context) {
 func (*Api) GetStatus(ctx *jas.Context) {
 	dataMap := make(map[string]interface{}, 4)
 	dataMap["Name"] = Conf.Name
-	dataMap["LocalNodes"] = Db.LenNodes(false)
-	dataMap["CachedNodes"] = Db.LenNodes(true) - dataMap["LocalNodes"].(int)
+	dataMap["LocalNodes"] = Db.NodesCount(NodesNormal | NodesPotential)
+	dataMap["CachedNodes"] = Db.NodesCount(NodesCached)
 	dataMap["CachedMaps"] = len(Conf.ChildMaps)
 	ctx.Data = dataMap
 }
