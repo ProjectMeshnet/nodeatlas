@@ -25,6 +25,10 @@ a.close {
     opacity: .5;
 }
 
+li a.disabled {
+	color: #AAA;
+}
+
 .leaflet-control-geoloc {
 	background-image: url(/img/location.png);
 	-webkit-border-radius: 5px 5px 5px 5px;

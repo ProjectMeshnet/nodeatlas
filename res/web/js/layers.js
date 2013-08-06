@@ -1,83 +1,27 @@
 function addNodes() {
-	$.getJSON("/api/all?geojson", function (response) {
-		// Active nodes
-		var res = response.data, dats = [];
-		for (var i in res.features) {
-			var stat = res.features[i].properties.Status;
-			if ((stat&STATUS_ACTIVE) > 0) dats[dats.length] = res.features[i];
-		}
-		res.features = dats;
-		L.geoJson(res, {
-			pointToLayer: createMarker
-		}).addTo(active).on('click', nodeInfoClick);
-		
-		// Potential nodes
-		res = response.data, dats = [];
-		for (var i in res.features) {
-			var stat = res.features[i].properties.Status;
-			if ((stat&STATUS_ACTIVE) <= 0) dats[dats.length] = res.features[i];
-		}
-		res.features = dats;
-		L.geoJson(res, {
-			pointToLayer: createMarker
-		}).addTo(potential).on('click', nodeInfoClick);
-		
-		// Residential nodes
-		res = response.data, dats = [];
-		for (var i in res.features) {
-			var stat = res.features[i].properties.Status;
-			if ((stat&STATUS_PHYSICAL) > 0) { alert('hi'); dats[dats.length] = res.features[i]; }
-		}
-		res.features = dats;
-		L.geoJson(res, {
-			pointToLayer: createMarker
-		}).addTo(residential).on('click', nodeInfoClick);
-		
-		// VPS nodes
-		res = response.data, dats = [];
-		for (var i in res.features) {
-			var stat = res.features[i].properties.Status;
-			if ((stat&STATUS_PHYSICAL) <= 0) dats[dats.length] = res.features[i];
-		}
-		res.features = dats;
-		L.geoJson(res, {
-			pointToLayer: createMarker
-		}).addTo(vps).on('click', nodeInfoClick);
-		
-		// Internet nodes
-		res = response.data, dats = [];
-		for (var i in res.features) {
-			var stat = res.features[i].properties.Status;
-			if ((stat&STATUS_INTERNET) > 0) dats[dats.length] = res.features[i];
-		}
-		res.features = dats;
-		L.geoJson(res, {
-			pointToLayer: createMarker
-		}).addTo(internet).on('click', nodeInfoClick);
-		
-		// Wireless nodes
-		res = response.data, dats = [];
-		for (var i in res.features) {
-			var stat = res.features[i].properties.Status;
-			if ((stat&STATUS_WIRELESS) > 0) dats[dats.length] = res.features[i];
-		}
-		res.features = dats;
-		L.geoJson(res, {
-			pointToLayer: createMarker
-		}).addTo(wireless).on('click', nodeInfoClick);
-		
-		// Wired (eth) nodes
-		res = response.data, dats = [];
-		for (var i in res.features) {
-			var stat = res.features[i].properties.Status;
-			if ((stat&STATUS_WIRED) > 0) dats[dats.length] = res.features[i];
-		}
-		res.features = dats;
-		L.geoJson(res, {
-			pointToLayer: createMarker
-		}).addTo(wired).on('click', nodeInfoClick);
-		
+	$.ajax({
+		type: "GET",
+		url: "/api/all?geojson",
+		dataType:"json",
+		success: addLayers
 	});
+}
+
+function addLayers(response) {
+		allL(jQuery.extend(true, {}, response));
+	
+		activeL(jQuery.extend(true, {}, response));
+		potentialL(jQuery.extend(true, {}, response));
+		
+		residentialL(jQuery.extend(true, {}, response));
+		vpsL(jQuery.extend(true, {}, response));
+		
+		wirelessL(jQuery.extend(true, {}, response));
+		internetL(jQuery.extend(true, {}, response));
+		wiredL(jQuery.extend(true, {}, response));
+		
+		// Disable all layers on start except for All, which shows everything
+		allNodes();
 }
 
 function createMarker(feature, latlng) {
@@ -142,42 +86,186 @@ if (feature.properties.SourceID) {
 	return m;
 }
 
+function allL(response) {
+	L.geoJson(response.data, {
+		pointToLayer: createMarker
+	}).addTo(all).on('click', nodeInfoClick);
+}
+
+function activeL(response) {
+	var res = response.data, dats = [];
+	for (var i in res.features) {
+		var stat = res.features[i].properties.Status;
+		if ((stat&STATUS_ACTIVE) > 0) dats[dats.length] = res.features[i];
+	}
+	res.features = dats;
+	L.geoJson(res, {
+		pointToLayer: createMarker
+	}).addTo(active).on('click', nodeInfoClick);
+}
+
+function potentialL(response) {
+	var res = response.data, dats = [];
+	for (var i in res.features) {
+		var stat = res.features[i].properties.Status;
+		if ((stat&STATUS_ACTIVE) <= 0) dats[dats.length] = res.features[i];
+	}
+	res.features = dats;
+	L.geoJson(res, {
+		pointToLayer: createMarker
+	}).addTo(potential).on('click', nodeInfoClick);
+}
+
+function wirelessL(response) {
+	var res = response.data, dats = [];
+	for (var i in res.features) {
+		var stat = res.features[i].properties.Status;
+		if ((stat&STATUS_WIRELESS) > 0) dats[dats.length] = res.features[i];
+	}
+	res.features = dats;
+	L.geoJson(res, {
+		pointToLayer: createMarker
+	}).addTo(wireless).on('click', nodeInfoClick);
+}
+
+function residentialL(response) {
+	var res = response.data, dats = [];
+	for (var i in res.features) {
+		var stat = res.features[i].properties.Status;
+		if ((stat&STATUS_PHYSICAL) > 0) dats[dats.length] = res.features[i];
+	}
+	res.features = dats;
+	L.geoJson(res, {
+		pointToLayer: createMarker
+	}).addTo(residential).on('click', nodeInfoClick);
+}
+
+function vpsL(response) {
+	var res = response.data, dats = [];
+	for (var i in res.features) {
+		var stat = res.features[i].properties.Status;
+		if ((stat&STATUS_PHYSICAL) <= 0) dats[dats.length] = res.features[i];
+	}
+	res.features = dats;
+	L.geoJson(res, {
+		pointToLayer: createMarker
+	}).addTo(vps).on('click', nodeInfoClick);
+}
+
+function internetL(response) {
+	var res = response.data, dats = [];
+	for (var i in res.features) {
+		var stat = res.features[i].properties.Status;
+		if ((stat&STATUS_INTERNET) > 0) dats[dats.length] = res.features[i];
+	}
+	res.features = dats;
+	L.geoJson(res, {
+		pointToLayer: createMarker
+	}).addTo(internet).on('click', nodeInfoClick);
+}
+
+function wiredL(response) {
+	var res = response.data, dats = [];
+	for (var i in res.features) {
+		var stat = res.features[i].properties.Status;
+		if ((stat&STATUS_WIRED) > 0) dats[dats.length] = res.features[i];
+	}
+	res.features = dats;
+	L.geoJson(res, {
+		pointToLayer: createMarker
+	}).addTo(wired).on('click', nodeInfoClick);
+}
+
+function allNodes() {
+	if ($('#all_l').hasClass('disabled')) {
+		map.addLayer(all);
+		$('#all_l').removeClass('disabled');
+		map.removeLayer(active);
+		$('#active_l').addClass('disabled');
+		map.removeLayer(potential);
+		$('#potential_l').addClass('disabled');
+		map.removeLayer(residential);
+		$('#residential_l').addClass('disabled');
+		map.removeLayer(vps);
+		$('#vps_l').addClass('disabled');
+		map.removeLayer(internet);
+		$('#internet_l').addClass('disabled');
+		map.removeLayer(wireless);
+		$('#wireless_l').addClass('disabled');
+		map.removeLayer(wired);
+		$('#wired_l').addClass('disabled');
+	} else {
+		map.removeLayer(all);
+		$('#all_l').addClass('disabled');
+	}
+}
+
 function activeNodes() {
-	if ($('#active_l').hasClass('.disabled')) {
+	if ($('#active_l').hasClass('disabled')) {
 		map.addLayer(active);
-		$('#active_l').removeClass('.disabled');
+		$('#active_l').removeClass('disabled');
 	} else {
 		map.removeLayer(active);
-		$('#active_l').addClass('.disabled');
+		$('#active_l').addClass('disabled');
 	}
 }
 
 function potentialNodes() {
-	
+	if ($('#potential_l').hasClass('disabled')) {
+		map.addLayer(potential);
+		$('#potential_l').removeClass('disabled');
+	} else {
+		map.removeLayer(potential);
+		$('#potential_l').addClass('disabled');
+	}
 }
 
 function residentialNodes() {
-	
+	if ($('#residential_l').hasClass('disabled')) {
+		map.addLayer(residential);
+		$('#residential_l').removeClass('disabled');
+	} else {
+		map.removeLayer(residential);
+		$('#residential_l').addClass('disabled');
+	}
 }
 
 function vpsNodes() {
-	
+	if ($('#vps_l').hasClass('disabled')) {
+		map.addLayer(vps);
+		$('#vps_l').removeClass('disabled');
+	} else {
+		map.removeLayer(vps);
+		$('#vps_l').addClass('disabled');
+	}
 }
 
 function internetNodes() {
-	
+	if ($('#internet_l').hasClass('disabled')) {
+		map.addLayer(internet);
+		$('#internet_l').removeClass('disabled');
+	} else {
+		map.removeLayer(internet);
+		$('#internet_l').addClass('disabled');
+	}
 }
 
 function wirelessNodes() {
-	if ($('#wireles_l').hasClass('.disabled')) {
+	if ($('#wireless_l').hasClass('disabled')) {
 		map.addLayer(wireless);
-		$('#wireless_l').removeClass('.disabled');
+		$('#wireless_l').removeClass('disabled');
 	} else {
 		map.removeLayer(wireless);
-		$('#wireless_l').addClass('.disabled');
+		$('#wireless_l').addClass('disabled');
 	}
 }
 
 function wiredNodes() {
-	
+	if ($('#wired_l').hasClass('disabled')) {
+		map.addLayer(wired);
+		$('#wired_l').removeClass('disabled');
+	} else {
+		map.removeLayer(wired);
+		$('#wired_l').addClass('disabled');
+	}
 }

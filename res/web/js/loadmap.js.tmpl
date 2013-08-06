@@ -18,14 +18,14 @@ var nodelayer = new L.MarkerClusterGroup({
 	maxClusterRadius: {{.Map.ClusterRadius}}
 });
 
-var active = nodelayer;
-var potential = nodelayer;
-var residential = nodelayer;
-var vps = nodelayer;
-var internet = nodelayer;
-var wireless = nodelayer;
-var wired = nodelayer;
-var all = nodelayer;
+var active = new L.LayerGroup();
+var potential = new L.LayerGroup();
+var residential = new L.LayerGroup();
+var vps = new L.LayerGroup();
+var internet = new L.LayerGroup();
+var wireless = new L.LayerGroup();
+var wired = new L.LayerGroup();
+var all = new L.LayerGroup();
 
 var newUser = new L.LayerGroup();
 var tilelayer = L.tileLayer(options.tileserver, {styleId: 22677, attribution: attribution});
@@ -36,7 +36,7 @@ var map = new L.Map('map', {
 	zoomControl: false,
 	maxZoom: 16,
 	minZoom: 2,
-	layers: [tilelayer, active, potential, residential, vps, internet, wireless, wired, newUser]
+	layers: [tilelayer, all, active, potential, residential, vps, internet, wireless, wired, newUser]
 });
 
 $(document).ready(function() {
