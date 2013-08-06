@@ -18,14 +18,14 @@ var nodelayer = new L.MarkerClusterGroup({
 	maxClusterRadius: {{.Map.ClusterRadius}}
 });
 
-var active = new L.LayerGroup();
-var potential = new L.LayerGroup();
-var residential = new L.LayerGroup();
-var vps = new L.LayerGroup();
-var internet = new L.LayerGroup();
-var wireless = new L.LayerGroup();
-var wired = new L.LayerGroup();
-var all = new L.LayerGroup();
+var active = jQuery.extend(true, {}, nodelayer);
+var potential = jQuery.extend(true, {}, nodelayer);
+var residential = jQuery.extend(true, {}, nodelayer);
+var vps = jQuery.extend(true, {}, nodelayer);
+var internet = jQuery.extend(true, {}, nodelayer);
+var wireless = jQuery.extend(true, {}, nodelayer);
+var wired = jQuery.extend(true, {}, nodelayer);
+var all = jQuery.extend(true, {}, nodelayer);
 
 var newUser = new L.LayerGroup();
 var tilelayer = L.tileLayer(options.tileserver, {styleId: 22677, attribution: attribution});
