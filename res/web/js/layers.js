@@ -20,7 +20,8 @@ function addLayers(response) {
 		internetL(jQuery.extend(true, {}, response));
 		wiredL(jQuery.extend(true, {}, response));
 		
-		// Disable all layers on start except for All, which shows everything
+		// Disable all layers on start except for
+		// All Layers which shows everything
 		allNodes();
 }
 
