@@ -18,6 +18,15 @@ var nodelayer = new L.MarkerClusterGroup({
 	maxClusterRadius: {{.Map.ClusterRadius}}
 });
 
+var active = nodelayer;
+var potential = nodelayer;
+var residential = nodelayer;
+var vps = nodelayer;
+var internet = nodelayer;
+var wireless = nodelayer;
+var wired = nodelayer;
+var all = nodelayer;
+
 var newUser = new L.LayerGroup();
 var tilelayer = L.tileLayer(options.tileserver, {styleId: 22677, attribution: attribution});
 
@@ -27,7 +36,7 @@ var map = new L.Map('map', {
 	zoomControl: false,
 	maxZoom: 16,
 	minZoom: 2,
-	layers: [tilelayer, nodelayer, newUser]
+	layers: [tilelayer, active, potential, residential, vps, internet, wireless, wired, newUser]
 });
 
 $(document).ready(function() {
@@ -78,85 +87,6 @@ function loadChildMaps() {
 		}
 		addNodes();
 	});
-}
-
-function addNodes() {
-	$.getJSON("/api/all?geojson", function (response) {
-		// TODO: Check for errors here (response.error)
-		L.geoJson(response.data, {
-			pointToLayer: createMarker
-		}).addTo(nodelayer).on('click', nodeInfoClick);
-
-		for (var i in response.data.features) {
-			nodes[i] = {
-				id: response.data.features[i].id,
-				properties: response.data.features[i].properties
-			};
-
-		}
-	});
-}
-
-function createMarker(feature, latlng) {
-	var html = '<div class="node">';
-	html +=  '<h4>'+feature.properties.OwnerName+'&nbsp;';
-	if (feature.properties.SourceID) {
-		html += '<a href="'+cachedMaps[feature.properties.SourceID].hostname+'/node/'+feature.id+'" class="btn btn-mini btn-info" id="sendMessage">Message</a>';
-	} else {
-		html += '<button class="btn btn-mini btn-info" id="sendMessage">Message</button>';
-	}
-	html += '&nbsp;<button class="btn btn-mini btn-success" id="edit">Edit</button>';
-	html += '&nbsp;<button class="btn btn-mini btn-warning" id="delete">Delete</button></h4>';
-	html += '<div class="text-center"><a href="/node/'+feature.id+'" class="btn btn-small btn-primary">'+feature.id+'</a></div><hr>';
-	
-if (feature.properties.SourceID) {
-	html += '<div class="property">Source</div>';
-		if (cachedMaps[feature.properties.SourceID] != null) {
-			sourceMap = cachedMaps[feature.properties.SourceID];
-			html += '<div class="more">Retrieved from <a href="'+sourceMap.hostname+'/node/'+feature.id+'">'+(sourceMap.name ? sourceMap.name : 'another map')+'</a>.</div>';
-		} else {
-			html += '<div class="more">Retrieved from another map.</div>';
-		}
-	}
-	
-	if (feature.properties.Details) {
-		html += '<div class="property">Details</div><div class="more">'+feature.properties.Details+'</div>';
-	}
-	if (feature.properties.Contact) {
-		html += '<div class="property">Contact</div><div class="more">'+feature.properties.Contact+'</div>';
-	}
-	if (feature.properties.PGP) {
-		html += '<div class="property">PGP</div><div class="more">'+(feature.properties.PGP).toUpperCase()+'</div>';
-	}
-	
-	html += '</div>';
-	
-	var p = L.popup();
-	p.setLatLng(latlng);
-	p.setContent(html);
-	
-	
-	// Use the status to set an appropriate icon and effects.
-	var icon = inactiveNodeIcon;
-	if (feature.properties.Status & STATUS_ACTIVE > 0) {
-		icon = activeNodeIcon;
-	}
-		
-	// If it's a VPS, show the VPS icon instead of the active/inactive icon
-	if (!(feature.properties.Status & STATUS_PHYSICAL)) {
-		icon = VPSIcon;
-	}
-	
-	// Create the Marker with options set above.
-	var m = L.marker(latlng, {icon: icon}).bindPopup(html);
-	
-	// If we have /node/xxx then center the map on it
-	if (nodexxx(feature.id)) {
-		map.setView(latlng, 8);
-		nodeInfoClick(html, true);
-	}
-		
-	return m;
 }
 
 function nodexxx(node) {

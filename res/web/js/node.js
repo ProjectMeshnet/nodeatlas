@@ -313,7 +313,7 @@ function getSTATUS() {
 	}
 	
 	if ($("#wireless").is(':checked')) {
-		wireless = STATUS_INTERNET;
+		wireless = STATUS_WIRELESS;
 	}
 	
 	if ($("#wired").is(':checked')) {
