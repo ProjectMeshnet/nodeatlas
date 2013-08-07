@@ -300,25 +300,11 @@ function nodeInfoClick(e, on) {
 function getSTATUS() {
 	var active = 0, residential = 0, internet = 0, wireless = 0, wired = 0;
 	
-	if ($("#active").is(':checked')) {
-		active = STATUS_ACTIVE;
-	}	
-	
-	if ($("#residential").is(':checked')) {
-		residential = STATUS_PHYSICAL;
-	}
-	
-	if ($("#internet").is(':checked')) {
-		internet = STATUS_INTERNET;
-	}
-	
-	if ($("#wireless").is(':checked')) {
-		wireless = STATUS_WIRELESS;
-	}
-	
-	if ($("#wired").is(':checked')) {
-		wired = STATUS_WIRED;
-	}
+	if ($("#active").is(':checked')) active = STATUS_ACTIVE;	
+	if ($("#residential").is(':checked')) residential = STATUS_PHYSICAL;
+	if ($("#internet").is(':checked')) internet = STATUS_INTERNET;
+	if ($("#wireless").is(':checked')) wireless = STATUS_WIRELESS;
+	if ($("#wired").is(':checked')) wired = STATUS_WIRED;
 	
 	return (active|residential|internet|wireless|wired);
 }

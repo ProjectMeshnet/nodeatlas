@@ -1,7 +1,5 @@
 var nodes = [];
 var statuses = [];
-var DEFAULT_FILTER = 0;
-var filter = DEFAULT_FILTER;
 
 function addNodes() {
 	$.ajax({
@@ -30,9 +28,32 @@ function addLayers(response) {
 }
 
 function filterLayer() {
-	
+	var filter = getFilter();
+	temp.clearLayers();
+	var matches = [];
+	for (var i = 0; i < nodes.length; i++) {
+		if (((filter&statuses[i]) == filter) || ((!filter)|statuses[i]) == (!filter)) {
+		//if (((filter&statuses[i]) == filter)) {
+			matches[matches.length] = nodes[i];
+		}
+	}
+	L.geoJson(matches, {
+		pointToLayer: createMarker
+	}).addTo(temp).on('click', nodeInfoClick);
+	map.removeLayer(all);
 }
 
+function getFilter() {
+	var active = 0, residential = 0, internet = 0, wireless = 0, wired = 0;
+	
+	if (!($("#active_l").hasClass('disabled'))) active = STATUS_ACTIVE;
+	if (!($("#residential_l").hasClass('disabled'))) residential = STATUS_PHYSICAL;
+	if (!($("#internet_l").hasClass('disabled'))) internet = STATUS_INTERNET;
+	if (!($("#wireless_l").hasClass('disabled'))) wireless = STATUS_WIRELESS;
+	if (!($("#wired_l").hasClass('disabled'))) wired = STATUS_WIRED;
+	
+	return (active|residential|internet|wireless|wired);
+}
 
 function onOff() {
 	if ($('#all_l').hasClass('disabled')) {
@@ -46,11 +67,13 @@ function onOff() {
 		$('#all_l').addClass('disabled');
 		$('#all_l').html('Off');
 		// Other Stuff
-		$('#layer_1, #active_l, #potential_l').addClass('hidden');
-		$('#layer_2, #residential_l, #vps_l').addClass('hidden');
-		$('#layer_3, #internet_l, #wireless_l, #wired_l').addClass('hidden');
+		$('#layer_1, #active_l, #potential_l').addClass('hidden disabled');
+		$('#layer_2, #residential_l, #vps_l').addClass('hidden disabled');
+		$('#layer_3, #internet_l, #wireless_l, #wired_l').addClass('hidden disabled');
 		// Reset Filter
 		filter = DEFAULT_FILTER;
+		map.removeLayer(temp);
+		map.addLayer(all);
 	}
 }
 
@@ -63,35 +86,91 @@ function activeNodes() {
 			$('#potential_l').addClass('disabled');
 		}
 		$('#active_l').removeClass('disabled');
+		$('#layer_2, #residential_l, #vps_l').removeClass('hidden');
 		// Tell the filter to look for active nodes
 		// and ignore potential nodes.
+		filterLayer();
 	} else {
-		
+		// Active is already set; do nothing.
 	}
 }
 
 function potentialNodes() {
-	
+	if ($('#potential_l').hasClass('disabled')) {
+		if (!($('#active_l').hasClass('disabled'))) {
+			// If active is already set, we want to
+			// change it from active to potential, so
+			// first we change some UI stuff.
+			$('#active_l').addClass('disabled');
+		}
+		$('#potential_l').removeClass('disabled');
+		$('#layer_2, #residential_l, #vps_l').removeClass('hidden');
+		// Tell the filter to look for potential nodes
+		// and ignore potential nodes.
+		filterLayer();
+	} else {
+		// Active is already set; do nothing.
+	}
 }
 
 function residentialNodes() {
-	
+	if ($('#residential_l').hasClass('disabled')) {
+		if (!($('#vps_l').hasClass('disabled'))) {
+			// If residential is already set, we want to
+			// change it from residential to vps, so
+			// first we change some UI stuff.
+			$('#vps_l').addClass('disabled');
+		}
+		$('#residential_l').removeClass('disabled');
+		$('#layer_3, #internet_l, #wireless_l, #wired_l').removeClass('hidden');
+		// Tell the filter to look for active nodes
+		// and ignore potential nodes.
+		filterLayer();
+	} else {
+		// Residential is already set; do nothing.
+	}
 }
 
 function vpsNodes() {
-	
+	if ($('#vps_l').hasClass('disabled')) {
+		if (!($('#residential_l').hasClass('disabled'))) {
+			$('#residential_l').addClass('disabled');
+		}
+		$('#vps_l').removeClass('disabled');
+		$('#layer_3, #internet_l, #wireless_l, #wired_l').removeClass('hidden');
+		// Tell the filter to look for active nodes
+		// and ignore potential nodes.
+		filterLayer();
+	} else {
+		// Residential is already set; do nothing.
+	}
 }
 
 function internetNodes() {
-	
+	if ($('#internet_l').hasClass('disabled')) {
+		$('#internet_l').removeClass('disabled');
+	} else {
+		$('#internet_l').addClass('disabled');
+	}
+	filterLayer();
 }
 
 function wirelessNodes() {
-	
+	if ($('#wireless_l').hasClass('disabled')) {
+		$('#wireless_l').removeClass('disabled');
+	} else {
+		$('#wireless_l').addClass('disabled');
+	}
+	filterLayer();
 }
 
 function wiredNodes() {
-	
+	if ($('#wired_l').hasClass('disabled')) {
+		$('#wired_l').removeClass('disabled');
+	} else {
+		$('#wired_l').addClass('disabled');
+	}
+	filterLayer();
 }
 
 function createMarker(feature, latlng) {
