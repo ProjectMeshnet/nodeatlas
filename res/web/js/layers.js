@@ -1,7 +1,6 @@
 var nodes = [];
 var statuses = [];
-var DEFAULT_FILTER;
-// TODO: SET DEFAULT FILTER
+var DEFAULT_FILTER = 0;
 var filter = DEFAULT_FILTER;
 
 function addNodes() {
@@ -26,48 +25,8 @@ function addLayers(response) {
 	// statuses for each corrisponding node.
 	for (i in response.data.features) {
 		nodes[i] = jQuery.extend(true, {}, response.data.features[i]);
-		statuses[i] = bit32Status(nodes[i].properties.Status);
+		statuses[i] = nodes[i].properties.Status;
 	}
-}
-
-function bit32Status(s) {
-	var status = '';
-	// We want to take the regular status and turn it
-	// into a binary number. The regular status is an
-	// unsigned 32 int. For the most recent version of
-	// the chart, view GitHub issue #56, otherwise you can
-	// read the chart below. This will be updated accordingly
-	//
-	// https://github.com/ProjectMeshnet/nodeatlas/issues/56
-	//
-	//   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-	//  | <<    |       1       |       0        |
-	//  |_ _ _ _|_ _ _ _ _ _ _ _|_ _ _ _ _ _ _ _ |
-	//  | 0     | active        | planned        |
-	//  | 1-6   |-----------reserved-------------|
-	//  | 7     | physical      | vps            |
-	//  | 8     | internet      | no internet    |
-	//  | 9     | wireless      | no wireless    |
-	//  | 10    | wired(eth)    | no wired(eth)  |
-	//  | 11-15 |-----------reserved-------------|
-	//  | 16-23 |-----------reserved-------------|
-	//  | 24    | pingable      | down           |
-	//  | 25-31 |-----------reserved-------------|
-	//  |_ _ _ _|_ _ _ _ _ _ _ _|_ _ _ _ _ _ _ _ |
-	// 
-	
-	status += ~~((s&STATUS_ACTIVE)>0);    // 0
-	status += '000000';                   // 1-6 are reserved
-	status += ~~((s&STATUS_PHYSICAL)>0);  // 7
-	status += ~~((s&STATUS_INTERNET)>0);  // 8
-	status += ~~((s&STATUS_WIRELESS)>0);  // 9
-	status += ~~((s&STATUS_WIRED)>0);     // 10
-	status += '00000';                    // 11-15 are reserved
-	status += '00000000';                 // 16-23 are reserved
-	status += ~~((s&STATUS_PINGABLE)>0);  // 24
-	status += '0000000';                  // 25-31 are reserved
-		
-	return status;
 }
 
 function filterLayer() {
@@ -87,16 +46,9 @@ function onOff() {
 		$('#all_l').addClass('disabled');
 		$('#all_l').html('Off');
 		// Other Stuff
-		$('#layer_1').addClass('hidden');
-		$('#active_l').addClass('hidden');
-		$('#potential_l').addClass('hidden');
-		$('#layer_2').addClass('hidden');
-		$('#residential_l').addClass('hidden');
-		$('#vps_l').addClass('hidden');
-		$('#layer_3').addClass('hidden');
-		$('#internet_l').addClass('hidden');
-		$('#wireless_l').addClass('hidden');
-		$('#wired_l').addClass('hidden');
+		$('#layer_1, #active_l, #potential_l').addClass('hidden');
+		$('#layer_2, #residential_l, #vps_l').addClass('hidden');
+		$('#layer_3, #internet_l, #wireless_l, #wired_l').addClass('hidden');
 		// Reset Filter
 		filter = DEFAULT_FILTER;
 	}
