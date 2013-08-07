@@ -24,7 +24,6 @@ function addLayers(response) {
 	for (i in response.data.features) {
 		nodes[i] = jQuery.extend(true, {}, response.data.features[i]);
 		statuses[i] = bit32Status(nodes[i].properties.Status);
-		alert(statuses[i]);
 	}
 }
 
