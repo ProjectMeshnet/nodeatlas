@@ -1,5 +1,6 @@
 var nodes = [];
 var statuses = [];
+var filter;
 
 function addNodes() {
 	$.ajax({
@@ -67,6 +68,43 @@ function bit32Status(s) {
 	return status;
 }
 
+function filterLayer() {
+	
+}
+
+
+function allNodes() {
+	
+}
+
+function activeNodes() {
+	
+}
+
+function potentialNodes() {
+	
+}
+
+function residentialNodes() {
+	
+}
+
+function vpsNodes() {
+	
+}
+
+function internetNodes() {
+	
+}
+
+function wirelessNodes() {
+	
+}
+
+function wiredNodes() {
+	
+}
+
 function createMarker(feature, latlng) {
 	var html = '<div class="node">';
 	html +=  '<h4>'+feature.properties.OwnerName+'</h4><h4>';
@@ -127,98 +165,4 @@ if (feature.properties.SourceID) {
 	}
 		
 	return m;
-}
-
-function allNodes() {
-	if ($('#all_l').hasClass('disabled')) {
-		map.addLayer(all);
-		$('#all_l').removeClass('disabled');
-		map.removeLayer(active);
-		$('#active_l').addClass('disabled');
-		map.removeLayer(potential);
-		$('#potential_l').addClass('disabled');
-		map.removeLayer(residential);
-		$('#residential_l').addClass('disabled');
-		map.removeLayer(vps);
-		$('#vps_l').addClass('disabled');
-		map.removeLayer(internet);
-		$('#internet_l').addClass('disabled');
-		map.removeLayer(wireless);
-		$('#wireless_l').addClass('disabled');
-		map.removeLayer(wired);
-		$('#wired_l').addClass('disabled');
-	} else {
-		map.removeLayer(all);
-		$('#all_l').addClass('disabled');
-	}
-}
-
-function activeNodes() {
-	if ($('#active_l').hasClass('disabled')) {
-		map.addLayer(active);
-		$('#active_l').removeClass('disabled');
-	} else {
-		map.removeLayer(active);
-		$('#active_l').addClass('disabled');
-	}
-}
-
-function potentialNodes() {
-	if ($('#potential_l').hasClass('disabled')) {
-		map.addLayer(potential);
-		$('#potential_l').removeClass('disabled');
-	} else {
-		map.removeLayer(potential);
-		$('#potential_l').addClass('disabled');
-	}
-}
-
-function residentialNodes() {
-	if ($('#residential_l').hasClass('disabled')) {
-		map.addLayer(residential);
-		$('#residential_l').removeClass('disabled');
-	} else {
-		map.removeLayer(residential);
-		$('#residential_l').addClass('disabled');
-	}
-}
-
-function vpsNodes() {
-	if ($('#vps_l').hasClass('disabled')) {
-		map.addLayer(vps);
-		$('#vps_l').removeClass('disabled');
-	} else {
-		map.removeLayer(vps);
-		$('#vps_l').addClass('disabled');
-	}
-}
-
-function internetNodes() {
-	if ($('#internet_l').hasClass('disabled')) {
-		map.addLayer(internet);
-		$('#internet_l').removeClass('disabled');
-	} else {
-		map.removeLayer(internet);
-		$('#internet_l').addClass('disabled');
-	}
-}
-
-function wirelessNodes() {
-	if ($('#wireless_l').hasClass('disabled')) {
-		map.addLayer(wireless);
-		$('#wireless_l').removeClass('disabled');
-	} else {
-		map.removeLayer(wireless);
-		$('#wireless_l').addClass('disabled');
-	}
-}
-
-function wiredNodes() {
-	if ($('#wired_l').hasClass('disabled')) {
-		map.addLayer(wired);
-		$('#wired_l').removeClass('disabled');
-	} else {
-		map.removeLayer(wired);
-		$('#wired_l').addClass('disabled');
-	}
 }
