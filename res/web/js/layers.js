@@ -1,6 +1,5 @@
 var nodes = [];
 var statuses = [];
-var save;
 
 function addNodes() {
 	$.ajax({
@@ -32,15 +31,16 @@ function filterLayer() {
 	var filter = getFilter();
 	temp.clearLayers();
 	var matches = [];
+	var notFilter = !(filter);
 	for (var i = 0; i < nodes.length; i++) {
 		if (((filter&statuses[i]) == filter)) {
 			matches[matches.length] = nodes[i];
 		}
 	}
+	
 	L.geoJson(matches, {
 		pointToLayer: createMarker
 	}).addTo(temp).on('click', nodeInfoClick);
-	map.removeLayer(all);
 }
 
 function getFilter() {
@@ -62,6 +62,7 @@ function onOff() {
 		$('#all_l').html('On');
 		// Other Stuff
 		$('#layer_1, #active_l, #potential_l').removeClass('hidden');
+		map.removeLayer(all);
 	} else {
 		// Stuff on the on/off
 		$('#all_l').addClass('disabled');
@@ -71,7 +72,6 @@ function onOff() {
 		$('#layer_2, #residential_l, #vps_l').addClass('hidden disabled');
 		$('#layer_3, #internet_l, #wireless_l, #wired_l').addClass('hidden disabled');
 		// Reset Filter
-		filter = DEFAULT_FILTER;
 		map.removeLayer(temp);
 		map.addLayer(all);
 	}
