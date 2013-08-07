@@ -1,3 +1,6 @@
+var nodes = [];
+var statuses = [];
+
 function addNodes() {
 	$.ajax({
 		type: "GET",
@@ -8,21 +11,61 @@ function addNodes() {
 }
 
 function addLayers(response) {
-		allL(jQuery.extend(true, {}, response));
+	// When we load the page, we want to add all of 
+	// the layers to just the basic "all" layers
+	L.geoJson(response.data, {
+		pointToLayer: createMarker
+	}).addTo(all).on('click', nodeInfoClick);
+	// Now we also want to create the two arrays that
+	// we have allocated at the top of the file.
+	// `nodes` will contain an array of the [object Object] nodes
+	// while `statuses` will contain an array of the int32
+	// statuses for each corrisponding node.
+	for (i in response.data.features) {
+		nodes[i] = jQuery.extend(true, {}, response.data.features[i]);
+		statuses[i] = bit32Status(nodes[i].properties.Status);
+		alert(statuses[i]);
+	}
+}
+
+function bit32Status(s) {
+	var status = '';
+	// We want to take the regular status and turn it
+	// into a binary number. The regular status is an
+	// unsigned 32 int. For the most recent version of
+	// the chart, view GitHub issue #56, otherwise you can
+	// read the chart below. This will be updated accordingly
+	//
+	// https://github.com/ProjectMeshnet/nodeatlas/issues/56
+	//
+	//   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+	//  | <<    |       1       |       0        |
+	//  |_ _ _ _|_ _ _ _ _ _ _ _|_ _ _ _ _ _ _ _ |
+	//  | 0     | active        | planned        |
+	//  | 1-6   |-----------reserved-------------|
+	//  | 7     | physical      | vps            |
+	//  | 8     | internet      | no internet    |
+	//  | 9     | wireless      | no wireless    |
+	//  | 10    | wired(eth)    | no wired(eth)  |
+	//  | 11-15 |-----------reserved-------------|
+	//  | 16-23 |-----------reserved-------------|
+	//  | 24    | pingable      | down           |
+	//  | 25-31 |-----------reserved-------------|
+	//  |_ _ _ _|_ _ _ _ _ _ _ _|_ _ _ _ _ _ _ _ |
+	// 
 	
-		activeL(jQuery.extend(true, {}, response));
-		potentialL(jQuery.extend(true, {}, response));
+	status += ~~((s&STATUS_ACTIVE)>0);    // 0
+	status += '000000';                   // 1-6 are reserved
+	status += ~~((s&STATUS_PHYSICAL)>0);  // 7
+	status += ~~((s&STATUS_INTERNET)>0);  // 8
+	status += ~~((s&STATUS_WIRELESS)>0);  // 9
+	status += ~~((s&STATUS_WIRED)>0);     // 10
+	status += '00000';                    // 11-15 are reserved
+	status += '00000000';                 // 16-23 are reserved
+	status += ~~((s&STATUS_PINGABLE)>0);  // 24
+	status += '0000000';                  // 25-31 are reserved
 		
-		residentialL(jQuery.extend(true, {}, response));
-		vpsL(jQuery.extend(true, {}, response));
-		
-		wirelessL(jQuery.extend(true, {}, response));
-		internetL(jQuery.extend(true, {}, response));
-		wiredL(jQuery.extend(true, {}, response));
-		
-		// Disable all layers on start except for
-		// All Layers which shows everything
-		allNodes();
+	return status;
 }
 
 function createMarker(feature, latlng) {
@@ -85,96 +128,6 @@ if (feature.properties.SourceID) {
 	}
 		
 	return m;
-}
-
-function allL(response) {
-	L.geoJson(response.data, {
-		pointToLayer: createMarker
-	}).addTo(all).on('click', nodeInfoClick);
-}
-
-function activeL(response) {
-	var res = response.data, dats = [];
-	for (var i in res.features) {
-		var stat = res.features[i].properties.Status;
-		if ((stat&STATUS_ACTIVE) > 0) dats[dats.length] = res.features[i];
-	}
-	res.features = dats;
-	L.geoJson(res, {
-		pointToLayer: createMarker
-	}).addTo(active).on('click', nodeInfoClick);
-}
-
-function potentialL(response) {
-	var res = response.data, dats = [];
-	for (var i in res.features) {
-		var stat = res.features[i].properties.Status;
-		if ((stat&STATUS_ACTIVE) <= 0) dats[dats.length] = res.features[i];
-	}
-	res.features = dats;
-	L.geoJson(res, {
-		pointToLayer: createMarker
-	}).addTo(potential).on('click', nodeInfoClick);
-}
-
-function wirelessL(response) {
-	var res = response.data, dats = [];
-	for (var i in res.features) {
-		var stat = res.features[i].properties.Status;
-		if ((stat&STATUS_WIRELESS) > 0) dats[dats.length] = res.features[i];
-	}
-	res.features = dats;
-	L.geoJson(res, {
-		pointToLayer: createMarker
-	}).addTo(wireless).on('click', nodeInfoClick);
-}
-
-function residentialL(response) {
-	var res = response.data, dats = [];
-	for (var i in res.features) {
-		var stat = res.features[i].properties.Status;
-		if ((stat&STATUS_PHYSICAL) > 0) dats[dats.length] = res.features[i];
-	}
-	res.features = dats;
-	L.geoJson(res, {
-		pointToLayer: createMarker
-	}).addTo(residential).on('click', nodeInfoClick);
-}
-
-function vpsL(response) {
-	var res = response.data, dats = [];
-	for (var i in res.features) {
-		var stat = res.features[i].properties.Status;
-		if ((stat&STATUS_PHYSICAL) <= 0) dats[dats.length] = res.features[i];
-	}
-	res.features = dats;
-	L.geoJson(res, {
-		pointToLayer: createMarker
-	}).addTo(vps).on('click', nodeInfoClick);
-}
-
-function internetL(response) {
-	var res = response.data, dats = [];
-	for (var i in res.features) {
-		var stat = res.features[i].properties.Status;
-		if ((stat&STATUS_INTERNET) > 0) dats[dats.length] = res.features[i];
-	}
-	res.features = dats;
-	L.geoJson(res, {
-		pointToLayer: createMarker
-	}).addTo(internet).on('click', nodeInfoClick);
-}
-
-function wiredL(response) {
-	var res = response.data, dats = [];
-	for (var i in res.features) {
-		var stat = res.features[i].properties.Status;
-		if ((stat&STATUS_WIRED) > 0) dats[dats.length] = res.features[i];
-	}
-	res.features = dats;
-	L.geoJson(res, {
-		pointToLayer: createMarker
-	}).addTo(wired).on('click', nodeInfoClick);
 }
 
 function allNodes() {
