@@ -1,5 +1,6 @@
 var nodes = [];
 var statuses = [];
+var save;
 
 function addNodes() {
 	$.ajax({
@@ -32,8 +33,7 @@ function filterLayer() {
 	temp.clearLayers();
 	var matches = [];
 	for (var i = 0; i < nodes.length; i++) {
-		if (((filter&statuses[i]) == filter) || ((!filter)|statuses[i]) == (!filter)) {
-		//if (((filter&statuses[i]) == filter)) {
+		if (((filter&statuses[i]) == filter)) {
 			matches[matches.length] = nodes[i];
 		}
 	}
@@ -45,7 +45,7 @@ function filterLayer() {
 
 function getFilter() {
 	var active = 0, residential = 0, internet = 0, wireless = 0, wired = 0;
-	
+		
 	if (!($("#active_l").hasClass('disabled'))) active = STATUS_ACTIVE;
 	if (!($("#residential_l").hasClass('disabled'))) residential = STATUS_PHYSICAL;
 	if (!($("#internet_l").hasClass('disabled'))) internet = STATUS_INTERNET;
