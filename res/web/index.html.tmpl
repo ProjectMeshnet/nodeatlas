@@ -53,23 +53,17 @@
 										<b class="caret"></b>
 									</a>
 									<ul class="dropdown-menu" aria-labelledby="dropdownMenu" role="menu">
-										<li><a href="#" onclick="allNodes(); return false;" id="all_l" class="disabled">Off</a></li>
-										<div class="hidden" id="layer_1">
-											<li class="divider"></li>
-											<li><a href="#" onclick="activeNodes(); return false;" id="active_l">Active Nodes</a></li>
-											<li><a href="#" onclick="potentialNodes(); return false;" id="potential_l">Potential Nodes</a></li>
-										</div>
-										<div class="hidden" id="layer_2">
-											<li class="divider"></li>
-											<li><a href="#" onclick="residentialNodes(); return false;" id="residential_l">Residential Nodes</a></li>
-											<li><a href="#" onclick="vpsNodes(); return false;" id="vps_l">Virtual Private Servers</a></li>
-										</div>
-										<div class="hidden" id="layer_3">
-										<li class="divider"></li>
-											<li><a href="#" onclick="internetNodes(); return false;" id="internet_l">Internet Access</a></li>
-											<li><a href="#" onclick="wirelessNodes(); return false;" id="wireless_l">Wireless Access</a></li>
-											<li><a href="#" onclick="wiredNodes(); return false;" id="wired_l">Wired (eth) Access</a></li>
-										</div>
+										<li><a href="#" onclick="onOff(); return false;" id="all_l" class="disabled">Off</a></li>
+										<li class="divider hidden" id="layer_1"></li>
+										<li><a href="#" onclick="activeNodes(); return false;" id="active_l" class="hidden disabled">Active Nodes</a></li>
+										<li><a href="#" onclick="potentialNodes(); return false;" id="potential_l" class="hidden disabled">Potential Nodes</a></li>
+										<li class="divider hidden" id="layer_2"></li>
+										<li><a href="#" onclick="residentialNodes(); return false;" id="residential_l" class="hidden disabled">Residential Nodes</a></li>
+										<li><a href="#" onclick="vpsNodes(); return false;" id="vps_l" class="hidden disabled">Virtual Private Servers</a></li>
+										<li class="divider hidden" id="layer_3"></li>
+										<li><a href="#" onclick="internetNodes(); return false;" id="internet_l" class="hidden disabled">Internet Access</a></li>
+										<li><a href="#" onclick="wirelessNodes(); return false;" id="wireless_l" class="hidden disabled">Wireless Access</a></li>
+										<li><a href="#" onclick="wiredNodes(); return false;" id="wired_l" class="hidden disabled">Wired (eth) Access</a></li>
 									</ul>
 								</li>
 								<li class="dropdown">

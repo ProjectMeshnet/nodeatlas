@@ -73,8 +73,31 @@ function filterLayer() {
 }
 
 
-function allNodes() {
-	
+function onOff() {
+	if ($('#all_l').hasClass('disabled')) {
+		// Stuff on the on/off
+		$('#all_l').removeClass('disabled');
+		$('#all_l').html('On');
+		// Other Stuff
+		$('#layer_1').removeClass('hidden');
+		$('#active_l').removeClass('hidden');
+		$('#potential_l').removeClass('hidden');
+	} else {
+		// Stuff on the on/off
+		$('#all_l').addClass('disabled');
+		$('#all_l').html('Off');
+		// Other Stuff
+		$('#layer_1').addClass('hidden');
+		$('#active_l').addClass('hidden');
+		$('#potential_l').addClass('hidden');
+		$('#layer_2').addClass('hidden');
+		$('#residential_l').addClass('hidden');
+		$('#vps_l').addClass('hidden');
+		$('#layer_3').addClass('hidden');
+		$('#internet_l').addClass('hidden');
+		$('#wireless_l').addClass('hidden');
+		$('#wired_l').addClass('hidden');
+	}
 }
 
 function activeNodes() {
