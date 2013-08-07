@@ -1,6 +1,8 @@
 var nodes = [];
 var statuses = [];
-var filter;
+var DEFAULT_FILTER;
+// TODO: SET DEFAULT FILTER
+var filter = DEFAULT_FILTER;
 
 function addNodes() {
 	$.ajax({
@@ -79,9 +81,7 @@ function onOff() {
 		$('#all_l').removeClass('disabled');
 		$('#all_l').html('On');
 		// Other Stuff
-		$('#layer_1').removeClass('hidden');
-		$('#active_l').removeClass('hidden');
-		$('#potential_l').removeClass('hidden');
+		$('#layer_1, #active_l, #potential_l').removeClass('hidden');
 	} else {
 		// Stuff on the on/off
 		$('#all_l').addClass('disabled');
@@ -97,11 +97,25 @@ function onOff() {
 		$('#internet_l').addClass('hidden');
 		$('#wireless_l').addClass('hidden');
 		$('#wired_l').addClass('hidden');
+		// Reset Filter
+		filter = DEFAULT_FILTER;
 	}
 }
 
 function activeNodes() {
-	
+	if ($('#active_l').hasClass('disabled')) {
+		if (!($('#potential_l').hasClass('disabled'))) {
+			// If potential is already set, we want to
+			// change it from potential to active, so
+			// first we change some UI stuff.
+			$('#potential_l').addClass('disabled');
+		}
+		$('#active_l').removeClass('disabled');
+		// Tell the filter to look for active nodes
+		// and ignore potential nodes.
+	} else {
+		
+	}
 }
 
 function potentialNodes() {
