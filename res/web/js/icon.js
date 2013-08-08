@@ -1,6 +1,6 @@
 var NodeIcon = L.Icon.extend({
     options: {
-        shadowUrl: '',
+        shadowUrl: '/img/shadow.png',
 		iconSize: [25, 41],
 		iconAnchor: [15, 35],
 		popupAnchor: [-1, -25]
