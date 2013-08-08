@@ -18,8 +18,8 @@ they're adding. This will allow them to verify their remote node from
 its own address, which is required on certain instances.
 
 This document describes API behavior as of version
-`v0.5.5-2-g3bb5af1`, and possibly later. Major changes will likely not
-be left undocumented, but there may be minor discrepancies.
+`v0.5.8-37-g4e6a96e`, and possibly later. Major changes will likely
+not be left undocumented, but there may be minor discrepancies.
 
 
 ## Accessing the API ##
@@ -204,13 +204,13 @@ respectively.
 // curl -s "http://localhost:8077/api/node?address=fcdf:db8b:fbf5:d3d7:64a:5aa3:f326:149b"
 {
     "data": {
-        "Addr": "fcdf:db8b:fbf5:d3d7:64a:5aa3:f326:149b", 
-        "Contact": "XMPP: duonoxsol@rows.io", 
-        "Details": "Bay node", 
-        "Latitude": 39.134321, 
-        "Longitude": -76.360474, 
-        "OwnerName": "Alexander Bauer", 
-        "PGP": "76aad89b", 
+        "Addr": "fcdf:db8b:fbf5:d3d7:64a:5aa3:f326:149b",
+        "Contact": "XMPP: duonoxsol@rows.io",
+        "Details": "Bay node",
+        "Latitude": 39.134321,
+        "Longitude": -76.360474,
+        "OwnerName": "Alexander Bauer",
+        "PGP": "76aad89b",
         "Status": 257
     }, 
     "error": null
@@ -240,8 +240,8 @@ following fields.
 The following fields can also be given, but are not required. The
 `contact` and `details` fields must be shorter than 256 characters,
 but are otherwise arbitrary plaintext. `pgp` can be 16, 8, or 0 hex
-digits, and `status` is a decimal `int32` composed of single-bit
-flags, as specified [here][status].
+digits, and must be all lowercase, and `status` is a decimal `int32`
+composed of single-bit flags, as specified [here][status].
 
   [status]: https://github.com/ProjectMeshnet/nodeatlas/issues/111
 
@@ -297,9 +297,11 @@ It will never return an error.
 
 ### verify ###
 
-`GET /api/verify` is used to verify a particular node ID via email.
+`GET /api/verify` is used to verify a particular node ID via email. If
+`Verify.FromNode` in the configuration is `true`, then it requires
+that the request come from the address which is being verified.
 
-If it returns an error, it will be a database-related `InternalError`.
+If it returns an error, it will be either `verify: remote address does not match Node address` or a database-related `InternalError`.
 
 ```json
 // curl -s "http://localhost:8077/api/verify?id=5085217136501410721"
@@ -309,12 +311,30 @@ If it returns an error, it will be a database-related `InternalError`.
 }
 ```
 
+### delete_node ###
+
+`POST /api/delete_node` removes a local node from the database. It
+requires that the connecting address match the address to be deleted,
+or to be registered as an admin.
+
+If it returns an error, it will either be verify: `remote address does
+not match Node address` or a database-related InternalError.
+
+```json
+// curl -s -d "address=fcdf:db8b:fbf5:d3d7:64a:5aa3:f326:149d" http://localhost:8077/api/delete_node
+{
+    "data": "deleted", 
+    "error": null
+}
+```
+
 ### message ###
 
 `POST /api/message` creates and sends an email to the address of the
 owner of the given node. The address to which it is sent remains
 private, and the IP of the sender is logged. It requires a non-expired
-CAPTCHA id and solution pair to be provided.
+CAPTCHA id and solution pair to be provided, and the message must be
+1000 characters or under.
 
 Required fields are as follows.
 
@@ -323,7 +343,6 @@ Required fields are as follows.
     "captcha": "id:solution",
 	"address": "fcdf:db8b:fbf5:d3d7:64a:5aa3:f326:149d",
 	"from": "me@example.com",
-	"subject": "I'd like to peer with you",
 	"message": "Hello, I'd like to peer with your node on the Project Meshnet\n
 NodeAtlas instance. Would you please provide peering details?"
 }
@@ -334,19 +353,19 @@ incorrect`, `CAPTCHA format invalid`, `<formkey>Invalid` error, or a
 database-related `InternalError`.
 
 ```json
-// curl -s -d "captcha=n2teCkgMKdceXkEs5HiC:595801" -d "address=fcdf:db8b:fbf5:d3d7:64a:5aa3:f326:149d" -d "from=me@example.com" -d "subject=I'd like to peer with you" -d "message=Hello, I'd like to peer with your node on the Project Meshnet\nNodeAtlas instance. Would you please provide peering details?" "http://localhost:8077/api/message"
+// curl -s -d "captcha=n2teCkgMKdceXkEs5HiC:595801" -d "address=fcdf:db8b:fbf5:d3d7:64a:5aa3:f326:149d" -d "from=me@example.com" -d "message=Hello, I'd like to peer with your node on the Project Meshnet\nNodeAtlas instance. Would you please provide peering details?" "http://localhost:8077/api/message"
 {
     "data":null,
 	"error":null
 }
 ```
 
-
 ### update_node ###
 
 `POST /api/update_node` is very similar to [`POST /api/node`](#post),
 except that it does not take the `email` form, and it can only be used
-to update existing nodes.
+to update existing nodes. It requires that the request be sent from
+the address which is being updated, or from an admin address.
 
 If there is an error, it will be of the form `<formkey>Invalid` or
 `InternalError`.

@@ -25,7 +25,7 @@ a.close {
     opacity: .5;
 }
 
-li a.disabled {
+li a.disabled, .disabled {
 	color: #AAA;
 }
 

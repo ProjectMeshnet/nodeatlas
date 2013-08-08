@@ -1,4 +1,5 @@
 package main
+
 // Copyright (C) 2013 Alexander Bauer, Luke Evers, Daniel Supernault,
 // Dylan Whichard, and contributors; (GPLv3) see LICENSE or doc.go
 
@@ -11,11 +12,17 @@ import (
 	"net"
 	"net/http"
 	"path"
+	"regexp"
 	"time"
 )
 
 const (
 	APIDocs = "https://github.com/ProjectMeshnet/nodeatlas/blob/master/API.md"
+)
+
+var (
+	PGPRegexp   = regexp.MustCompilePOSIX("^[0-9a-z]{8}{0,2}$")
+	EmailRegexp = regexp.MustCompilePOSIX("^[a-z0-9._%+-]+@([a-z0-9-]+\\.)+[a-z]+$")
 )
 
 // Api is the JAS-required type which is passed to all API-related
@@ -78,7 +85,7 @@ func (*Api) GetKey(ctx *jas.Context) {
 // it. If `?geojson` is set, then it returns it in geojson.Feature
 // form.
 func (*Api) GetNode(ctx *jas.Context) {
-	ip := IP(net.ParseIP(ctx.RequireString("address")))
+	ip := IP(net.ParseIP(ctx.RequireStringLen(0, 40, "address")))
 	if ip == nil {
 		// If this is encountered, the address was incorrectly
 		// formatted.
@@ -131,7 +138,7 @@ func (*Api) PostNode(ctx *jas.Context) {
 	// Initialize the node and retrieve fields.
 	node := new(Node)
 
-	ip := IP(net.ParseIP(ctx.RequireString("address")))
+	ip := IP(net.ParseIP(ctx.RequireStringLen(0, 40, "address")))
 	if ip == nil {
 		// If the address is invalid, return that error.
 		ctx.Error = jas.NewRequestError("addressInvalid")
@@ -141,23 +148,22 @@ func (*Api) PostNode(ctx *jas.Context) {
 	node.Latitude = ctx.RequireFloat("latitude")
 	node.Longitude = ctx.RequireFloat("longitude")
 	node.OwnerName = ctx.RequireString("name")
-	node.OwnerEmail = ctx.RequireString("email")
-	node.Contact, _ = ctx.FindString("contact")
-	node.Details, _ = ctx.FindString("details")
+	node.OwnerEmail = ctx.RequireStringMatch(EmailRegexp, "email")
 
-	if len(node.Contact) > 255 {
+	// If Contact and Details are too long to fit in the database,
+	// produce an error.
+	if node.Contact, err = ctx.FindStringLen(0, 255, "contact"); err == jas.TooLongError {
 		ctx.Error = jas.NewRequestError("contactTooLong")
 		return
 	}
-
-	if len(node.Details) > 255 {
+	if node.Details, err = ctx.FindStringLen(0, 255, "details"); err == jas.TooLongError {
 		ctx.Error = jas.NewRequestError("detailsTooLong")
 		return
 	}
 
-	// Validate the PGP ID, if given.
-	// TODO(DuoNoxSol): Ensure that it is hex.
-	pgpstr, _ := ctx.FindString("pgp")
+	// Validate the PGP ID, if given. It can be an lowercase hex
+	// string of length 0, 8, or 16.
+	pgpstr, _ := ctx.FindStringMatch(PGPRegexp, "pgp")
 	if node.PGP, err = DecodePGPID([]byte(pgpstr)); err != nil {
 		ctx.Error = jas.NewRequestError("pgpInvalid")
 		return
@@ -254,7 +260,7 @@ func (*Api) PostUpdateNode(ctx *jas.Context) {
 
 	// Retrieve the given IP address, check that it's sane, and check
 	// that it exists in the *local* database.
-	ip := IP(net.ParseIP(ctx.RequireString("address")))
+	ip := IP(net.ParseIP(ctx.RequireStringLen(0, 40, "address")))
 	if ip == nil {
 		// If the address is invalid, return that error.
 		ctx.Error = jas.NewRequestError("addressInvalid")
@@ -285,22 +291,21 @@ func (*Api) PostUpdateNode(ctx *jas.Context) {
 	node.Latitude = ctx.RequireFloat("latitude")
 	node.Longitude = ctx.RequireFloat("longitude")
 	node.OwnerName = ctx.RequireString("name")
-	node.Contact, _ = ctx.FindString("contact")
-	node.Details, _ = ctx.FindString("details")
 
-	if len(node.Contact) > 255 {
+	// If Contact and Details are too long to fit in the database,
+	// produce an error.
+	if node.Contact, err = ctx.FindStringLen(0, 255, "contact"); err == jas.TooLongError {
 		ctx.Error = jas.NewRequestError("contactTooLong")
 		return
 	}
-
-	if len(node.Details) > 255 {
+	if node.Details, err = ctx.FindStringLen(0, 255, "details"); err == jas.TooLongError {
 		ctx.Error = jas.NewRequestError("detailsTooLong")
 		return
 	}
 
-	// Validate the PGP ID, if given.
-	// TODO(DuoNoxSol): Ensure that it is hex.
-	pgpstr, _ := ctx.FindString("pgp")
+	// Validate the PGP ID, if given. It can be an lowercase hex
+	// string of length 0, 8, or 16.
+	pgpstr, _ := ctx.FindStringMatch(PGPRegexp, "pgp")
 	if node.PGP, err = DecodePGPID([]byte(pgpstr)); err != nil {
 		ctx.Error = jas.NewRequestError("pgpInvalid")
 		return
@@ -339,7 +344,7 @@ func (*Api) PostDeleteNode(ctx *jas.Context) {
 
 	// Retrieve the given IP address, check that it's sane, and check
 	// that it exists in the *local* database.
-	ip := IP(net.ParseIP(ctx.RequireString("address")))
+	ip := IP(net.ParseIP(ctx.RequireStringLen(0, 40, "address")))
 	if ip == nil {
 		// If the address is invalid, return that error.
 		ctx.Error = jas.NewRequestError("addressInvalid")
@@ -475,7 +480,7 @@ func (*Api) PostMessage(ctx *jas.Context) {
 
 	// Next, retrieve the IP of the node the user is attempting to
 	// contact.
-	ip := IP(net.ParseIP(ctx.RequireString("address")))
+	ip := IP(net.ParseIP(ctx.RequireStringLen(0, 40, "address")))
 	if ip == nil {
 		// If the address is invalid, return that error.
 		ctx.Error = jas.NewRequestError("addressInvalid")
@@ -484,9 +489,8 @@ func (*Api) PostMessage(ctx *jas.Context) {
 
 	// Find the appropriate variables. If any of these are not
 	// found, JAS will return a request error.
-	replyto := ctx.RequireString("from")
-	subject := ctx.RequireString("subject")
-	message := ctx.RequireString("message")
+	replyto := ctx.RequireStringMatch(EmailRegexp, "from")
+	message := ctx.RequireStringLen(0, 1000, "message")
 
 	// Retrieve the appropriate node from the database.
 	node, err := Db.GetNode(ip)
@@ -511,7 +515,7 @@ func (*Api) PostMessage(ctx *jas.Context) {
 	e := &Email{
 		To:      node.OwnerEmail,
 		From:    Conf.SMTP.EmailAddress,
-		Subject: subject,
+		Subject: "Message via " + Conf.Name,
 	}
 	e.Data = make(map[string]interface{}, 6)
 	e.Data["ReplyTo"] = replyto
