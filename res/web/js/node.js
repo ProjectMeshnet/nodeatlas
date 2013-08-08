@@ -103,7 +103,6 @@ function nodeInfoClick(e, on) {
 	$('.node').hide(); 
 	$('.node').fadeIn(500);
 	var name = html.substring(html.indexOf('<h4>')+4, html.indexOf('</h4>'));
-	alert(name);
 	ipv6 = html.substring(html.indexOf('a href')+14);
 	ipv6 = ipv6.substring(0, ipv6.indexOf('"'));
 	// DELETE NODE
