@@ -71,7 +71,7 @@ function insertUser() {
 				setTimeout(function() {
 					$('#alert').fadeOut(500, function() {
 						$('#alert').remove();
-						nodelayer.clearLayers();
+						all.clearLayers();
 						addNodes();
 					});
 				}, 1000);
@@ -120,7 +120,7 @@ function nodeInfoClick(e, on) {
 					url: "/api/delete_node",
 					data: {address: ipv6},
 					success: function(response) {
-						nodelayer.clearLayers();
+						all.clearLayers();
 						addNodes();
 						var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
 						success += 'node deleted';
@@ -148,6 +148,7 @@ function nodeInfoClick(e, on) {
 	// EDIT NODE
 	$('#edit').bind('click', function() {
 		$('.node').fadeOut(500, function() {
+			alert(JSON.stringify(e.layer));
 			$('.node').remove();
 			$('#wrap').append(getForm(e.layer.getLatLng().lat, e.layer.getLatLng().lng));
 			$('#submitatlas').prop('onclick', '');
@@ -197,7 +198,7 @@ function nodeInfoClick(e, on) {
 						url: "/api/update_node",
 						data: data,
 						success: function(response) {
-							nodelayer.clearLayers();
+							all.clearLayers();
 							addNodes();
 							var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
 							success += 'node updated';
