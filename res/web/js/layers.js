@@ -87,7 +87,6 @@ function onOff() {
 		$('#all_l').html('On');
 		// Other Stuff
 		$('#layer_1, #active_l, #potential_l').removeClass('hidden');
-		map.removeLayer(all);
 	} else {
 		// Stuff on the on/off
 		$('#all_l').addClass('disabled');
@@ -103,6 +102,7 @@ function onOff() {
 }
 
 function activeNodes() {
+	map.removeLayer(all);
 	if ($('#active_l').hasClass('disabled')) {
 		if (!($('#potential_l').hasClass('disabled'))) {
 			// If potential is already set, we want to
@@ -121,6 +121,7 @@ function activeNodes() {
 }
 
 function potentialNodes() {
+	map.removeLayer(all);
 	if ($('#potential_l').hasClass('disabled')) {
 		if (!($('#active_l').hasClass('disabled'))) {
 			// If active is already set, we want to
