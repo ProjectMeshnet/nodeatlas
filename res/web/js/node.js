@@ -274,6 +274,7 @@ function nodeInfoClick(e, on) {
 							setTimeout(function() {
 								$('#alert').fadeOut(500, function() {
 									$('#alert').remove();
+									$('#messageCreate').remove();
 								});
 							}, 1000);
 						},
@@ -284,11 +285,11 @@ function nodeInfoClick(e, on) {
 							setTimeout(function() {
 								$('#alert').fadeOut(500, function() {
 									$('#alert').remove();
+									$('#messageCreate').fadeIn(500);
 								});
 							}, 3000);
 						}
 					});
-					$('#messageCreate').remove();
 				});
 			});
 			$('#messageCreate').hide();
