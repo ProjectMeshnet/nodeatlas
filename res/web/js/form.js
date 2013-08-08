@@ -6,7 +6,8 @@ function createMessageForm(name, ipv6) {
 			html += '<input type="text" id="address" value="'+ipv6+'" disabled class="hidden">';
 			html += '<br/><input type="text" placeholder="Subject" id="subject"  maxlength="255">';
 			html += '<br/><textarea placeholder="Body" id="message"  maxlength="999"></textarea>';
-			html += '<br/><br/><div class="row"><div class="col col-lg-6" style="text-align:center;">';
+			html += '<br/><div class="text-center disabled">Basic markdown is supported</div>';
+			html += '<br/><div class="row"><div class="col col-lg-6" style="text-align:center;">';
 			html += '<input type="reset" id="cancelmessage" class="btn btn-small" value="Cancel Message"></div>';
 			html += '<div class="col col-lg-6" style="text-align:center;">';
 			html += '<input type="submit" id="nextpagesubmit" class="btn btn-small btn-primary" value="Next Page" onclick="next(2); return false;"></div></div>';
