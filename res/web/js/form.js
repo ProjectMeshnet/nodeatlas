@@ -29,7 +29,7 @@ function getForm(lat, lng) {
 			form += '<label><strong>Name</strong> <span class="desc">Marker title</span></label>';
 			form += '<input type="text" class="input-medium" placeholder="Required" id="name" name="name" maxlength="255" />';
 			form += '<label><strong>Email</strong> <span class="desc">Never shared</span></label>';
-			form += '<input type="email" class="input-medium" placeholder="Required" id="email" name="email" />';
+			form += '<input type="email" class="input-medium" placeholder="Required" id="email" name="email" maxlength="255" />';
 			form += '<label><strong>Address</strong> <span class="desc">Network-specific IP</span></label>';
 			form += '<input type="text" class="input-medium" id="address" name="address" placeholder="Required" maxlength="39"/>';
 			form += '<label><strong>Details</strong></label>';
