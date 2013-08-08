@@ -31,16 +31,41 @@ function filterLayer() {
 	var filter = getFilter();
 	temp.clearLayers();
 	var matches = [];
-	var notFilter = !(filter);
+	var notFilter = getNotFilter();
 	for (var i = 0; i < nodes.length; i++) {
-		if (((filter&statuses[i]) == filter)) {
-			matches[matches.length] = nodes[i];
+		if ((filter&statuses[i]) == filter) {
+			if (typeof notFilter == 'undefined') {
+				matches[matches.length] = nodes[i];
+			} else if ((notFilter|statuses[i]) == notFilter) {
+				matches[matches.length] = nodes[i];
+			}
 		}
 	}
 	
 	L.geoJson(matches, {
 		pointToLayer: createMarker
 	}).addTo(temp).on('click', nodeInfoClick);
+}
+
+function getNotFilter() {
+	var notFilter;
+	if (!($('#potential_l').hasClass('disabled'))) {
+		if (!($('#vps_l').hasClass('disabled'))) {
+			// Both Potential and VPS
+			notFilter = ~01111111;
+			notFilter ^= STATUS_PHYSICAL;
+		} else {
+			// Only potential
+			notFilter = ~0;
+			notFilter ^= STATUS_ACTIVE;
+		}
+	} else if (!($('#vps_l').hasClass('disabled'))) {
+		// Only VPS
+		notFilter = ~01111110;
+		notFilter ^= STATUS_PHYSICAL;
+	} 
+	
+	return notFilter;
 }
 
 function getFilter() {
