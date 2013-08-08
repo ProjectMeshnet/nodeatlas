@@ -30,6 +30,10 @@ var (
 type Api struct{}
 
 var (
+	ActiveTokens map[uint32]time.Time
+)
+
+var (
 	ReadOnlyError = jas.NewRequestError("database in readonly mode")
 )
 
@@ -70,6 +74,14 @@ func (*Api) GetStatus(ctx *jas.Context) {
 	dataMap["CachedNodes"] = Db.LenNodes(true) - dataMap["LocalNodes"].(int)
 	dataMap["CachedMaps"] = len(Conf.ChildMaps)
 	ctx.Data = dataMap
+}
+
+// GetToken generates a short random token and stores it in an
+// in-memory map with its generation time. (See CheckToken.)
+func (*Api) GetToken(ctx *jas.Context) {
+	token := rand.Uint32()
+	ActiveTokens[token] = time.Now()
+	ctx.Data = token
 }
 
 // GetKey generates a CAPTCHA ID and returns it. This can be combined
@@ -550,6 +562,22 @@ func (*Api) GetChildMaps(ctx *jas.Context) {
 		l.Errf("Error dumping child maps: %s", err)
 	}
 	return
+}
+
+// CheckToken ensures that a particular token is valid, meaning that
+// it is in the list, and has not expired. If so, it removes the token
+// and returns true. If the token is expired, it is removed, and the
+// function returns false.
+func CheckToken(token uint32) bool {
+	generated, ok := ActiveTokens[token]
+	if ok {
+		delete(ActiveTokens, token)
+	}
+
+	if !ok || time.Now().After(generated.Add(time.Minute*5)) {
+		return false
+	}
+	return true
 }
 
 // IsAdmin is a small wrapper function to check if the given address
