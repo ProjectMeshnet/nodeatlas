@@ -1,37 +1,3 @@
-var options = {
-	"tileserver": "{{.Map.Tileserver}}",
-	"center": new L.LatLng({{.Map.Center.Latitude}},
-						   {{.Map.Center.Longitude}}),
-	"zoom": {{.Map.Zoom}}
-}
-
-var cachedMaps = {};
-var nodes = [];
-
-var firstLoad = true;
-var attribution = '<a href="https://github.com/ProjectMeshnet/nodeatlas">NodeAtlas {{.Version}}</a> — Map data {{.Map.Attribution}}';
-
-var all = new L.MarkerClusterGroup({
-	spiderfyOnMaxZoom: true,
-	showCoverageOnHover: false,
-	zoomToBoundsOnClick: true,
-	maxClusterRadius: {{.Map.ClusterRadius}}
-});
-
-var temp = jQuery.extend(true, {}, all);
-
-var newUser = new L.LayerGroup();
-var tilelayer = L.tileLayer(options.tileserver, {styleId: 22677, attribution: attribution});
-
-var map = new L.Map('map', {
-	center: options.center,
-	zoom: options.zoom,
-	zoomControl: false,
-	maxZoom: 16,
-	minZoom: 2,
-	layers: [tilelayer, all, temp, newUser]
-});
-
 $(document).ready(function() {
 
 	addJSFiles();
