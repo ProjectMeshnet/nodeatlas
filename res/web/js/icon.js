@@ -1,33 +1,24 @@
 var NodeIcon = L.Icon.extend({
     options: {
-        shadowUrl: '/img/marker-shadow.png',
+        shadowUrl: '/img/shadow.png',
+		iconSize: [25, 41],
+		iconAnchor: [15, 35],
+		popupAnchor: [-1, -25]
     }
 });
 
 var activeNodeIcon = new NodeIcon({
-	iconUrl: '/img/marker-icon.png',
-	iconSize: [25, 41],
-	iconAnchor: [15, 35],
-	popupAnchor: [-1, -25]
+	iconUrl: '/img/node.png'
 });
 
 var	inactiveNodeIcon = new NodeIcon({
-	iconUrl: '/img/marker-icon_light_gray.png',
-	iconSize: [25, 41],
-	iconAnchor: [15, 35],
-	popupAnchor: [-1, -25]
+	iconUrl: '/img/inactive.png'
 });
 
 var newUserIcon = new NodeIcon({
-	iconUrl: '/img/marker-icon_gray.png',
-	iconSize: [25, 41],
-	iconAnchor: [15, 35],
-	popupAnchor: [-1, -25]
+	iconUrl: '/img/newUser.png'
 });
 
 var VPSIcon = new NodeIcon({ 
-	iconUrl: '/img/marker-icon_light_gray.png',
-	iconSize: [25, 41],
-	iconAnchor: [15, 35],
-	popupAnchor: [-1, -25]
+	iconUrl: '/img/vps.png'
 });
