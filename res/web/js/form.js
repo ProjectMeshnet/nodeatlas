@@ -23,8 +23,7 @@ function createMessageForm(name, ipv6) {
 	return html;
 }
 
-function getForm(lat, lng) {
-	$('#inputform').remove();
+function getForm(lat, lng) { 
 	var form =  '<div id="inputform">';
 	form += '<div class="tabby">';
 		form += '<div class="tab" id="one">';

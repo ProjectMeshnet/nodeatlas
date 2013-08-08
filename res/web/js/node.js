@@ -26,6 +26,7 @@ function addError(fadewhat, err) {
 }
 
 function insertUser() {
+	
 	var address = $("#address").val();
 	var name = $("#name").val();
 	var email = $("#email").val();

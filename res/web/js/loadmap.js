@@ -62,11 +62,15 @@ function verifying() {
 
 function onMapClick(e) {
 	var markerLocation = new L.LatLng(e.latlng.lat, e.latlng.lng);
-	var marker = new L.Marker(markerLocation, {icon: newUserIcon, draggable: true});
+	var marker = new L.Marker(markerLocation, {icon: newUserIcon});
 	newUser.clearLayers();
 	newUser.addLayer(marker);
-	
-	$('#wrap').append(getForm(e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6)));
+	if ($('#inputform').length > 0) {
+		// only update lat/lng
+		$('#latitude').val(e.latlng.lat.toFixed(6));
+		$('#longitude').val(e.latlng.lng.toFixed(6));
+	}
+	else $('#wrap').append(getForm(e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6)));
 	
 	$('.node').remove();
 	
