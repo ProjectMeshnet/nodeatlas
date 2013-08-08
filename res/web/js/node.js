@@ -64,14 +64,14 @@ function insertUser() {
 			data: dataObject,
 			success: function(response) {
 				cancelRegistration();
-				nodelayer.clearLayers();
-				addNodes();
 				var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
-				success += 'node added';
+				success += 'Please check your email for a verification link!';
 				$('#wrap').append(success);
 				setTimeout(function() {
 					$('#alert').fadeOut(500, function() {
 						$('#alert').remove();
+						nodelayer.clearLayers();
+						addNodes();
 					});
 				}, 1000);
 			},
