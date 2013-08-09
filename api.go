@@ -147,6 +147,9 @@ func (*Api) PostNode(ctx *jas.Context) {
 	}
 	var err error
 
+	// Require a token, because this is mildly sensitive.
+	RequireToken(ctx.Finder)
+
 	// Initialize the node and retrieve fields.
 	node := new(Node)
 
@@ -270,6 +273,9 @@ func (*Api) PostUpdateNode(ctx *jas.Context) {
 	}
 	var err error
 
+	// Require a token, because this is a very sensitive endpoint.
+	RequireToken(ctx.Finder)
+
 	// Retrieve the given IP address, check that it's sane, and check
 	// that it exists in the *local* database.
 	ip := IP(net.ParseIP(ctx.RequireStringLen(0, 40, "address")))
@@ -353,6 +359,9 @@ func (*Api) PostDeleteNode(ctx *jas.Context) {
 		return
 	}
 	var err error
+
+	// Require a token, because this is a very sensitive endpoint.
+	RequireToken(ctx.Finder)
 
 	// Retrieve the given IP address, check that it's sane, and check
 	// that it exists in the *local* database.
@@ -479,9 +488,12 @@ func (*Api) GetAll(ctx *jas.Context) {
 // the node with the given IP. It requires a correct and non-expired
 // CAPTCHA pair be given.
 func (*Api) PostMessage(ctx *jas.Context) {
-	// First, ensure that the given CAPTCHA pair is correct. If it is
-	// not, then return the explanation. This is bypassed if the
-	// request comes from an admin address.
+	// Because this is a somewhat sensitive endpoint, require a token.
+	RequireToken(ctx.Finder)
+
+	// Ensure that the given CAPTCHA pair is correct. If it is not,
+	// then return the explanation. This is bypassed if the request
+	// comes from an admin address.
 	if !IsAdmin(ctx.Request) {
 		err := VerifyCAPTCHA(ctx.Request)
 		if err != nil {
@@ -562,6 +574,16 @@ func (*Api) GetChildMaps(ctx *jas.Context) {
 		l.Errf("Error dumping child maps: %s", err)
 	}
 	return
+}
+
+// RequireToken uses the finder to retrieve a value named "token", and
+// panics with "tokenInvalid" if there is either no such value, or it
+// is invalid or expired.
+func RequireToken(finder jas.Finder) {
+	tokeni, err := finder.FindInt("token")
+	if err != nil || !CheckToken(uint32(tokeni)) {
+		panic(jas.NewRequestError("tokenInvalid"))
+	}
 }
 
 // CheckToken ensures that a particular token is valid, meaning that
