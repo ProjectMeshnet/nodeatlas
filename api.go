@@ -517,16 +517,17 @@ func (*Api) PostMessage(ctx *jas.Context) {
 		From:    Conf.SMTP.EmailAddress,
 		Subject: "Message via " + Conf.Name,
 	}
-	e.Data = make(map[string]interface{}, 6)
-	e.Data["ReplyTo"] = replyto
-	e.Data["Message"] = message
-	e.Data["Name"] = Conf.Name
-	e.Data["Link"] = template.HTML(Conf.Web.Hostname + Conf.Web.Prefix)
-	e.Data["AdminContact"] = Conf.AdminContact
+	e.Data = map[string]interface{}{
+		"ReplyTo":      replyto,
+		"Message":      template.HTML(message),
+		"Name":         Conf.Name,
+		"Link":         template.HTML(Conf.Web.Hostname + Conf.Web.Prefix),
+		"AdminContact": Conf.AdminContact,
 
-	// Generate a random number for use as a boundary marker in the
-	// multipart/alternative email.
-	e.Data["Boundary"] = rand.Int31()
+		// Generate a random number for use as a boundary marker in the
+		// multipart/alternative email.
+		"Boundary": rand.Int31(),
+	}
 
 	err = e.Send("message.txt")
 	if err != nil {
