@@ -64,12 +64,13 @@ func (*Api) Get(ctx *jas.Context) {
 // map name, total number of nodes, number available (pingable), etc.
 // (Not yet implemented.)
 func (*Api) GetStatus(ctx *jas.Context) {
-	dataMap := make(map[string]interface{}, 4)
-	dataMap["Name"] = Conf.Name
-	dataMap["LocalNodes"] = Db.LenNodes(false)
-	dataMap["CachedNodes"] = Db.LenNodes(true) - dataMap["LocalNodes"].(int)
-	dataMap["CachedMaps"] = len(Conf.ChildMaps)
-	ctx.Data = dataMap
+	localNodes := Db.LenNodes(false)
+	ctx.Data = map[string]interface{}{
+		"Name":        Conf.Name,
+		"LocalNodes":  localNodes,
+		"CachedNodes": Db.LenNodes(true) - localNodes,
+		"CachedMaps":  len(Conf.ChildMaps),
+	}
 }
 
 // GetKey generates a CAPTCHA ID and returns it. This can be combined

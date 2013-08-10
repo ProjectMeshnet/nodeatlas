@@ -1,4 +1,5 @@
 package main
+
 // Copyright (C) 2013 Alexander Bauer, Luke Evers, Daniel Supernault,
 // Dylan Whichard, and contributors; (GPLv3) see LICENSE or doc.go
 
@@ -136,8 +137,9 @@ FROM cached_maps;`)
 // local IDs. It also includes a mapping of "local" to id 0.
 func (db DB) GetMapSourceToID() (sourceToID map[string]int, err error) {
 	// Initialize the map and insert the "local" id.
-	sourceToID = make(map[string]int, 1)
-	sourceToID["local"] = 0
+	sourceToID = map[string]int{
+		"local": 0,
+	}
 
 	// Retrieve every pair of hostnames and IDs.
 	rows, err := db.Query(`SELECT hostname,id
@@ -165,8 +167,9 @@ FROM cached_maps;`)
 // hostnames. ID 0 is "local".
 func (db DB) GetMapIDToSource() (IDToSource map[int]string, err error) {
 	// Initialize the slice with "local".
-	IDToSource = make(map[int]string, 1)
-	IDToSource[0] = "local"
+	IDToSource = map[int]string{
+		0: "local",
+	}
 
 	// Retrieve every pair of IDs and hostnames.
 	rows, err := db.Query(`SELECT id,hostname
