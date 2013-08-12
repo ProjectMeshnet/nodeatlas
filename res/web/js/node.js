@@ -45,48 +45,50 @@ function insertUser() {
 		addError('#inputform', 'an address is required');
 		return false;
 	}
-
-	var dataObject = {
-		'name': name,
-		'email': email,
-		'address': address,
-		'latitude': $("#latitude").val(),
-		'longitude': $("#longitude").val(),
-		'status': getSTATUS(),
-		'contact': $("#contact").val(),
-		'details': $("#details").val(),
-		'pgp': $("#pgp").val()
-	};
 	
 	$('#inputform').fadeOut(500, function() {
-		$.ajax({
-			type: "POST",
-			url: "/api/node",
-			data: dataObject,
-			success: function(response) {
-				cancelRegistration();
-				var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
-				success += 'Please check your email for a verification link!';
-				$('#wrap').append(success);
-				setTimeout(function() {
-					$('#alert').fadeOut(500, function() {
-						$('#alert').remove();
-						all.clearLayers();
-						addNodes();
-					});
-				}, 1000);
-			},
-			error: function(data) {
-				var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
-				error += JSON.parse(data.responseText).error+'</div>';
-				$('#wrap').append(error);
-				setTimeout(function() {
-					$('#alert').fadeOut(500, function() {
-						$('#alert').remove();
-						$('#inputform').fadeIn(500);
-					});
-				}, 3000);
-			}
+		$.getJSON('/api/token', function(token){
+			var dataObject = {
+				'name': name,
+				'email': email,
+				'address': address,
+				'latitude': $("#latitude").val(),
+				'longitude': $("#longitude").val(),
+				'status': getSTATUS(),
+				'contact': $("#contact").val(),
+				'details': $("#details").val(),
+				'pgp': $("#pgp").val(),
+				'token': token.data
+			};
+			$.ajax({
+				type: "POST",
+				url: "/api/node",
+				data: dataObject,
+				success: function(response) {
+					cancelRegistration();
+					var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
+					success += 'Please check your email for a verification link!';
+					$('#wrap').append(success);
+					setTimeout(function() {
+						$('#alert').fadeOut(500, function() {
+							$('#alert').remove();
+							all.clearLayers();
+							addNodes();
+						});
+					}, 1000);
+				},
+				error: function(data) {
+					var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+					error += JSON.parse(data.responseText).error+'</div>';
+					$('#wrap').append(error);
+					setTimeout(function() {
+						$('#alert').fadeOut(500, function() {
+							$('#alert').remove();
+							$('#inputform').fadeIn(500);
+						});
+					}, 3000);
+				}
+			});
 		});
 	});
 	return false;
@@ -115,32 +117,34 @@ function nodeInfoClick(e, on) {
 		$('#reallydelete').bind('click', function() {
 			$('.node').fadeOut(500, function() {
 				$('.node').remove();
-				$.ajax({
-					type: "POST",
-					url: "/api/delete_node",
-					data: {address: ipv6},
-					success: function(response) {
-						all.clearLayers();
-						addNodes();
-						var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
-						success += 'node deleted';
-						$('#wrap').append(success);
-						setTimeout(function() {
-							$('#alert').fadeOut(500, function() {
-								$('#alert').remove();
-							});
-						}, 1000);
-					},
-					error: function(data) {
-						var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
-						error += JSON.parse(data.responseText).error+'</div>';
-						$('#wrap').append(error);
-						setTimeout(function() {
-							$('#alert').fadeOut(500, function() {
-								$('#alert').remove();
-							});
-						}, 3000);
-					}
+				$.getJSON('/api/token', function(token){
+					$.ajax({
+						type: "POST",
+						url: "/api/delete_node",
+						data: {address: ipv6, token: token.data},
+						success: function(response) {
+							all.clearLayers();
+							addNodes();
+							var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
+							success += 'node deleted';
+							$('#wrap').append(success);
+							setTimeout(function() {
+								$('#alert').fadeOut(500, function() {
+									$('#alert').remove();
+								});
+							}, 1000);
+						},
+						error: function(data) {
+							var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+							error += JSON.parse(data.responseText).error+'</div>';
+							$('#wrap').append(error);
+							setTimeout(function() {
+								$('#alert').fadeOut(500, function() {
+									$('#alert').remove();
+								});
+							}, 3000);
+						}
+					});
 				});
 			});
 		});
@@ -148,7 +152,6 @@ function nodeInfoClick(e, on) {
 	// EDIT NODE
 	$('#edit').bind('click', function() {
 		$('.node').fadeOut(500, function() {
-			alert(JSON.stringify(e.layer));
 			$('.node').remove();
 			$('#wrap').append(getForm(e.layer.getLatLng().lat, e.layer.getLatLng().lng));
 			$('#submitatlas').prop('onclick', '');
@@ -183,45 +186,47 @@ function nodeInfoClick(e, on) {
 				// Click submit
 				$('#submitatlas').bind('click', function() {
 					$('#inputform').fadeOut(500);
-					var data = {
-						'name': $("#name").val(),
-						'address': $("#address").val(),
-						'latitude': $("#latitude").val(),
-						'longitude': $("#longitude").val(),
-						'status': getSTATUS(),
-						'contact': $("#contact").val(),
-						'details': $("#details").val(),
-						'pgp': $("#pgp").val()
-					};
-					$.ajax({
-						type: "POST",
-						url: "/api/update_node",
-						data: data,
-						success: function(response) {
-							all.clearLayers();
-							addNodes();
-							var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
-							success += 'node updated';
-							$('#wrap').append(success);
-							setTimeout(function() {
-								$('#alert').fadeOut(500, function() {
-									$('#alert').remove();
-								});
-							}, 1000);
-						},
-						error: function(data) {
-							var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
-							error += JSON.parse(data.responseText).error+'</div>';
-							$('#wrap').append(error);
-							setTimeout(function() {
-								$('#alert').fadeOut(500, function() {
-									$('#alert').remove();
-									$('#inputform').fadeIn(500);
-								});
-							}, 3000);
-						}
+					$.getJSON('/api/token', function(token){
+						var data = {
+							'name': $("#name").val(),
+							'address': $("#address").val(),
+							'latitude': $("#latitude").val(),
+							'longitude': $("#longitude").val(),
+							'status': getSTATUS(),
+							'contact': $("#contact").val(),
+							'details': $("#details").val(),
+							'pgp': $("#pgp").val(),
+							'token': token.data
+						};
+						$.ajax({
+							type: "POST",
+							url: "/api/update_node",
+							data: data,
+							success: function(response) {
+								all.clearLayers();
+								addNodes();
+								var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
+								success += 'node updated';
+								$('#wrap').append(success);
+								setTimeout(function() {
+									$('#alert').fadeOut(500, function() {
+										$('#alert').remove();
+									});
+								}, 1000);
+							},
+							error: function(data) {
+								var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+								error += JSON.parse(data.responseText).error+'</div>';
+								$('#wrap').append(error);
+								setTimeout(function() {
+									$('#alert').fadeOut(500, function() {
+										$('#alert').remove();
+										$('#inputform').fadeIn(500);
+									});
+								}, 3000);
+							}
+						});
 					});
-					
 				});
 			});
 			$('#inputform').fadeIn(500);
@@ -258,39 +263,42 @@ function nodeInfoClick(e, on) {
 					var key = $('#captcha_img').attr('src');
 					key = key.substring(9, key.length-4);
 					captcha = key + ':' + captcha;
-					var msg = {
-						'from': from,
-						'address': address,
-						'subject': subject,
-						'message': message,
-						'captcha': captcha
-					};
-					$.ajax({
-						type: "POST",
-						url: "/api/message",
-						data: msg,
-						success: function(response) {
-							var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
-							success += 'message sent';
-							$('#wrap').append(success);
-							setTimeout(function() {
-								$('#alert').fadeOut(500, function() {
-									$('#alert').remove();
-									$('#messageCreate').remove();
-								});
-							}, 1000);
-						},
-						error: function(data) {
-							var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
-							error += JSON.parse(data.responseText).error+'</div>';
-							$('#wrap').append(error);
-							setTimeout(function() {
-								$('#alert').fadeOut(500, function() {
-									$('#alert').remove();
-									$('#messageCreate').fadeIn(500);
-								});
-							}, 3000);
-						}
+					$.getJSON('/api/token', function(token){
+						var msg = {
+							'from': from,
+							'address': address,
+							'subject': subject,
+							'message': message,
+							'captcha': captcha,
+							'token': token.data
+						};
+						$.ajax({
+							type: "POST",
+							url: "/api/message",
+							data: msg,
+							success: function(response) {
+								var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
+								success += 'message sent';
+								$('#wrap').append(success);
+								setTimeout(function() {
+									$('#alert').fadeOut(500, function() {
+										$('#alert').remove();
+										$('#messageCreate').remove();
+									});
+								}, 1000);
+							},
+							error: function(data) {
+								var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+								error += JSON.parse(data.responseText).error+'</div>';
+								$('#wrap').append(error);
+								setTimeout(function() {
+									$('#alert').fadeOut(500, function() {
+										$('#alert').remove();
+										$('#messageCreate').fadeIn(500);
+									});
+								}, 3000);
+							}
+						});
 					});
 				});
 			});
