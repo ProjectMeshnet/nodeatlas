@@ -30,7 +30,7 @@ var (
 type Api struct{}
 
 var (
-	ActiveTokens map[uint32]time.Time
+	ActiveTokens = make(map[uint32]time.Time)
 )
 
 var (
