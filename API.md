@@ -18,7 +18,7 @@ they're adding. This will allow them to verify their remote node from
 its own address, which is required on certain instances.
 
 This document describes API behavior as of version
-`v0.5.8-37-g4e6a96e`, and possibly later. Major changes will likely
+`v0.5.9-17-g0ee47aa`, and possibly later. Major changes will likely
 not be left undocumented, but there may be minor discrepancies.
 
 
@@ -254,6 +254,8 @@ composed of single-bit flags, as specified [here][status].
 }
 ```
 
+In addition, it requires a token.
+
 If there is an error, it will will either be of the form
 `<formkey>Invalid`, such as `addressInvalid` or `emailInvalid`. If
 there is a database error, then it will return an `InternalError`.
@@ -317,6 +319,8 @@ If it returns an error, it will be either `verify: remote address does not match
 requires that the connecting address match the address to be deleted,
 or to be registered as an admin.
 
+In addition, it requires a token.
+
 If it returns an error, it will either be verify: `remote address does
 not match Node address` or a database-related InternalError.
 
@@ -348,6 +352,8 @@ NodeAtlas instance. Would you please provide peering details?"
 }
 ```
 
+In addition, it requires a token.
+
 If there is an error, it will be a `CAPTCHA ID or solution is
 incorrect`, `CAPTCHA format invalid`, `<formkey>Invalid` error, or a
 database-related `InternalError`.
@@ -366,6 +372,8 @@ database-related `InternalError`.
 except that it does not take the `email` form, and it can only be used
 to update existing nodes. It requires that the request be sent from
 the address which is being updated, or from an admin address.
+
+In addition, it requires a token.
 
 If there is an error, it will be of the form `<formkey>Invalid` or
 `InternalError`.
