@@ -30,8 +30,13 @@ var (
 type Api struct{}
 
 var (
-	ActiveTokens = make(map[uint32]time.Time)
+	ActiveTokens = make(map[uint32]token)
 )
+
+type token struct {
+	IP     string
+	Issued time.Time
+}
 
 var (
 	ReadOnlyError = jas.NewRequestError("database in readonly mode")
@@ -79,9 +84,9 @@ func (*Api) GetStatus(ctx *jas.Context) {
 // GetToken generates a short random token and stores it in an
 // in-memory map with its generation time. (See CheckToken.)
 func (*Api) GetToken(ctx *jas.Context) {
-	token := rand.Uint32()
-	ActiveTokens[token] = time.Now()
-	ctx.Data = token
+	tokenid := rand.Uint32()
+	ActiveTokens[tokenid] = token{ctx.RemoteAddr, time.Now()}
+	ctx.Data = tokenid
 }
 
 // GetKey generates a CAPTCHA ID and returns it. This can be combined
@@ -148,7 +153,7 @@ func (*Api) PostNode(ctx *jas.Context) {
 	var err error
 
 	// Require a token, because this is mildly sensitive.
-	RequireToken(ctx.Finder)
+	RequireToken(ctx)
 
 	// Initialize the node and retrieve fields.
 	node := new(Node)
@@ -274,7 +279,7 @@ func (*Api) PostUpdateNode(ctx *jas.Context) {
 	var err error
 
 	// Require a token, because this is a very sensitive endpoint.
-	RequireToken(ctx.Finder)
+	RequireToken(ctx)
 
 	// Retrieve the given IP address, check that it's sane, and check
 	// that it exists in the *local* database.
@@ -361,7 +366,7 @@ func (*Api) PostDeleteNode(ctx *jas.Context) {
 	var err error
 
 	// Require a token, because this is a very sensitive endpoint.
-	RequireToken(ctx.Finder)
+	RequireToken(ctx)
 
 	// Retrieve the given IP address, check that it's sane, and check
 	// that it exists in the *local* database.
@@ -489,7 +494,7 @@ func (*Api) GetAll(ctx *jas.Context) {
 // CAPTCHA pair be given.
 func (*Api) PostMessage(ctx *jas.Context) {
 	// Because this is a somewhat sensitive endpoint, require a token.
-	RequireToken(ctx.Finder)
+	RequireToken(ctx)
 
 	// Ensure that the given CAPTCHA pair is correct. If it is not,
 	// then return the explanation. This is bypassed if the request
@@ -579,9 +584,9 @@ func (*Api) GetChildMaps(ctx *jas.Context) {
 // RequireToken uses the finder to retrieve a value named "token", and
 // panics with "tokenInvalid" if there is either no such value, or it
 // is invalid or expired.
-func RequireToken(finder jas.Finder) {
-	tokeni, err := finder.FindInt("token")
-	if err != nil || !CheckToken(uint32(tokeni)) {
+func RequireToken(ctx *jas.Context) {
+	tokeni, err := ctx.FindInt("token")
+	if err != nil || !CheckToken(ctx.RemoteAddr, uint32(tokeni)) {
 		panic(jas.NewRequestError("tokenInvalid"))
 	}
 }
@@ -590,13 +595,14 @@ func RequireToken(finder jas.Finder) {
 // it is in the list, and has not expired. If so, it removes the token
 // and returns true. If the token is expired, it is removed, and the
 // function returns false.
-func CheckToken(token uint32) bool {
-	generated, ok := ActiveTokens[token]
+func CheckToken(IP string, token uint32) bool {
+	t, ok := ActiveTokens[token]
 	if ok {
 		delete(ActiveTokens, token)
 	}
 
-	if !ok || time.Now().After(generated.Add(time.Minute*5)) {
+	if !ok || time.Now().After(t.Issued.Add(time.Minute*5)) ||
+		t.IP != IP {
 		return false
 	}
 	return true
