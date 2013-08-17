@@ -15,6 +15,8 @@ $(document).ready(function() {
 		var searchResults = search(nodes, $(this).val());
 	});
 	
+	mapview();
+
 	map.addControl(new L.Control.Scale());
 	
 	// If you're at /verify/xxx
@@ -46,6 +48,15 @@ function loadChildMaps() {
 		}
 		addNodes();
 	});
+}
+
+function mapview() {
+	// If the URL fragment is provided, it should be of the form
+	// 'zoom/lat/lon'. If it is, use it to set the view.
+	var view = window.location.hash.replace('#', '').split('/');
+	if (view.length > 0) {
+		map.setView([view[1], view[2]], view[0]);
+	}
 }
 
 function nodexxx(node) {
