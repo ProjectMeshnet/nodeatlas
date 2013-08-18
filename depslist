@@ -2,6 +2,6 @@ leaflet.js http://cdn.leafletjs.com/leaflet-0.5/leaflet.js
 leaflet.css http://cdn.leafletjs.com/leaflet-0.5/leaflet.css
 leaflet.ie.css http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css
 jquery.js http://code.jquery.com/jquery-2.0.3.min.js
-bootstrap.css https://raw.github.com/twbs/bootstrap/3.0.0-wip/dist/css/bootstrap.min.css
-bootstrap.js https://raw.github.com/twbs/bootstrap/3.0.0-wip/dist/js/bootstrap.js
+bootstrap.css https://raw.github.com/twbs/bootstrap/e46708f7cee19ebe4acf04c71ef71947e6c2e20f/dist/css/bootstrap.min.css
+bootstrap.js https://raw.github.com/twbs/bootstrap/e46708f7cee19ebe4acf04c71ef71947e6c2e20f/dist/js/bootstrap.js
 leaflet.markercluster.js https://raw.github.com/Leaflet/Leaflet.markercluster/0.2/dist/leaflet.markercluster.js
