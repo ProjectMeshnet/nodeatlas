@@ -15,8 +15,6 @@ $(document).ready(function() {
 		var searchResults = search(nodes, $(this).val());
 	});
 	
-	mapview();
-
 	map.addControl(new L.Control.Scale());
 	
 	// If you're at /verify/xxx
@@ -24,6 +22,9 @@ $(document).ready(function() {
 	if (key != '') {
 		verifyNode(key);
 	}
+
+	$(window).bind('hashchange', onHashChange);
+	$(window).trigger('hashchange');
 });
 
 $(window).resize(function () {
@@ -48,15 +49,6 @@ function loadChildMaps() {
 		}
 		addNodes();
 	});
-}
-
-function mapview() {
-	// If the URL fragment is provided, it should be of the form
-	// 'zoom/lat/lon'. If it is, use it to set the view.
-	var view = window.location.hash.replace('#', '').split('/');
-	if (view.length > 0) {
-		map.setView([view[1], view[2]], view[0]);
-	}
 }
 
 function nodexxx(node) {
@@ -88,6 +80,16 @@ function onMapClick(e) {
 	$('#inputform').fadeIn(500);
 	
 	$('#name').focus();
+}
+
+function onHashChange(e) {
+	var fragment = location.hash.slice(1);
+
+	// Try to parse the fragment as a map view.
+	var view = fragment.split('/');
+	if (view.length == 3) {
+		map.setView(view.slice(1,3), view[0]);
+	}
 }
 
 function addJSFiles() {
