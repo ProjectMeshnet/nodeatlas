@@ -25,6 +25,9 @@ $(document).ready(function() {
 
 	$(window).bind('hashchange', onHashChange);
 	$(window).trigger('hashchange');
+	map.on('moveend', function() {
+		window.location.hash = getPermalink();
+	});
 });
 
 $(window).resize(function () {
@@ -36,6 +39,13 @@ function geoLocate() {
 	map.on('locationfound', function() {
 		map.off('locationfound');
 	});
+}
+
+function getPermalink() {
+	var center = map.getCenter();
+	var zoom = map.getZoom();
+	return "#" + zoom + "/" + center.lat.toFixed(3) +
+		"/" + center.lng.toFixed(3);
 }
 
 function loadChildMaps() {
