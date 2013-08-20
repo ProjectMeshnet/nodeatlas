@@ -10,7 +10,10 @@
 			"X-Forwarded-For",
 			"X-Real-Ip"
 		],
-		"HeaderSnippet": "<meta name='description' content='Federated node mapping for mesh networks.'>"
+		"HeaderSnippet": "<meta name='description' content='Federated node mapping for mesh networks.'>",
+		"RSS": {
+			"MaxAge": "2h"
+		}
 	},
 	"ChildMaps": [],
 	"Database": {

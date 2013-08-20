@@ -1,4 +1,5 @@
 package main
+
 // Copyright (C) 2013 Alexander Bauer, Luke Evers, Daniel Supernault,
 // Dylan Whichard, and contributors; (GPLv3) see LICENSE or doc.go
 
@@ -65,6 +66,14 @@ type Config struct {
 		// the <head> of each page. For example, one could include a
 		// script tieing into Pikwik.
 		HeaderSnippet template.HTML
+
+		// RSS is the structure which contains settings for the
+		// built-in RSS feed generator.
+		RSS struct {
+			// MaxAge is the duration after which new nodes are
+			// considered old, and should no longer populate the feed.
+			MaxAge Duration
+		}
 	}
 
 	// ChildMaps is a list of addresses from which to pull lists of

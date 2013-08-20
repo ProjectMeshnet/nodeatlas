@@ -1,4 +1,5 @@
 package main
+
 // Copyright (C) 2013 Alexander Bauer, Luke Evers, Daniel Supernault,
 // Dylan Whichard, and contributors; (GPLv3) see LICENSE or doc.go
 
@@ -181,9 +182,9 @@ func VerifyCAPTCHA(req *http.Request) error {
 	return nil
 }
 
-// GenerateNodeRSS creates an RSS feed of nodes from the database and
-// returns any errors.
-func GenerateNodeRSS() (err error) {
+// CleanNodeRSS recreates the node RSS feed from scratch using the
+// database and logs any errors.
+func CleanNodeRSS() {
 	NodeRSS = moverss.ChannelFactory(
 		Conf.Name+" NodeAtlas",
 		Conf.Web.Hostname,
@@ -194,12 +195,14 @@ func GenerateNodeRSS() (err error) {
 		Local: "nodes",
 	}
 
-	// We need to use some custom SQL here in order to retrieve the
-	// timestamps.
+	// We use a separate query here so that we can retrieve only the
+	// fields we need, and only nodes newer than RSS.MaxAge ago.
 	rows, err := Db.Query(`
 SELECT updated,address,owner
-FROM nodes;`)
+FROM nodes
+WHERE updated >= ?;`, time.Now().Add(time.Duration(-Conf.Web.RSS.MaxAge)))
 	if err != nil {
+		l.Errf("Error getting nodes from database: %s", err)
 		return
 	}
 	defer rows.Close()
@@ -212,6 +215,7 @@ FROM nodes;`)
 		// Scan all of the values into them.
 		err = rows.Scan(&updated, &node.Addr, &node.OwnerName)
 		if err != nil {
+			l.Errf("Error getting nodes from database: %s", err)
 			return
 		}
 
