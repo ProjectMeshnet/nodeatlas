@@ -1,4 +1,4 @@
-@charset "Utf-8";
+charset "Utf-8";
 
 body {
     font-family: Helvetica, sans-seirf;
@@ -19,6 +19,14 @@ a.btn {
 #map {
     width:100%;
     height:700px;
+}
+
+.popover {
+    width: 200px !important;
+}
+
+.popover hr {
+    margin: 6px -14px;
 }
 
 a.close {
