@@ -548,10 +548,11 @@ func (*Api) PostMessage(ctx *jas.Context) {
 		Subject: "Message via " + Conf.Name,
 	}
 	e.Data = map[string]interface{}{
-		"ReplyTo":      replyto,
-		"Message":      template.HTML(message),
-		"Name":         Conf.Name,
-		"Link":         template.HTML(Conf.Web.Hostname + Conf.Web.Prefix),
+		"ReplyTo": replyto,
+		"Message": template.HTML(message),
+		"Name":    Conf.Name,
+		"Link": template.HTML(Conf.Web.Hostname + Conf.Web.Prefix +
+			"/node/" + ip.String()),
 		"AdminContact": Conf.AdminContact,
 
 		// Generate a random number for use as a boundary marker in the
