@@ -1,14 +1,14 @@
 @charset "Utf-8";
 
 body {
-	font-family: Helvetica, sans-seirf;
-	font-size: 14px;
-	font-weight: 400;
-	color: #333;
+    font-family: Helvetica, sans-seirf;
+    font-size: 14px;
+    font-weight: 400;
+    color: #333;
 }
 
 a.btn {
-	color: #FFF;
+    color: #FFF;
 }
 
 .btn {
@@ -17,8 +17,8 @@ a.btn {
 }
 
 #map {
-	width:100%;
-	height:700px;
+    width:100%;
+    height:700px;
 }
 
 a.close {
@@ -26,61 +26,61 @@ a.close {
 }
 
 li a.disabled, .disabled {
-	color: #AAA;
+    color: #AAA;
 }
 
 .leaflet-control-geoloc {
-	background-image: url(/img/location.png);
-	-webkit-border-radius: 5px 5px 5px 5px;
-	border-radius: 5px 5px 5px 5px;
+    background-image: url(/img/location.png);
+    -webkit-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
 }
 
 .leaflet-control-node {
-	background-image: url(/img/node.png);
-	-webkit-border-radius: 5px 5px 5px 5px;
-	border-radius: 5px 5px 5px 5px;
+    background-image: url(/img/node.png);
+    -webkit-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
 }
 
 .leaflet-control-about {
-	background-image: url(/img/info.png);
-	-webkit-border-radius: 5px 5px 5px 5px;
-	border-radius: 5px 5px 5px 5px;
+    background-image: url(/img/info.png);
+    -webkit-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
 }
 
 .leaflet-control-distance {
-	background-image: url(/img/ruler.png);
-	-webkit-border-radius: 5px 5px 5px 5px;
-	border-radius: 5px 5px 5px 5px;
+    background-image: url(/img/ruler.png);
+    -webkit-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
 }
 
 .desc {
-	color: #AAA;
-	font-size: 10px;
+    color: #AAA;
+    font-size: 10px;
 }
 
 #two, #three, #four {
-	display: none;
+    display: none;
 }
 
 textarea.contact {
-	width: 200px !important;
+    width: 200px !important;
 }
 
 .property {
-	color: #333;
-	font-size: 16px;
-	font-weight: 900;
+    color: #333;
+    font-size: 16px;
+    font-weight: 900;
 }
 
 li.active a, li.open a {
-	background-color: rgba(255, 255, 255, 1) !important;
+    background-color: rgba(255, 255, 255, 1) !important;
 }
 
 .navbar {
     position: absolute;
     z-index: 5000;
     width: 100%;
-	background-color: rgba(255, 255, 255, .8);
+    background-color: rgba(255, 255, 255, .8);
 }
 
 .leaflet-top {
@@ -88,65 +88,72 @@ li.active a, li.open a {
 }
 
 .padding {
-	padding-top: 25px;
+    padding-top: 25px;
 }
 
 #inputform {
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-	position: absolute;
-	top: 75px;
-	display: none;
-	right: 25px;
-	background: rgba(255, 255, 255, .8);
-	padding: 25px;
-	overflow: hidden;
-	z-index: 4000;
-	font-family: Helvetica;
-	width: 250px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    position: absolute;
+    top: 75px;
+    display: none;
+    right: 25px;
+    background: rgba(255, 255, 255, .8);
+    padding: 25px;
+    overflow: hidden;
+    z-index: 4000;
+    font-family: Helvetica;
+    width: 250px;
 }
 
 #bringnavbarback {
-	display: none;
-	position: absolute;
-	z-index: 4000;
-	top: 0px;
-	right: 50px;
-	background-color: rgba(255, 255, 255, .8);
-	padding: 10px;
+    display: none;
+    position: absolute;
+    z-index: 4000;
+    top: 0px;
+    right: 50px;
+    background-color: rgba(255, 255, 255, .8);
+    padding: 10px;
 }
 
 #bringnavbarback:hover {
-	cursor: pointer;
-	background-color: rgba(255, 255, 255, 1);
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 1);
 }
 
 #search {
-	margin-top: 6px;	
+    margin-top: 6px;	
 }
 
 .node, #messageCreate {
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-	position: absolute;
-	top: 75px;
-	right: 25px;
-	background: rgba(255, 255, 255, .8);
-	padding: 5px 25px 25px 25px;
-	overflow: hidden;
-	z-index: 4000;
-	font-family: Helvetica;
-	width: 300px;
-	font-size: 12px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    position: absolute;
+    top: 75px;
+    right: 25px;
+    background: rgba(255, 255, 255, .8);
+    padding: 5px 25px 25px 25px;
+    overflow: hidden;
+    z-index: 4000;
+    font-family: Helvetica;
+    width: 300px;
+    font-size: 12px;
 }
 
 #alert {
-	position: absolute;
-	top: 75px;
-	right: 25px;
-	z-index: 4000;
+    position: absolute;
+    top: 75px;
+    right: 25px;
+    z-index: 4000;
+}
+
+#alert-left {
+    position: absolute;
+    top: 75px;
+    left: 25px;
+    z-index: 4000;
 }
 
 .btn-mini {
@@ -157,57 +164,57 @@ li.active a, li.open a {
 /* ========== MARKERCLUSTER ========== */
 
 .marker-cluster-small {
-	background-color: rgb(181, 226, 140);
-	background-color: rgba(181, 226, 140, 0.6);
+    background-color: rgb(181, 226, 140);
+    background-color: rgba(181, 226, 140, 0.6);
 }
 
 .marker-cluster-small div {
-	background-color: rgb(110, 204, 57);
-	background-color: rgba(110, 204, 57, 0.6);
+    background-color: rgb(110, 204, 57);
+    background-color: rgba(110, 204, 57, 0.6);
 }
 
 .marker-cluster-medium {
-	background-color: rgb(241, 211, 87);
-	background-color: rgba(241, 211, 87, 0.6);
+    background-color: rgb(241, 211, 87);
+    background-color: rgba(241, 211, 87, 0.6);
 }
 
 .marker-cluster-medium div {
-	background-color: rgb(240, 194, 12);
-	background-color: rgba(240, 194, 12, 0.6);
+    background-color: rgb(240, 194, 12);
+    background-color: rgba(240, 194, 12, 0.6);
 }
 
 .marker-cluster-large {
-	background-color: rgb(253, 156, 115);
-	background-color: rgba(253, 156, 115, 0.6);
+    background-color: rgb(253, 156, 115);
+    background-color: rgba(253, 156, 115, 0.6);
 }
 
 .marker-cluster-large div {
-	background-color: rgb(241, 128, 23);
-	background-color: rgba(241, 128, 23, 0.6);
+    background-color: rgb(241, 128, 23);
+    background-color: rgba(241, 128, 23, 0.6);
 }
 
 .marker-cluster {
-	background-clip: padding-box;
-	border-radius: 20px;
+    background-clip: padding-box;
+    border-radius: 20px;
 }
 
 .marker-cluster div {
-	width: 30px;
-	height: 30px;
-	margin-left: 5px;
-	margin-top: 5px;
-	text-align: center;
-	border-radius: 15px;
-	font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    width: 30px;
+    height: 30px;
+    margin-left: 5px;
+    margin-top: 5px;
+    text-align: center;
+    border-radius: 15px;
+    font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
 .marker-cluster span {
-	line-height: 30px;
+    line-height: 30px;
 }
 
 .leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow {
-	-webkit-transition: -webkit-transform 0.25s ease-out, opacity 0.25s ease-in;
-	-moz-transition: -moz-transform 0.25s ease-out, opacity 0.25s ease-in;
-	-o-transition: -o-transform 0.25s ease-out, opacity 0.25s ease-in;
-	transition: transform 0.25s ease-out, opacity 0.25s ease-in;
+    -webkit-transition: -webkit-transform 0.25s ease-out, opacity 0.25s ease-in;
+    -moz-transition: -moz-transform 0.25s ease-out, opacity 0.25s esae-in;
+    -o-transition: -o-transform 0.25s ease-out, opacity 0.25s ease-in;
+    transition: transform 0.25s ease-out, opacity 0.25s ease-in;
 }
