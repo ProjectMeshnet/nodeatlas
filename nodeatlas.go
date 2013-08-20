@@ -17,6 +17,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/
 //
 package main
+
 // Copyright (C) 2013 Alexander Bauer, Luke Evers, Daniel Supernault,
 // Dylan Whichard, and contributors; (GPLv3) see LICENSE or doc.go
 
@@ -26,10 +27,8 @@ import (
 	"fmt"
 	"github.com/inhies/go-log"
 	"html/template"
-	"net"
 	"os"
 	"os/signal"
-	"path"
 	"sync"
 	"syscall"
 	"time"
@@ -69,7 +68,6 @@ var (
 	fReadOnly = flag.Bool("readonly", false, "disallow database changes")
 
 	fImport = flag.String("import", "", "import a JSON array of nodes")
-	fTestDB = flag.Bool("testdb", false, "test the database")
 )
 
 func main() {
@@ -127,31 +125,6 @@ func main() {
 		l.Fatalf("Could not compile static files: %s", err)
 	}
 	l.Debugf("Compiled static files to %q\n", StaticDir)
-
-	if *fTestDB {
-		// Open up a temporary database using sqlite3.
-		tempDB := path.Join(os.TempDir(), "nodeatlas-test.db")
-
-		db, err := sql.Open("sqlite3", tempDB)
-		if err != nil {
-			l.Fatalf("Could not connect to temporary database: %s", err)
-		}
-
-		// Perform all of the tests in sequence.
-		TestDatabase(DB{db, false})
-		err = db.Close()
-		if err != nil {
-			l.Emergf("Could not close temporary database: %s", err)
-		}
-
-		// Finally, remove the database file and exit.
-		err = os.Remove(tempDB)
-		if err != nil {
-			l.Emergf("Could not remove temporary database %q: %s",
-				tempDB, err)
-		}
-		return
-	}
 
 	// Connect to the database with configured parameters.
 	db, err := sql.Open(Conf.Database.DriverName,
@@ -338,74 +311,5 @@ func ListenSignal() {
 			// exit.
 			shutdown.Broadcast()
 		}
-	}
-}
-
-func TestDatabase(db DB) {
-	err := db.InitializeTables()
-	if err != nil {
-		l.Fatalf("Could not initialize tables: %s", err)
-	}
-	l.Debug("Successfully initialized tables\n")
-
-	node := &Node{
-		Addr:       IP(net.ParseIP("ff00::1")),
-		OwnerName:  "nodeatlas",
-		OwnerEmail: "admin@example.org",
-		Latitude:   80.01010,
-		Longitude:  -80.10101,
-		Status:     uint32(0),
-	}
-
-	nodeCached := &Node{
-		Addr:         IP(net.ParseIP("ff00::2")),
-		OwnerName:    "test",
-		OwnerEmail:   "nothing@example.com",
-		Latitude:     34.14523,
-		Longitude:    5.3635,
-		Status:       uint32(0),
-		RetrieveTime: time.Now().Unix(),
-	}
-
-	err = db.AddNode(node)
-
-	if err != nil {
-		l.Errf("Error adding node: %s", err)
-	} else {
-		l.Debug("Successfully added node\n")
-	}
-
-	l.Debugf("Nodes: %d", db.LenNodes(false))
-
-	node.Status = StatusActive
-	err = db.UpdateNode(node)
-	if err != nil {
-		l.Errf("Error updating node: %s", err)
-	} else {
-		l.Debug("Successfully updated node")
-	}
-
-	ip := IP(net.ParseIP("ff00::1"))
-	_, err = db.GetNode(ip)
-	if err != nil {
-		l.Errf("Error retrieving node: %s", err)
-	} else {
-		l.Debug("Successfully got node")
-	}
-
-	err = db.DeleteNode(node.Addr)
-	if err != nil {
-		l.Errf("Error deleting node: %s", err)
-	} else {
-		l.Debug("Successfully deleted node")
-	}
-
-	nodes := []*Node{node, nodeCached}
-
-	err = db.CacheNodes(nodes)
-	if err != nil {
-		l.Errf("Error caching nodes: %s", err)
-	} else {
-		l.Debug("Successfully cached nodes")
 	}
 }
