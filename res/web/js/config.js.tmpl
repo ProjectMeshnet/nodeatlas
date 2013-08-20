@@ -31,3 +31,5 @@ var map = new L.Map('map', {
 	minZoom: 2,
 	layers: [tilelayer, all, temp, newUser]
 });
+
+var sendmail = !({{.SMTP.VerifyDisabled }});
