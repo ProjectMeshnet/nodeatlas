@@ -1,5 +1,5 @@
 var options = {
-	"tileserver": "{{.Map.Tileserver}}",
+    	"tileserver": "{{.Map.Tileserver}}",
 	"center": new L.LatLng({{.Map.Center.Latitude}},
 						   {{.Map.Center.Longitude}}),
 	"zoom": {{.Map.Zoom}}
@@ -33,3 +33,4 @@ var map = new L.Map('map', {
 });
 
 var sendmail = !({{.SMTP.VerifyDisabled }});
+var readonly = {{.Database.ReadOnly}};
