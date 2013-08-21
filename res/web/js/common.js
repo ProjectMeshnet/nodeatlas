@@ -4,7 +4,7 @@
 
 $(document).ready(function() {
     
-    fixNavbarBrand();
+    //fixNavbarBrand();
     if (readonly) {
 	addDBWarning();
     }
