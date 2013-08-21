@@ -69,6 +69,20 @@ func (*Api) Get(ctx *jas.Context) {
 	ctx.Data = http.StatusText(http.StatusSeeOther) + ": " + APIDocs
 }
 
+// GetEcho responds with the remote address of the user
+func (*Api) GetEcho(ctx *jas.Context) {
+	if Conf.Verify.Netmask != nil {
+		if !(*net.IPNet)(Conf.Verify.Netmask).Contains(net.IP(ctx.RemoteAddr)) {
+			ctx.Data = ctx.RemoteAddr
+		} else {
+			ctx.Error = jas.NewRequestError("remote address not in subnet")
+		}
+	} else {
+		ctx.Error = jas.NewRequestError("netmask not set")
+	}
+}
+
+
 // GetStatus responds with a status summary of the map, including the
 // map name, total number of nodes, number available (pingable), etc.
 // (Not yet implemented.)

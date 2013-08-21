@@ -85,12 +85,16 @@ function onMapClick(e) {
 	$('#longitude').val(e.latlng.lng.toFixed(6));
     }
     else $('#wrap').append(getForm(e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6)));
-    
-    $('.node').remove();
-    
+    $('.node, #delete').remove();
     $('#inputform').fadeIn(500);
-    
     $('#name').focus();
+    $.ajax ({
+	type: 'GET',
+	url: '/api/echo',
+	success: function(res) {
+	    $('#address').val(res.data);
+	}
+    });
 }
 
 function onHashChange(e) {
