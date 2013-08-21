@@ -8,7 +8,7 @@ function createMessageForm(name, ipv6) {
 			html += '<br/><textarea placeholder="Body" id="message" class="form-control" maxlength="999"></textarea>';
 			html += '<br/><div class="text-center disabled">Basic markdown is supported</div>';
 			html += '<br/><div class="row"><div class="col col-lg-6 text-center">';
-			html += '<input type="reset" id="cancelmessage" class="btn btn-small" value="Cancel Message"></div>';
+			html += '<input type="reset" id="cancelmessage" class="btn btn-default btn-small" value="Cancel Message"></div>';
 			html += '<div class="col col-lg-6 text-center">';
 			html += '<input type="submit" id="nextpagesubmit" class="btn btn-small btn-primary" value="Next Page" onclick="next(2); return false;"></div></div>';
 		html += '</div><div id="two">';
@@ -16,7 +16,7 @@ function createMessageForm(name, ipv6) {
 			html += '<br/><input type="text" placeholder="Captcha" class="form-control" id="captcha" maxlength="255">';
 			html += '<br/><div class="text-center"><button class="btn btn-warning btn-mini" href="#" onclick="loadCAPTCHA($(\'#captcha_img\')); return false;">Load New Captcha</button></div>';
 			html += '<br/><div class="row"><div class="col col-lg-6 text-center">';
-			html += '<input type="reset" onclick="next(1); return false;" class="btn btn-small" value="Previous Page"></div>';
+			html += '<input type="reset" onclick="next(1); return false;" class="btn btn-default btn-small" value="Previous Page"></div>';
 			html += '<div class="col col-lg-6 text-center">';
 			html += '<input type="submit" id="sendmessage" class="btn btn-small btn-primary" value="Send Message"></div></div>';
 	html += '</div></div>';
@@ -36,7 +36,7 @@ function getForm(lat, lng) {
 			form += '<label><strong>Details</strong></label>';
 			form += '<input type="text" class="input-medium form-control" placeholder="Home, Work, ..." id="details" maxlength="255"/><br/>';
 			form += '<div class="row"><div class="col col-lg-6 text-center">';
-			form += '<button class="btn btn-small" href="#" onclick="cancelRegistration(); return false;">Cancel</button></div>';
+			form += '<button class="btn btn-default btn-small" href="#" onclick="cancelRegistration(); return false;">Cancel</button></div>';
 			form += '<div class="col col-lg-6 text-center">';
 			form += '<button class="btn btn-small btn-primary" href="#" onclick="next(2); return false;">Next</button></div></div>';
 		form += '</div>';
