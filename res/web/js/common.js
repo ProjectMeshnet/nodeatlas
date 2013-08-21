@@ -4,7 +4,7 @@
 
 $(document).ready(function() {
     
-    //fixNavbarBrand();
+    fixNavbarBrand();
     if (readonly) {
 	addDBWarning();
     }
@@ -15,7 +15,6 @@ function fixNavbarBrand() {
     // Function to check the height of the navbar if it's too big,
     // then decrease the font size on the navbar-brand until we get a
     // nice same height on all navbars
-    
     if ($('.container').css('max-width') != 'none') for (;;) {
 	var wrong = $('.navbar-brand').css('height');
 	var correct = $('.navbar-nav').css('height');
@@ -25,7 +24,7 @@ function fixNavbarBrand() {
 	var size = $('.navbar-brand').css('font-size');
 	size = parseFloat(size.substring(0, size.length-2));
 	$('.navbar-brand').css('font-size', (--size) + 'px');		
-	}
+    }
 }
 
 function hide(x) {

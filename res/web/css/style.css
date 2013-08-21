@@ -91,6 +91,10 @@ li.active a, li.open a {
     background-color: rgba(255, 255, 255, .8);
 }
 
+.navbar-brand {
+    width: 180px;
+}
+
 .leaflet-top {
     top: 45px;
 }
