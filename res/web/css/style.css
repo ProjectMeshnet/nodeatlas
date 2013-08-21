@@ -21,6 +21,10 @@ a.btn {
     height:700px;
 }
 
+.dropdown-menu a:hover {
+    color: #AAA !important;
+}
+
 .popover {
     width: 225px !important;
 }
