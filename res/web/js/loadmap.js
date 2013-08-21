@@ -6,7 +6,7 @@ $(document).ready(function() {
     
     $('#addme').tooltip();
     $('#distance').tooltip();
-    $('#key').popover({'content':'<img src="/img/node.png" width="16px"/>&nbsp;Active Node<hr><img src="/img/vps.png" width="16px">&nbsp;VPS Node<hr><img src="/img/inactive.png" width="16px">&nbsp;Inactive Node', 'html': true});
+    $('#legend').popover({'content':'<img src="/img/node.png" width="16px"/>&nbsp;Active Residential Node<hr><img src="/img/vps.png" width="16px">&nbsp;Active Hosted/Virtual Node<hr><img src="/img/inactive.png" width="16px">&nbsp;Inactive Node', 'html': true});
     
     // this handles loading the child nodes now
     loadChildMaps();
