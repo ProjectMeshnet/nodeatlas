@@ -209,7 +209,6 @@ function createMarker(feature, latlng) {
 	html += '<button class="btn btn-mini btn-info" id="sendMessage">Message</button>';
     }
     html += '&nbsp;<button class="btn btn-mini btn-success" id="edit">Edit</button>';
-    html += '&nbsp;<button class="btn btn-mini btn-warning" id="delete">Delete</button>';
     html += '<span class="pull-right"><button class="btn btn-mini btn-default" id="closeNode">Close</button></span></h4>';
     html += '<div class="text-center"><a href="/node/'+feature.id+'" class="btn btn-small btn-primary">'+feature.id+'</a></div><hr>';
     

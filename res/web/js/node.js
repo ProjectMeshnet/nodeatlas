@@ -118,25 +118,159 @@ function nodeInfoClick(e, on) {
 	    $('.node').remove();
 	});
     });
-    // DELETE NODE
-    $('#delete').bind('click', function() {
-	$('#delete').prop('id', 'reallydelete');
-	$('#reallydelete').removeClass('btn-warning');
-	$('#reallydelete').addClass('btn-danger');
-	$('#reallydelete').html('Are you sure?');
-	$('#reallydelete').bind('click', function() {
-	    $('.node').fadeOut(500, function() {
-		$('.node').remove();
+    // EDIT NODE
+    $('#edit').bind('click', function() {
+	edit(e, ipv6);
+    });
+
+    // SEND MESSAGE
+    $('#sendMessage').bind('click', function() {
+	message(name, ipv6);
+    });
+}
+
+function getSTATUS() {
+    var active = 0, residential = 0, internet = 0, wireless = 0, wired = 0;
+    
+    if ($("#active").is(':checked')) active = STATUS_ACTIVE;	
+    if ($("#residential").is(':checked')) residential = STATUS_PHYSICAL;
+    if ($("#internet").is(':checked')) internet = STATUS_INTERNET;
+    if ($("#wireless").is(':checked')) wireless = STATUS_WIRELESS;
+    if ($("#wired").is(':checked')) wired = STATUS_WIRED;
+    
+    return (active|residential|internet|wireless|wired);
+}
+
+function message(name, ipv6) {
+    $('.node').fadeOut(500, function() {
+	$('.node').remove();
+	var form = createMessageForm(name, ipv6);
+	$('#wrap').append(form);
+	$('#from').focus();
+	$('#cancelmessage').bind('click', function(e) {
+	    $('#messageCreate').fadeOut(500, function() {
+		$('#messageCreate').remove();
+	    });
+	});
+	$('#nextpagesubmit').bind('click', function(e) {
+	    loadCAPTCHA($('#captcha_img'));
+	    $('#cancel').bind('click', function(e) {
+		$('#messageCreate').fadeOut(500, function() {
+		    $('#messageCreate').remove();
+		});
+	    });
+	});
+	$('#sendmessage').bind('click', function(e) {
+	    $('#messageCreate').fadeOut(500, function() {
+		var from = $('#from').val();
+		var address = $('#address').val();
+		var subject = $('#subject').val();
+		var message = $('#message').val();
+		var captcha = $('#captcha').val();
+		var key = $('#captcha_img').attr('src');
+		key = key.substring(9, key.length-4);
+		captcha = key + ':' + captcha;
 		$.getJSON('/api/token', function(token){
+		    var msg = {
+			'from': from,
+			'address': address,
+			'subject': subject,
+			'message': message,
+			'captcha': captcha,
+			'token': token.data
+		    };
 		    $.ajax({
 			type: "POST",
-			url: "/api/delete_node",
-			data: {address: ipv6, token: token.data},
+			url: "/api/message",
+			data: msg,
+			success: function(response) {
+			    var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
+			    success += 'message sent';
+			    $('#wrap').append(success);
+			    setTimeout(function() {
+				$('#alert').fadeOut(500, function() {
+				    $('#alert').remove();
+				    $('#messageCreate').remove();
+				});
+			    }, 3000);
+			},
+			error: function(data) {
+			    var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+			    error += JSON.parse(data.responseText).error+'</div>';
+			    $('#wrap').append(error);
+			    setTimeout(function() {
+				$('#alert').fadeOut(500, function() {
+				    $('#alert').remove();
+				    $('#messageCreate').fadeIn(500);
+				});
+			    }, 3000);
+			}
+		    });
+		});
+	    });
+	});
+	$('#messageCreate').hide();
+	$('#messageCreate').fadeIn(500);
+    });
+}
+
+function edit(e, ipv6) {
+    $('.node').fadeOut(500, function() {
+	$('.node').remove();
+	$('#wrap').append(getForm(e.layer.getLatLng().lat, e.layer.getLatLng().lng));
+	$('#submitatlas').prop('onclick', '');
+	// Now we want to set shit that is already there.
+	$.getJSON('/api/node?address='+ipv6, function(response) {
+	    $('#name').val(response.data.OwnerName);
+	    $('#email').prop('disabled', 'disabled');
+	    $('#email').val('Can\'t change');
+	    $('#address').val(response.data.Addr);
+	    $('#address').prop('disabled', 'disabled');
+	    $('#details').val(response.data.Details);
+	    $('#pgp').val(response.data.PGP);
+	    $('#contact').val(response.data.Contact);
+	    
+	    var STATUS = response.data.Status;
+	    
+	    if ((STATUS&STATUS_ACTIVE) > 0) $('#active').prop('checked', true);
+	    else $('#active').prop('checked', false);
+	    
+	    if ((STATUS&STATUS_PHYSICAL) > 0) $('#residential').prop('checked', true);
+	    else $('#residential').prop('checked', false);
+	    
+	    if ((STATUS&STATUS_INTERNET) > 0) $('#internet').prop('checked', true);
+	    else $('#internet').prop('checked', false);
+	    
+	    if ((STATUS&STATUS_WIRELESS) > 0) $('#wireless').prop('checked', true);
+	    else $('#wireless').prop('checked', false);
+	    
+	    if ((STATUS&STATUS_WIRED) > 0) $('#wired').prop('checked', true);
+	    else $('#wired').prop('checked', false);
+
+	    // Click submit
+	    $('#submitatlas').bind('click', function() {
+		$('#inputform').fadeOut(500);
+		$.getJSON('/api/token', function(token){
+		    var data = {
+			'name': $("#name").val(),
+			'address': $("#address").val(),
+			'latitude': $("#latitude").val(),
+			'longitude': $("#longitude").val(),
+			'status': getSTATUS(),
+			'contact': $("#contact").val(),
+			'details': $("#details").val(),
+			'pgp': $("#pgp").val(),
+			'token': token.data
+		    };
+		    $.ajax({
+			type: "POST",
+			url: "/api/update_node",
+			data: data,
 			success: function(response) {
 			    all.clearLayers();
 			    addNodes();
 			    var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
-			    success += 'node deleted';
+			    success += 'node updated';
 			    $('#wrap').append(success);
 			    setTimeout(function() {
 				$('#alert').fadeOut(500, function() {
@@ -151,6 +285,7 @@ function nodeInfoClick(e, on) {
 			    setTimeout(function() {
 				$('#alert').fadeOut(500, function() {
 				    $('#alert').remove();
+				    $('#inputform').fadeIn(500);
 				});
 			    }, 3000);
 			}
@@ -158,174 +293,52 @@ function nodeInfoClick(e, on) {
 		});
 	    });
 	});
-    });
-    // EDIT NODE
-    $('#edit').bind('click', function() {
-	$('.node').fadeOut(500, function() {
-	    $('.node').remove();
-	    $('#wrap').append(getForm(e.layer.getLatLng().lat, e.layer.getLatLng().lng));
-	    $('#submitatlas').prop('onclick', '');
-	    // Now we want to set shit that is already there.
-	    $.getJSON('/api/node?address='+ipv6, function(response) {
-		$('#name').val(response.data.OwnerName);
-		$('#email').prop('disabled', 'disabled');
-		$('#email').val('Can\'t change');
-		$('#address').val(response.data.Addr);
-		$('#address').prop('disabled', 'disabled');
-		$('#details').val(response.data.Details);
-		$('#pgp').val(response.data.PGP);
-		$('#contact').val(response.data.Contact);
-		
-		var STATUS = response.data.Status;
-		
-		if ((STATUS&STATUS_ACTIVE) > 0) $('#active').prop('checked', true);
-		else $('#active').prop('checked', false);
-		
-		if ((STATUS&STATUS_PHYSICAL) > 0) $('#residential').prop('checked', true);
-		else $('#residential').prop('checked', false);
-		
-		if ((STATUS&STATUS_INTERNET) > 0) $('#internet').prop('checked', true);
-		else $('#internet').prop('checked', false);
-		
-		if ((STATUS&STATUS_WIRELESS) > 0) $('#wireless').prop('checked', true);
-		else $('#wireless').prop('checked', false);
-		
-		if ((STATUS&STATUS_WIRED) > 0) $('#wired').prop('checked', true);
-		else $('#wired').prop('checked', false);
-		
-		// Click submit
-		$('#submitatlas').bind('click', function() {
-		    $('#inputform').fadeOut(500);
-		    $.getJSON('/api/token', function(token){
-			var data = {
-			    'name': $("#name").val(),
-			    'address': $("#address").val(),
-			    'latitude': $("#latitude").val(),
-			    'longitude': $("#longitude").val(),
-			    'status': getSTATUS(),
-			    'contact': $("#contact").val(),
-			    'details': $("#details").val(),
-			    'pgp': $("#pgp").val(),
-			    'token': token.data
-			};
-			$.ajax({
-			    type: "POST",
-			    url: "/api/update_node",
-			    data: data,
-			    success: function(response) {
-				all.clearLayers();
-				addNodes();
-				var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
-				success += 'node updated';
-				$('#wrap').append(success);
-				setTimeout(function() {
-				    $('#alert').fadeOut(500, function() {
-					$('#alert').remove();
-				    });
-				}, 3000);
-			    },
-			    error: function(data) {
-				var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
-				error += JSON.parse(data.responseText).error+'</div>';
-				$('#wrap').append(error);
-				setTimeout(function() {
-				    $('#alert').fadeOut(500, function() {
-					$('#alert').remove();
-					$('#inputform').fadeIn(500);
-				    });
-				}, 3000);
-			    }
-			});
-		    });
-		});
-	    });
-	    $('#inputform').fadeIn(500);
-	    $('#name').focus();
-	});
-    });
-    // SEND MESSAGE
-    $('#sendMessage').bind('click', function(e) {
-	$('.node').fadeOut(500, function() {
-	    $('.node').remove();
-	    var form = createMessageForm(name, ipv6);
-	    $('#wrap').append(form);
-	    $('#from').focus();
-	    $('#cancelmessage').bind('click', function(e) {
-		$('#messageCreate').fadeOut(500, function() {
-		    $('#messageCreate').remove();
-		});
-	    });
-	    $('#nextpagesubmit').bind('click', function(e) {
-		loadCAPTCHA($('#captcha_img'));
-		$('#cancel').bind('click', function(e) {
-		    $('#messageCreate').fadeOut(500, function() {
-			$('#messageCreate').remove();
-		    });
-		});
-	    });
-	    $('#sendmessage').bind('click', function(e) {
-		$('#messageCreate').fadeOut(500, function() {
-		    var from = $('#from').val();
-		    var address = $('#address').val();
-		    var subject = $('#subject').val();
-		    var message = $('#message').val();
-		    var captcha = $('#captcha').val();
-		    var key = $('#captcha_img').attr('src');
-		    key = key.substring(9, key.length-4);
-		    captcha = key + ':' + captcha;
-		    $.getJSON('/api/token', function(token){
-			var msg = {
-			    'from': from,
-			    'address': address,
-			    'subject': subject,
-			    'message': message,
-			    'captcha': captcha,
-			    'token': token.data
-			};
-			$.ajax({
-			    type: "POST",
-			    url: "/api/message",
-			    data: msg,
-			    success: function(response) {
-				var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
-				success += 'message sent';
-				$('#wrap').append(success);
-				setTimeout(function() {
-				    $('#alert').fadeOut(500, function() {
-					$('#alert').remove();
-					$('#messageCreate').remove();
-				    });
-				}, 3000);
-			    },
-			    error: function(data) {
-				var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
-				error += JSON.parse(data.responseText).error+'</div>';
-				$('#wrap').append(error);
-				setTimeout(function() {
-				    $('#alert').fadeOut(500, function() {
-					$('#alert').remove();
-					$('#messageCreate').fadeIn(500);
-				    });
-				}, 3000);
-			    }
-			});
-		    });
-		});
-	    });
-	    $('#messageCreate').hide();
-	    $('#messageCreate').fadeIn(500);
-	});
+	$('#inputform').fadeIn(500);
+	$('#name').focus();
+	// DELETE NODE
+        $('#delete').bind('click', function() {
+            deleteNode(ipv6);
+        });
     });
 }
 
-function getSTATUS() {
-    var active = 0, residential = 0, internet = 0, wireless = 0, wired = 0;
-    
-    if ($("#active").is(':checked')) active = STATUS_ACTIVE;	
-    if ($("#residential").is(':checked')) residential = STATUS_PHYSICAL;
-    if ($("#internet").is(':checked')) internet = STATUS_INTERNET;
-    if ($("#wireless").is(':checked')) wireless = STATUS_WIRELESS;
-    if ($("#wired").is(':checked')) wired = STATUS_WIRED;
-    
-    return (active|residential|internet|wireless|wired);
+function deleteNode(ipv6) {
+    $('#delete').prop('id', 'reallydelete');
+    $('#reallydelete').removeClass('btn-warning');
+    $('#reallydelete').addClass('btn-danger');
+    $('#reallydelete').html('Are you sure?');
+    $('#reallydelete').bind('click', function() {
+	$('#inputform').fadeOut(500, function() {
+	    $('#inputform').remove();
+	    $.getJSON('/api/token', function(token){
+		$.ajax({
+		    type: "POST",
+		    url: "/api/delete_node",
+		    data: {address: ipv6, token: token.data},
+		    success: function(response) {
+			all.clearLayers();
+			addNodes();
+			var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
+			success += 'node deleted';
+			$('#wrap').append(success);
+			setTimeout(function() {
+			    $('#alert').fadeOut(500, function() {
+				$('#alert').remove();
+			    });
+			}, 3000);
+		    },
+		    error: function(data) {
+			var error = '<div class="alert alert-danger" id="alert"><strong>Error:</strong>&nbsp;';
+			error += JSON.parse(data.responseText).error+'</div>';
+			$('#wrap').append(error);
+			setTimeout(function() {
+			    $('#alert').fadeOut(500, function() {
+				$('#alert').remove();
+			    });
+			}, 3000);
+		    }
+		});
+	    });
+	});
+    });
 }
