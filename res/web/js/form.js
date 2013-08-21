@@ -27,7 +27,7 @@ function getForm(lat, lng) {
     var form =  '<div id="inputform">';
     form += '<div class="tabby">';
     form += '<div class="tab" id="one">';
-    form += '<button class="btn btn-mini btn-success" onclick="repositionNode(); return false;">Reposition</button>';
+    form += '<button class="btn btn-mini btn-success" id="reposition">Reposition</button>';
     form += '&nbsp;<button class="btn btn-mini btn-warning" id="delete">Delete</button>';
     form += '<br/><label><strong>Name</strong> <span class="desc">Marker title</span></label>';
     form += '<input type="text" class="input-medium form-control" placeholder="Required" id="name" name="name" maxlength="255" />';

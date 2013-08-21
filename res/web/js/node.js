@@ -25,8 +25,7 @@ function addError(fadewhat, err) {
     });
 }
 
-function insertUser() {
-    
+function insertUser() {    
     var address = $("#address").val();
     var name = $("#name").val();
     var email = $("#email").val();
@@ -99,6 +98,7 @@ function insertUser() {
 }
 
 function nodeInfoClick(e, on) {
+    var m = $.extend(true, {}, e);
     var html;
     $('#inputform').remove();
     $('.node').remove();
@@ -120,7 +120,7 @@ function nodeInfoClick(e, on) {
     });
     // EDIT NODE
     $('#edit').bind('click', function() {
-	edit(e, ipv6);
+	edit(e, ipv6, m);
     });
 
     // SEND MESSAGE
@@ -214,7 +214,7 @@ function message(name, ipv6) {
     });
 }
 
-function edit(e, ipv6) {
+function edit(e, ipv6, m) {
     $('.node').fadeOut(500, function() {
 	$('.node').remove();
 	$('#wrap').append(getForm(e.layer.getLatLng().lat, e.layer.getLatLng().lng));
@@ -267,6 +267,7 @@ function edit(e, ipv6) {
 			url: "/api/update_node",
 			data: data,
 			success: function(response) {
+			    repNDone();
 			    all.clearLayers();
 			    addNodes();
 			    var success = '<div class="alert alert-success" id="alert"><strong>Success!</strong>&nbsp;';
@@ -299,7 +300,35 @@ function edit(e, ipv6) {
         $('#delete').bind('click', function() {
             deleteNode(ipv6);
         });
+	// REPOSITON NODE
+	$('#reposition').bind('click', function() {
+	    repositionNode(m);
+	});
     });
+}
+
+function repositionNode(m) {
+    var newM = new L.Marker(m.layer._popup._source.getLatLng(), {icon: newUserIcon});
+    newUser.clearLayers();
+    newUser.addLayer(newM);
+    map.removeLayer(m.layer);
+    $('#map').css('cursor', 'crosshair');
+    map.addEventListener('click', repNAdd);
+}
+
+function repNDone() {
+    newUser.clearLayers();
+    $('#map').css('cursor', '');
+    $('#inputform').fadeOut(500);
+    map.removeEventListener('click', repNAdd);
+}
+
+function repNAdd(e) {
+    var newM = new L.Marker((new L.LatLng(e.latlng.lat, e.latlng.lng)), {icon: newUserIcon});
+    newUser.clearLayers();
+    newUser.addLayer(newM);
+    $('#latitude').val(e.latlng.lat);
+    $('#longitude').val(e.latlng.lng);
 }
 
 function deleteNode(ipv6) {
