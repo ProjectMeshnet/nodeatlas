@@ -141,6 +141,7 @@ function potentialNodes() {
 
 function residentialNodes() {
     if ($('#residential_l').hasClass('disabled')) {
+	
 	if (!($('#vps_l').hasClass('disabled'))) {
 	    // If residential is already set, we want to
 	    // change it from residential to vps, so
@@ -236,17 +237,13 @@ function createMarker(feature, latlng) {
     var p = L.popup();
     p.setLatLng(latlng);
     p.setContent(html);
-    
-    // If it's a VPS, show the VPS icon.
-    if (!(feature.properties.Status & STATUS_PHYSICAL)) {
-	icon = VPSIcon;
-    }
-    
+
     // Use the status to set an appropriate icon and effects.
-    var icon = inactiveNodeIcon;
     if (feature.properties.Status & STATUS_ACTIVE > 0) {
-	icon = activeNodeIcon;
-    }
+	if (!(feature.properties.Status & STATUS_PHYSICAL)) {
+	    icon = VPSIcon;
+	} else icon = activeNodeIcon;
+    } else icon = inactiveNodeIcon;
     
     // Create the Marker with options set above.
     var m = L.marker(latlng, {icon: icon}).bindPopup(html);
@@ -256,6 +253,6 @@ function createMarker(feature, latlng) {
 	map.setView(latlng, 8);
 	nodeInfoClick(html, true);
     }
-    
+
     return m;
 }
