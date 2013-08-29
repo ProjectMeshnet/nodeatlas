@@ -227,7 +227,7 @@ func (*Api) PostNode(ctx *jas.Context) {
 		id := rand.Int63() // Pseudo-random positive int64
 
 		emailsent := true
-		if err := SendVerificationEmail(id, node.OwnerEmail); err != nil {
+		if err := SendVerificationEmail(id, node.OwnerEmail, node.PGP.String()); err != nil {
 			// If the sending of the email fails, set the internal
 			// error and log it, then set a bool so that email can be
 			// resent. If email continues failing to send, it will

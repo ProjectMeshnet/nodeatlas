@@ -130,12 +130,13 @@ func VerifyRequest(node *Node, r *http.Request) error {
 // SendVerificationEmail uses the fields in Conf.SMTP to send a
 // templated email (verification.txt) to the given email address. If
 // the email could not be sent, it returns an error.
-func SendVerificationEmail(id int64, recipientEmail string) (err error) {
+func SendVerificationEmail(id int64, recipientEmail, pgpid string) (err error) {
 	// Prepare an Email type.
 	e := &Email{
 		To:      recipientEmail,
 		From:    Conf.SMTP.EmailAddress,
 		Subject: Conf.Name + " Node Registration",
+		PGPsig:  pgpid,
 	}
 
 	e.Data = map[string]interface{}{
@@ -159,7 +160,7 @@ func SendVerificationEmail(id int64, recipientEmail string) (err error) {
 // every node in the verification queue that is marked as not yet
 // notified. It logs errors.
 func ResendVerificationEmails() {
-	rows, err := Db.Query(`SELECT id,email
+	rows, err := Db.Query(`SELECT id,email,pgp
 FROM nodes_verify_queue
 WHERE verifysent = 0;`)
 	if err != nil {
@@ -174,14 +175,15 @@ WHERE verifysent = 0;`)
 		var (
 			id    int64
 			email string
+			pgp   []byte
 		)
 
-		if err = rows.Scan(&id, &email); err != nil {
+		if err = rows.Scan(&id, &email, &pgp); err != nil {
 			l.Errf("Error resending verification email: %s", err)
 			continue
 		}
 
-		if err = SendVerificationEmail(id, email); err != nil {
+		if err = SendVerificationEmail(id, email, string(pgp)); err != nil {
 			l.Warningf("Could not send verification email to %q: %s", email, err)
 		} else {
 			verifysent = append(verifysent, id)

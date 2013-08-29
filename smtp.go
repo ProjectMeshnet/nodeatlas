@@ -5,7 +5,13 @@ package main
 import (
 	"errors"
 	"net"
+	"net/http"
+	"io/ioutil"
+	"code.google.com/p/go.crypto/openpgp"
+	"code.google.com/p/go.crypto/openpgp/packet"
+	"code.google.com/p/go.crypto/openpgp/armor"
 	"net/smtp"
+	"strings"
 	"time"
 )
 
@@ -59,6 +65,34 @@ func ConnectSMTP() (c *smtp.Client, err error) {
 	return
 }
 
+// LookupKey uses http to pull a user's pgp key (ASCII armored) from
+// a keyserver. In this case it uses keyserver.ubuntu.com but this could
+// be replaced. It returns a pointer to an initialized openpgp.Entity.
+func LookupKey(pgpsig string) (recipient *openpgp.Entity, err error) {
+	resp, err := http.Get("http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=" + pgpsig)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	beginning := strings.Index(string(body), "<pre>")
+	end := strings.Index(string(body), "</pre>")
+
+	if beginning < 0 || end < 0 {
+		return nil, errors.New("Error: Key not found.")
+	}
+	
+	keyBody, err := armor.Decode(strings.NewReader(string(body[beginning+6:end])))
+	if err != nil {
+		return nil, err
+	}
+	return openpgp.ReadEntity(packet.NewReader(keyBody.Body))
+}
+
 // PrepareEmail connects to the SMTP server configured in the Conf and
 // prepares an email with the given fields. The caller should call the
 // Data() method on the *smtp.Client and write the body directly to
@@ -97,6 +131,9 @@ type Email struct {
 	// name in the template, e.g. '{{.Data.FieldName}}'.
 	Data map[string]interface{}
 
+	PGPsig string
+	PGPkey *openpgp.Entity
+
 	// Header contains data which is generated at Send() time. It does
 	// not need to need to be filled out.
 	Header struct {
@@ -105,6 +142,15 @@ type Email struct {
 }
 
 func (e *Email) Send(templateName string) (err error) {
+	var encrypted bool
+	if e.PGPsig != "" {
+		e.PGPkey, err = LookupKey(e.PGPsig)
+		if err == nil {
+			encrypted = true
+		} else {
+			encrypted = false
+		}
+	}
 	c, err := PrepareEmail(Conf.SMTP.EmailAddress, e.To)
 	if err != nil {
 		return
@@ -121,5 +167,18 @@ func (e *Email) Send(templateName string) (err error) {
 
 	// Execute the template verification.txt and write directly to the
 	// connection.
-	return t.ExecuteTemplate(w, templateName, e)
+	if encrypted {
+		recipients := []*openpgp.Entity{e.PGPkey}
+		armored, err := armor.Encode(w, "PGP MESSAGE", nil)
+		plaintext, err := openpgp.Encrypt(armored, recipients, nil, nil, nil)
+		err = t.ExecuteTemplate(plaintext, templateName, e)
+		if err != nil {
+			return err
+		}
+		plaintext.Close()
+		armored.Close()
+		return err
+	} else {
+		return t.ExecuteTemplate(w, templateName, e)
+	}
 }
