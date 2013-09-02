@@ -34,4 +34,5 @@ var map = new L.Map('map', {
 
 var sendmail = !({{.SMTP.VerifyDisabled }});
 var readonly = {{.Database.ReadOnly}};
-var AddressType = {{.Web.AddressType}};
+
+var AddressType = "{{.Map.AddressType}}";
