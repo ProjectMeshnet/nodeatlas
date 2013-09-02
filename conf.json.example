@@ -6,6 +6,7 @@
 		"Hostname": "http://localhost",
 		"Prefix": "",
 		"Addr": "tcp://0.0.0.0:8077",
+		"AddressType": "Network-specific IP",
 		"DeproxyHeaderFields": [
 			"X-Forwarded-For",
 			"X-Real-Ip"
