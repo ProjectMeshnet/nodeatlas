@@ -42,7 +42,8 @@
 		},
 		"Zoom": 4,
 		"ClusterRadius": 50,
-		"Attribution": "© <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"
+		"Attribution": "© <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+		"AddressType": "Network-specific IP"
 	},
 	"Verify": {
 		"Netmask": "fc00::/8",
