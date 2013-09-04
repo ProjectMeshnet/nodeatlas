@@ -130,13 +130,12 @@ func VerifyRequest(node *Node, r *http.Request) error {
 // SendVerificationEmail uses the fields in Conf.SMTP to send a
 // templated email (verification.txt) to the given email address. If
 // the email could not be sent, it returns an error.
-func SendVerificationEmail(id int64, recipientEmail, pgpid string) (err error) {
+func SendVerificationEmail(id int64, recipientEmail string, pgpid PGPID) (err error) {
 	// Prepare an Email type.
 	e := &Email{
 		To:      recipientEmail,
 		From:    Conf.SMTP.EmailAddress,
 		Subject: Conf.Name + " Node Registration",
-		PGPsig:  pgpid,
 	}
 
 	e.Data = map[string]interface{}{
@@ -150,7 +149,7 @@ func SendVerificationEmail(id int64, recipientEmail, pgpid string) (err error) {
 		"Boundary": rand.Int31(),
 	}
 
-	if err = e.Send("verification.txt"); err == nil {
+	if err = e.Send("verification.txt", pgpid); err == nil {
 		l.Debugf("Sent verification email to %d", id)
 	}
 	return
@@ -183,7 +182,7 @@ WHERE verifysent = 0;`)
 			continue
 		}
 
-		if err = SendVerificationEmail(id, email, string(pgp)); err != nil {
+		if err = SendVerificationEmail(id, email, pgp); err != nil {
 			l.Warningf("Could not send verification email to %q: %s", email, err)
 		} else {
 			verifysent = append(verifysent, id)

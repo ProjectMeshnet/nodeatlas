@@ -69,7 +69,7 @@ func ConnectSMTP() (c *smtp.Client, err error) {
 // a keyserver. In this case it uses keyserver.ubuntu.com but this could
 // be replaced. It returns a pointer to an initialized openpgp.Entity.
 func LookupKey(pgpsig string) (recipient *openpgp.Entity, err error) {
-	resp, err := http.Get("http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=" + pgpsig)
+	resp, err := http.Get(Conf.PGP.Keyserver + pgpsig)
 	if err != nil {
 		return nil, err
 	}
@@ -131,9 +131,6 @@ type Email struct {
 	// name in the template, e.g. '{{.Data.FieldName}}'.
 	Data map[string]interface{}
 
-	PGPsig string
-	PGPkey *openpgp.Entity
-
 	// Header contains data which is generated at Send() time. It does
 	// not need to need to be filled out.
 	Header struct {
@@ -141,10 +138,11 @@ type Email struct {
 	}
 }
 
-func (e *Email) Send(templateName string) (err error) {
+func (e *Email) Send(templateName string, PGPsig PGPID) (err error) {
 	var encrypted bool
-	if e.PGPsig != "" {
-		e.PGPkey, err = LookupKey(e.PGPsig)
+	var PGPkey *openpgp.Entity
+	if PGPsig.String() != "" {
+		PGPkey, err = LookupKey(PGPsig.String())
 		if err == nil {
 			encrypted = true
 		} else {
@@ -168,8 +166,11 @@ func (e *Email) Send(templateName string) (err error) {
 	// Execute the template verification.txt and write directly to the
 	// connection.
 	if encrypted {
-		recipients := []*openpgp.Entity{e.PGPkey}
+		recipients := []*openpgp.Entity{PGPkey}
 		armored, err := armor.Encode(w, "PGP MESSAGE", nil)
+		if err != nil {
+			return err
+		}
 		plaintext, err := openpgp.Encrypt(armored, recipients, nil, nil, nil)
 		err = t.ExecuteTemplate(plaintext, templateName, e)
 		if err != nil {
