@@ -1,15 +1,16 @@
 package main
+
 // Copyright (C) 2013 Alexander Bauer, Luke Evers, Daniel Supernault,
 // Dylan Whichard, and contributors; (GPLv3) see LICENSE or doc.go
 
 import (
+	"code.google.com/p/go.crypto/openpgp"
+	"code.google.com/p/go.crypto/openpgp/armor"
+	"code.google.com/p/go.crypto/openpgp/packet"
 	"errors"
+	"io/ioutil"
 	"net"
 	"net/http"
-	"io/ioutil"
-	"code.google.com/p/go.crypto/openpgp"
-	"code.google.com/p/go.crypto/openpgp/packet"
-	"code.google.com/p/go.crypto/openpgp/armor"
 	"net/smtp"
 	"strings"
 	"time"
@@ -85,8 +86,8 @@ func LookupKey(pgpsig string) (recipient *openpgp.Entity, err error) {
 	if beginning < 0 || end < 0 {
 		return nil, errors.New("Error: Key not found.")
 	}
-	
-	keyBody, err := armor.Decode(strings.NewReader(string(body[beginning+6:end])))
+
+	keyBody, err := armor.Decode(strings.NewReader(string(body[beginning+6 : end])))
 	if err != nil {
 		return nil, err
 	}

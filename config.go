@@ -145,7 +145,7 @@ type Config struct {
 		PGPDisabled bool
 
 		// URL for an http keyserver search query. It should be a full
-		// URL ending in the GET query. 
+		// URL ending in the GET query.
 		// Ie - "http://keyserver.ubuntu.com/pks/lookup?op=get&search="
 		Keyserver string
 	}

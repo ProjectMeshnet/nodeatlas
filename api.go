@@ -82,7 +82,6 @@ func (*Api) GetEcho(ctx *jas.Context) {
 	}
 }
 
-
 // GetStatus responds with a status summary of the map, including the
 // map name, total number of nodes, number available (pingable), etc.
 // (Not yet implemented.)
