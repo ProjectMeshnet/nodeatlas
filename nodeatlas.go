@@ -37,11 +37,18 @@ var (
 
 var (
 	ignoreServerCrash bool
+
+	// defaultResLocation and defaultConfLocation are used as flag
+	// defaults.
+	defaultResLocation  = "res/"
+	defaultConfLocation = "conf.json"
 )
 
 var (
-	fConf = flag.String("conf", "conf.json", "path to configuration file")
-	fRes  = flag.String("res", "res/", "path to resource directory")
+	fConf = flag.String("conf", defaultConfLocation,
+		"path to configuration file")
+	fRes = flag.String("res", defaultResLocation,
+		"path to resource directory")
 
 	fLog   = flag.String("file", "", "Logfile (defaults to stdout)")
 	fDebug = flag.Bool("debug", false, "maximize verbosity")
