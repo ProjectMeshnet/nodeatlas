@@ -7,6 +7,7 @@ $(document).ready(function() {
     fixNavbarBrand();
     if (readonly) {
 	addDBWarning();
+	$('#addme').remove();
     }
     
 });
