@@ -16,6 +16,7 @@
 		}
 	},
 	"ChildMaps": [],
+	"Global": false,
 	"Database": {
 		"DriverName": "sqlite3",
 		"Resource": "example.db",

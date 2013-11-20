@@ -8,6 +8,9 @@ $(document).ready(function() {
     if (readonly) {
 	addDBWarning();
     }
+    if (global) {
+	GlobalMap();
+    }
     
 });
 
@@ -46,4 +49,13 @@ function hide(x) {
 function addDBWarning() {
     var warning = '<div class="alert alert-danger" id="alert-left">Database is in read only mode.</div>';
     $('#wrap').append(warning);
+}
+
+
+// If the map is a Global Map, we have to do some things differently
+// than if it was a normal map.
+function GlobalMap() {
+    // Create meshlocal button
+    var ml = '<li><a href="/meshlocals/">MeshLocals</a></li>';
+    $('.nav navbar-nav').append(ml);
 }

@@ -119,15 +119,18 @@ function nodeInfoClick(e, on) {
 	});
     });
     // EDIT NODE
-    $('#edit').bind('click', function() {
-	edit(e, ipv6, m);
-    });
-
-    // SEND MESSAGE
-    $('#sendMessage').bind('click', function() {
-	message(name, ipv6);
-    });
+    if (!global) {
+	$('#edit').bind('click', function() {
+	    edit(e, ipv6, m);
+	});
+	
+	// SEND MESSAGE
+	$('#sendMessage').bind('click', function() {
+	    message(name, ipv6);
+	});
+    }
 }
+
 
 function getSTATUS() {
     var active = 0, residential = 0, internet = 0, wireless = 0, wired = 0;

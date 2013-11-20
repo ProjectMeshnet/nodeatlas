@@ -4,9 +4,15 @@ $(document).ready(function() {
     
     $.ajaxSetup({cache:true});
     
-    $('#addme').tooltip();
+    if (!global) $('#addme').tooltip();
     $('#distance').tooltip();
-    $('#legend').popover({'content':'<img src="/img/node.png" width="16px"/>&nbsp;Active Residential Node<hr><img src="/img/vps.png" width="16px">&nbsp;Active Hosted/Virtual Node<hr><img src="/img/inactive.png" width="16px">&nbsp;Inactive Node', 'html': true});
+    if (!global) $('#legend').popover({'content':'<img src="/img/node.png" width="16px"/>&nbsp;Active Residential Node<hr><img src="/img/vps.png" width="16px">&nbsp;Active Hosted/Virtual Node<hr><img src="/img/inactive.png" width="16px">&nbsp;Inactive Node', 'html': true});
+    
+    // If we're a global map, we don't want the legend or the add me
+    // button. We also want to remove search and calculate distance.
+    if (global) {
+	$('#addme, #legend, #distance, #searchButton, #searchDivide, #filter').remove();
+    }
     
     // this handles loading the child nodes now
     loadChildMaps();
