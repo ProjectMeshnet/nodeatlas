@@ -81,8 +81,8 @@
 		  <ul class="dropdown-menu" aria-labelledby="dropdownMenu" role="menu">
 		    <li><a href="#" onclick="geoLocate(); return false;">Locate Me</a></li>
 		    <li><a href="#" onclick="initDistance();" id="distance" data-toggle="tooltip" data-placement="bottom" data-original-title="Click on the first node, and then the second node." >Calculate Distance</a></li>
-		    <li class="divider"></li>
-		    <li><a href="#" onclick="search(); return false;" class="disabled">Search</a></li>
+		    <li class="divider" id="searchDivide"></li>
+		    <li><a href="#" id="searchButton" onclick="search(); return false;" class="disabled">Search</a></li>
 		  </ul>
 		</li>
 		<li><button href="#" onclick="initRegistration();" class="btn btn-primary navbar-btn" id="addme" data-toggle="tooltip" data-placement="bottom" data-original-title="Click anywhere to add your node!" >Add Node</button></li>
