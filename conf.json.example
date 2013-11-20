@@ -16,7 +16,7 @@
 		}
 	},
 	"ChildMaps": [],
-	"MeshOnly": false,
+	"Global": false,
 	"Database": {
 		"DriverName": "sqlite3",
 		"Resource": "example.db",

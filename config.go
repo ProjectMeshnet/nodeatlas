@@ -82,12 +82,12 @@ type Config struct {
 	// database temporarily (until cleared by the CacheExpiration.
 	ChildMaps []string
 
-	// MeshOnly is a bool value that is set to false by
-	// default. If it is set to false, NodeAtlas will function
-	// normally with adding nodes. If it is set to true, NodeAtlas
-	// will only pull nodes from the ChildMaps list and won't even
-	// give the option to add a node.
-	MeshOnly bool
+	// Global is a bool value that is set to false by default. If
+	// it is set to false, NodeAtlas will function normally with
+	// adding nodes. If it is set to true, NodeAtlas will only
+	// pull nodes from the ChildMaps list and won't even give the
+	// option to add a node.
+	Global bool
 
 	// Database is the structure which contains the database driver
 	// name, such as "sqlite3" or "mysql", and the database resource,

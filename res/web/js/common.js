@@ -8,6 +8,9 @@ $(document).ready(function() {
     if (readonly) {
 	addDBWarning();
     }
+    if (global) {
+	GlobalMap();
+    }
     
 });
 
@@ -46,4 +49,11 @@ function hide(x) {
 function addDBWarning() {
     var warning = '<div class="alert alert-danger" id="alert-left">Database is in read only mode.</div>';
     $('#wrap').append(warning);
+}
+
+
+// If the map is a GlobalMap, we don't want to let people add
+// nodes.
+function GlobalMap() {
+    $('#addme').remove();
 }
