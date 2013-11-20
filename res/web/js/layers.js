@@ -247,7 +247,6 @@ function createMarker(feature, latlng) {
     
     // Create the Marker with options set above.
     var m = L.marker(latlng, {icon: icon}).bindPopup(html);
-    
     // If we have /node/xxx then center the map on it
     if (nodexxx(feature.id)) {
 	map.setView(latlng, 8);

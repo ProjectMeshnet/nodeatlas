@@ -11,7 +11,7 @@ $(document).ready(function() {
     // If we're a global map, we don't want the legend or the add me
     // button. We also want to remove search and calculate distance.
     if (global) {
-	$('#addme, #legend, #distance, #searchButton, #searchDivide').remove();
+	$('#addme, #legend, #distance, #searchButton, #searchDivide, #filter').remove();
     }
     
     // this handles loading the child nodes now

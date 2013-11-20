@@ -52,8 +52,10 @@ function addDBWarning() {
 }
 
 
-// If the map is a GlobalMap, we don't want to let people add
-// nodes.
+// If the map is a Global Map, we have to do some things differently
+// than if it was a normal map.
 function GlobalMap() {
-    
+    // Create meshlocal button
+    var ml = '<li><a href="/meshlocals/">MeshLocals</a></li>';
+    $('.nav navbar-nav').append(ml);
 }
