@@ -55,5 +55,5 @@ function addDBWarning() {
 // If the map is a GlobalMap, we don't want to let people add
 // nodes.
 function GlobalMap() {
-    $('#addme').remove();
+    
 }
