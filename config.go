@@ -67,6 +67,11 @@ type Config struct {
 		// script tieing into Pikwik.
 		HeaderSnippet template.HTML
 
+		// AboutSnippet is an excerpt that will get put into
+		// the /about page for all to read upon going to the
+		// /about page. 
+		AboutSnippet string
+
 		// RSS is the structure which contains settings for the
 		// built-in RSS feed generator.
 		RSS struct {

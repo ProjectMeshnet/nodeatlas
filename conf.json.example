@@ -11,6 +11,7 @@
 			"X-Real-Ip"
 		],
 		"HeaderSnippet": "<meta name='description' content='Federated node mapping for mesh networks.'>",
+		"AboutSnippet": "Contact the administrator of this map for help!",
 		"RSS": {
 			"MaxAge": "2h"
 		}
