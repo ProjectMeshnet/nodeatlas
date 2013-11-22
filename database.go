@@ -16,6 +16,7 @@ var (
 
 type DB struct {
 	*sql.DB
+    DriverName string
 	ReadOnly bool
 }
 
@@ -66,11 +67,18 @@ expiration INT NOT NULL);`)
 	if err != nil {
 		return
 	}
-
+    // <mysql> SQL? A standard? Hahahaha!
+    if db.DriverName == "mysql" {
+	_, err = db.Query(`CREATE TABLE IF NOT EXISTS cached_maps (
+id INTEGER PRIMARY KEY AUTO_INCREMENT,
+hostname VARCHAR(255) NOT NULL,
+name VARCHAR(255) NOT NULL);`)
+    } else {
 	_, err = db.Query(`CREATE TABLE IF NOT EXISTS cached_maps (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 hostname VARCHAR(255) NOT NULL,
 name VARCHAR(255) NOT NULL);`)
+    }
 	if err != nil {
 		return
 	}

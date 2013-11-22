@@ -124,6 +124,7 @@ func main() {
 	// Wrap the *sql.DB type.
 	Db = DB{
 		DB:       db,
+        DriverName: Conf.Database.DriverName,
 		ReadOnly: (*fReadOnly || Conf.Database.ReadOnly),
 	}
 	l.Debug("Connected to database\n")
