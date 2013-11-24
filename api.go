@@ -185,17 +185,11 @@ func (*Api) PostNode(ctx *jas.Context) {
 	node.Longitude = ctx.RequireFloat("longitude")
 	node.OwnerName = html.EscapeString(ctx.RequireString("name"))
 	node.OwnerEmail = ctx.RequireStringMatch(EmailRegexp, "email")
-	node.Contact, err = ctx.FindString("contact")
-	if err != nil {
-		ctx.Error = jas.NewRequestError("someError")
-		return
-	}
+	
+	node.Contact, _ = ctx.FindString("contact")
 	node.Contact = html.EscapeString(node.Contact)
-	node.Details, err = ctx.FindString("details")
-	if err != nil {
-		ctx.Error = jas.NewRequestError("someError")
-		return
-	}
+
+	node.Details, _ = ctx.FindString("details")
 	node.Details = html.EscapeString(node.Details)
 
 	// If Contact, Details, or OwnerName are too long to fit in
