@@ -1,4 +1,5 @@
 package main
+
 // Copyright (C) 2013 Alexander Bauer, Luke Evers, Daniel Supernault,
 // Dylan Whichard, and contributors; (GPLv3) see LICENSE or doc.go
 
@@ -16,7 +17,8 @@ var (
 
 type DB struct {
 	*sql.DB
-	ReadOnly bool
+	DriverName string
+	ReadOnly   bool
 }
 
 // InitializeTables issues the commands to create all tables and
@@ -66,11 +68,18 @@ expiration INT NOT NULL);`)
 	if err != nil {
 		return
 	}
-
-	_, err = db.Query(`CREATE TABLE IF NOT EXISTS cached_maps (
+	// <mysql> SQL? A standard? Hahahaha!
+	if db.DriverName == "mysql" {
+		_, err = db.Query(`CREATE TABLE IF NOT EXISTS cached_maps (
+id INTEGER PRIMARY KEY AUTO_INCREMENT,
+hostname VARCHAR(255) NOT NULL,
+name VARCHAR(255) NOT NULL);`)
+	} else {
+		_, err = db.Query(`CREATE TABLE IF NOT EXISTS cached_maps (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 hostname VARCHAR(255) NOT NULL,
 name VARCHAR(255) NOT NULL);`)
+	}
 	if err != nil {
 		return
 	}
@@ -92,7 +101,7 @@ func (db DB) LenNodes(useCached bool) (n int) {
 	// Count the number of rows in the 'nodes' table.
 	var row *sql.Row
 	if useCached {
-		row = db.QueryRow("SELECT COUNT(*) FROM (SELECT address FROM nodes UNION SELECT address FROM nodes_cached);")
+		row = db.QueryRow("SELECT COUNT(*) FROM (SELECT address FROM nodes UNION SELECT address FROM nodes_cached) AS cachedNodes;")
 	} else {
 		row = db.QueryRow("SELECT COUNT(*) FROM nodes;")
 	}
