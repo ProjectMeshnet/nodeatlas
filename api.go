@@ -7,6 +7,7 @@ import (
 	"database/sql"
 	"github.com/coocood/jas"
 	"github.com/dchest/captcha"
+    "html"
 	"html/template"
 	"math/rand"
 	"net"
@@ -82,7 +83,6 @@ func (*Api) GetEcho(ctx *jas.Context) {
 		ctx.Error = jas.NewRequestError("netmask not set")
 	}
 }
-
 
 // GetStatus responds with a status summary of the map, including the
 // map name, total number of nodes, number available (pingable), etc.
@@ -183,19 +183,35 @@ func (*Api) PostNode(ctx *jas.Context) {
 	node.Addr = ip
 	node.Latitude = ctx.RequireFloat("latitude")
 	node.Longitude = ctx.RequireFloat("longitude")
-	node.OwnerName = ctx.RequireString("name")
+	node.OwnerName = html.EscapeString(ctx.RequireString("name"))
 	node.OwnerEmail = ctx.RequireStringMatch(EmailRegexp, "email")
+    node.Contact, err = ctx.FindString("contact")
+    if err != nil {
+        ctx.Error = jas.NewRequestError("someError")
+        return
+    }
+    node.Contact = html.EscapeString(node.Contact)
+    node.Details, err = ctx.FindString("details")
+    if err != nil {
+        ctx.Error = jas.NewRequestError("someError")
+        return
+    }
+    node.Details = html.EscapeString(node.Details)
 
-	// If Contact and Details are too long to fit in the database,
-	// produce an error.
-	if node.Contact, err = ctx.FindStringLen(0, 255, "contact"); err == jas.TooLongError {
-		ctx.Error = jas.NewRequestError("contactTooLong")
-		return
-	}
-	if node.Details, err = ctx.FindStringLen(0, 255, "details"); err == jas.TooLongError {
-		ctx.Error = jas.NewRequestError("detailsTooLong")
-		return
-	}
+    // If Contact, Details, or OwnerName are too long to fit in
+    // the database, produce an error.
+    if len(node.Contact) > 255 {
+        ctx.Error = jas.NewRequestError("contactTooLong")
+        return
+    }
+    if len(node.Details) > 255 {
+        ctx.Error = jas.NewRequestError("detailsTooLong")
+        return
+    }
+    if len(node.OwnerName) > 255 {
+        ctx.Error = jas.NewRequestError("ownerNameTooLong")
+        return
+    }
 
 	// Validate the PGP ID, if given. It can be an lowercase hex
 	// string of length 0, 8, or 16.
@@ -329,18 +345,34 @@ func (*Api) PostUpdateNode(ctx *jas.Context) {
 	node.Addr = ip
 	node.Latitude = ctx.RequireFloat("latitude")
 	node.Longitude = ctx.RequireFloat("longitude")
-	node.OwnerName = ctx.RequireString("name")
+	node.OwnerName = html.EscapeString(ctx.RequireString("name"))
+    node.Contact, err = ctx.FindString("contact")
+    if err != nil {
+        ctx.Error = jas.NewRequestError("someError")
+        return
+    }
+    node.Contact = html.EscapeString(node.Contact)
+    node.Details, err = ctx.FindString("details")
+    if err != nil {
+        ctx.Error = jas.NewRequestError("someError")
+        return
+    }
+    node.Details = html.EscapeString(node.Details)
 
-	// If Contact and Details are too long to fit in the database,
-	// produce an error.
-	if node.Contact, err = ctx.FindStringLen(0, 255, "contact"); err == jas.TooLongError {
-		ctx.Error = jas.NewRequestError("contactTooLong")
-		return
-	}
-	if node.Details, err = ctx.FindStringLen(0, 255, "details"); err == jas.TooLongError {
-		ctx.Error = jas.NewRequestError("detailsTooLong")
-		return
-	}
+    // If Contact, Details, or OwnerName are too long to fit in
+    // the database, produce an error.
+    if len(node.Contact) > 255 {
+        ctx.Error = jas.NewRequestError("contactTooLong")
+        return
+    }
+    if len(node.Details) > 255 {
+        ctx.Error = jas.NewRequestError("detailsTooLong")
+        return
+    }
+    if len(node.OwnerName) > 255 {
+        ctx.Error = jas.NewRequestError("ownerNameTooLong")
+        return
+    }
 
 	// Validate the PGP ID, if given. It can be an lowercase hex
 	// string of length 0, 8, or 16.
