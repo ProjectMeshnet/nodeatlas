@@ -54,7 +54,7 @@ type Config struct {
 		// "unix://nodeatlas.sock" will create a UNIX socket at
 		// nodeatlas.sock.
 		Addr string
-		
+
 		// DeproxyHeaderFields is a list of HTTP header fields that
 		// should be used instead of the connecting IP when verifying
 		// nodes and logging major errors. They must be in
@@ -69,7 +69,7 @@ type Config struct {
 
 		// AboutSnippet is an excerpt that will get put into
 		// the /about page for all to read upon going to the
-		// /about page. 
+		// /about page.
 		AboutSnippet string
 
 		// RSS is the structure which contains settings for the
@@ -171,14 +171,14 @@ type Config struct {
 		// the bottom right of the map, meant to credit the
 		// maintainers of the tileserver.
 		Attribution template.HTML
-		
+
 		// AddressType is the text that is displayed on the
 		// map next to "Address" when adding a new node or
 		// editing a previous node. The default is
 		// "Network-specific IP", but due to how general that
 		// is, it should be changed to whatever is the most
 		// helpful for people to understand.
-                AddressType string
+		AddressType string
 	}
 
 	// Verify contains the list of steps used to ensure that new nodes
