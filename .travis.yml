@@ -6,3 +6,6 @@ go:
 
 before_install:
   - go get
+
+after_install:
+  - go test
