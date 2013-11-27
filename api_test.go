@@ -11,6 +11,7 @@ type PGP struct {
 }
 
 func TestPGP(t *testing.T) {
+	fmt.Println("Testing PGP regex")
 	
 	testPGP := []PGP{
 		{"CAFEBABE", true},
@@ -26,9 +27,14 @@ func TestPGP(t *testing.T) {
 	}
 	
 	for i, p := range testPGP {
-		fmt.Println(i)
-		if PGPRegexp.Match([]byte(p.Key)) && !p.Valid {
-			t.Errorf("%s matched when it should not have!", p.Key)
+		fmt.Print(i)
+		fmt.Print(" - " + p.Key + " is valid? ")
+		fmt.Print(PGPRegexp.Match([]byte(p.Key)))
+		fmt.Print(" (should be ")
+		fmt.Print(p.Valid)
+		fmt.Println(")")
+		if PGPRegexp.Match([]byte(p.Key)) != p.Valid {
+			t.Errorf("%s returned %v when it should have returned %v!", p.Key, !p.Valid, p.Valid)
 		}
 	}
 }

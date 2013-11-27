@@ -22,7 +22,7 @@ const (
 )
 
 var (
-	PGPRegexp   = regexp.MustCompilePOSIX("^[0-9a-z]{8}{0,2}$")
+	PGPRegexp   = regexp.MustCompilePOSIX("^[0-9A-Fa-f]{8}{0,2}$")
 	EmailRegexp = regexp.MustCompilePOSIX("^[a-z0-9._%+-]+@([a-z0-9-]+\\.)+[a-z]+$")
 )
 
