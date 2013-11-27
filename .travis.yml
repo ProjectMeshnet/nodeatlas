@@ -7,5 +7,5 @@ go:
 before_install:
   - go get
 
-after_install:
+after_success:
   - go test
