@@ -77,13 +77,13 @@ type Node struct {
 	// is not cached.
 	RetrieveTime int64 `json:",omitempty"`
 
-	/* Optional Fields */
-
 	// OwnerName is the node's owner's real or screen name.
 	OwnerName string
 
 	// OwnerEmail is the node's owner's email address.
 	OwnerEmail string `json:",omitempty"`
+
+	/* Optional Fields */
 
 	// Contact is public contact information, such as a nickname,
 	// email, or xmpp username.
