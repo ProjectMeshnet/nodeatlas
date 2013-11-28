@@ -37,7 +37,7 @@
 	  <h1>About NodeAtlas</h1>
 	</div>		<div class="col col-lg-5 pull-right">
 	  <div class="alert alert-info">
-	    <p>Admin Contact: {{.AdminContact}}</p>
+	    <p>Admin Contact: {{.AdminContact.Name}} &lt;<a href="mailto:{{.AdminContact.Email}}">{{.AdminContact.Email}}</a>&gt; {{.AdminContact.PGP}}
 	  </div>
 	</div>
 	<p class="lead">How do you make sense of a meshnet? You map it.</p>
