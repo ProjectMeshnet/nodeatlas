@@ -70,7 +70,7 @@ func ConnectSMTP() (c *smtp.Client, err error) {
 // a keyserver. In this case it uses keyserver.ubuntu.com but this could
 // be replaced. It returns a pointer to an initialized openpgp.Entity.
 func LookupKey(pgpsig string) (recipient *openpgp.Entity, err error) {
-	resp, err := http.Get(Conf.PGP.Keyserver + pgpsig)
+	resp, err := http.Get(Conf.PGP.Keyserver + "0x" + pgpsig)
 	if err != nil {
 		return nil, err
 	}
