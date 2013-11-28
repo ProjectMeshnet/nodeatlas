@@ -1,4 +1,4 @@
-charset "Utf-8";
+@charset "Utf-8";
 
 body {
     font-family: Helvetica, sans-seirf;
@@ -228,7 +228,8 @@ li.active a, li.open a {
     line-height: 30px;
 }
 
-.leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow {
+.leaflet-cluster-anim .leaflet-marker-icon, 
+.leaflet-cluster-anim .leaflet-marker-shadow {
     -webkit-transition: -webkit-transform 0.25s ease-out, opacity 0.25s ease-in;
     -moz-transition: -moz-transform 0.25s ease-out, opacity 0.25s esae-in;
     -o-transition: -o-transform 0.25s ease-out, opacity 0.25s ease-in;

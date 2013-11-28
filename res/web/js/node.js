@@ -112,17 +112,19 @@ function nodeInfoClick(e, on) {
     var name = html.substring(html.indexOf('<h4>')+4, html.indexOf('</h4>'));
     ipv6 = html.substring(html.indexOf('a href')+14);
     ipv6 = ipv6.substring(0, ipv6.indexOf('"'));
+    
     // CLOSE NODE
     $('#closeNode').bind('click', function() {
 	$('.node').fadeOut(500, function() {
 	    $('.node').remove();
 	});
     });
+
     // EDIT NODE
     $('#edit').bind('click', function() {
 	edit(e, ipv6, m);
     });
-
+    
     // SEND MESSAGE
     $('#sendMessage').bind('click', function() {
 	message(name, ipv6);
@@ -219,6 +221,7 @@ function edit(e, ipv6, m) {
 	$('.node').remove();
 	$('#wrap').append(getForm(e.layer.getLatLng().lat, e.layer.getLatLng().lng));
 	$('#submitatlas').prop('onclick', '');
+	
 	// Now we want to set shit that is already there.
 	$.getJSON('/api/node?address='+ipv6, function(response) {
 	    $('#name').val(response.data.OwnerName);
@@ -246,7 +249,7 @@ function edit(e, ipv6, m) {
 	    
 	    if ((STATUS&STATUS_WIRED) > 0) $('#wired').prop('checked', true);
 	    else $('#wired').prop('checked', false);
-
+	    
 	    // Click submit
 	    $('#submitatlas').bind('click', function() {
 		$('#inputform').fadeOut(500);
@@ -296,10 +299,12 @@ function edit(e, ipv6, m) {
 	});
 	$('#inputform').fadeIn(500);
 	$('#name').focus();
+	
 	// DELETE NODE
         $('#delete').bind('click', function() {
             deleteNode(ipv6);
         });
+	
 	// REPOSITON NODE
 	$('#reposition').bind('click', function() {
 	    repositionNode(m);

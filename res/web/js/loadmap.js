@@ -1,5 +1,5 @@
 $(document).ready(function() {
-
+    
     addJSFiles();
     
     $.ajaxSetup({cache:true});
@@ -23,7 +23,7 @@ $(document).ready(function() {
     if (key != '') {
 	verifyNode(key);
     }
-
+    
     $(window).bind('hashchange', onHashChange);
     $(window).trigger('hashchange');
     map.on('moveend', function() {
@@ -99,7 +99,7 @@ function onMapClick(e) {
 
 function onHashChange(e) {
     var fragment = location.hash.slice(1);
-
+    
     // Try to parse the fragment as a map view.
     var view = fragment.split('/');
     if (view.length == 3) {
