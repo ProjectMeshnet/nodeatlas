@@ -4,6 +4,7 @@ package main
 // Dylan Whichard, and contributors; (GPLv3) see LICENSE or doc.go
 
 import (
+	"bytes"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -11,7 +12,6 @@ import (
 	"net"
 	"net/http"
 	"time"
-    "bytes"
 )
 
 // QueueNode inserts the given node into the verify queue with its
@@ -101,17 +101,16 @@ func (db DB) VerifyRegistrant(node *Node) error {
 		}
 	}
 
-    // Ensure IP and email are unique
-    nodeList, err := db.DumpLocal()
-    if err != nil {
-        return err
-    }
-    for _, n := range nodeList {
-        // FIXME Doesn't actually validate if email is unique for some reason
-        if bytes.Equal(n.Addr, node.Addr) || bytes.Equal([]byte(n.OwnerEmail), []byte(node.OwnerEmail)) {
-            return errors.New("Non-unique IP or email address")
-        }
-    }
+	// Ensure IPs are unique
+	nodeList, err := db.DumpLocal()
+	if err != nil {
+		return err
+	}
+	for _, n := range nodeList {
+		if bytes.Equal(n.Addr, node.Addr) {
+			return errors.New("Non-unique IP address")
+		}
+	}
 
 	return nil
 }
