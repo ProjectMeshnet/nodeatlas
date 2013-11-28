@@ -4,6 +4,7 @@ package main
 // Dylan Whichard, and contributors; (GPLv3) see LICENSE or doc.go
 
 import (
+	"bytes"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -91,7 +92,7 @@ var (
 // ensure that a Node is fit to be placed in the verification
 // queue. If the given Node is acceptable, then no error will be
 // returned.
-func VerifyRegistrant(node *Node) error {
+func (db DB) VerifyRegistrant(node *Node) error {
 	// Ensure that the node's address is contained by the netmask.
 	if Conf.Verify.Netmask != nil {
 		if !(*net.IPNet)(Conf.Verify.Netmask).Contains(net.IP(node.Addr)) {
@@ -99,6 +100,18 @@ func VerifyRegistrant(node *Node) error {
 				Conf.Verify.Netmask)
 		}
 	}
+
+	// Ensure IPs are unique
+	nodeList, err := db.DumpLocal()
+	if err != nil {
+		return err
+	}
+	for _, n := range nodeList {
+		if bytes.Equal(n.Addr, node.Addr) {
+			return errors.New("Non-unique IP address")
+		}
+	}
+
 	return nil
 }
 

@@ -185,7 +185,7 @@ func (*Api) PostNode(ctx *jas.Context) {
 	node.Longitude = ctx.RequireFloat("longitude")
 	node.OwnerName = html.EscapeString(ctx.RequireString("name"))
 	node.OwnerEmail = ctx.RequireStringMatch(EmailRegexp, "email")
-	
+
 	node.Contact, _ = ctx.FindString("contact")
 	node.Contact = html.EscapeString(node.Contact)
 
@@ -218,7 +218,7 @@ func (*Api) PostNode(ctx *jas.Context) {
 	node.Status = uint32(status)
 
 	// Ensure that the node is correct and usable.
-	if err = VerifyRegistrant(node); err != nil {
+	if err = Db.VerifyRegistrant(node); err != nil {
 		ctx.Error = jas.NewRequestError(err.Error())
 		return
 	}
