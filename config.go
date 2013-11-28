@@ -18,12 +18,19 @@ type Config struct {
 	// the region about which it focuses.
 	Name string
 
-	// AdminContact is the information shown in the about menu or when
-	// displaying errors. It should be at least a name and email
-	// address, such as "Your Name <email@example.com>" with an
-	// optional PGP key ID, such as "Your Name <email@example.com>
-	// 0123ABCD"
-	AdminContact template.HTML
+	// AdminContact is the structure which contains information
+	// relating to where you can contact the administrator.
+	AdminContact struct {
+		// Name of the administrator
+		Name string
+		
+		// Email of the administrator
+		Email string
+		
+		// PGP key of the administrator
+		PGP string
+	}
+	
 
 	// AdminAddresses is a slice of addresses which are considered
 	// fully authenticated. Connections originating from those
