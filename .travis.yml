@@ -9,7 +9,7 @@ before_install:
 
 install:
   - make
-  - make install
+  - sudo make install
 
 after_success:
   - go test
