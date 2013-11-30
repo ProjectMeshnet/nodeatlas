@@ -149,6 +149,19 @@ type Config struct {
 		ServerAddress string
 	}
 
+	PGP *struct {
+		// PGPDisabled controls whether the server attemps to use PGP
+		// when sending verification emails. If it is false or omitted,
+		// the system will encrypt emails before sending them if the
+		// user has included a pgp key in their registration.
+		PGPDisabled bool
+
+		// URL for an http keyserver search query. It should be a full
+		// URL ending in the GET query. 
+		// Ie - "http://keyserver.ubuntu.com/pks/lookup?op=get&search="
+		Keyserver string
+	}
+
 	// Map contains the information used by NodeAtlas to power the
 	// Leaflet.js map.
 	Map struct {
