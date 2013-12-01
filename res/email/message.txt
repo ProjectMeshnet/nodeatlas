@@ -20,7 +20,7 @@ If you choose to reply, make sure that you reply to
     {{.Data.ReplyTo}}
 
 If this email was abusive or spam, please email
-    {{.Data.AdminContact}}
+    {{.Data.AdminContact.Name}} <{{.Data.AdminContact.Email}}> {{.Data.AdminContact.PGP}}
 
 https://github.com/ProjectMeshnet/nodeatlas
 
@@ -37,7 +37,9 @@ If you choose to reply, make sure that you reply to <a
 href="mailto:{{.Data.ReplyTo}}">{{.Data.ReplyTo}}</a>.<br/>
 
 If this email was abusive or spam, please email
-{{.Data.AdminContact}}.<br/>
+{{.Data.AdminContact.Name}} 
+<a href="mailto:{{.Data.AdminContact.Email}}">{{.Data.AdminContact.Email}}></a> 
+{{.Data.AdminContact.PGP}} <br/>
 
 <a href="https://github.com/ProjectMeshnet/nodeatlas">NodeAtlas GitHub</a></br>
 
