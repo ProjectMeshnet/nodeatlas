@@ -4,9 +4,15 @@ package main
 // Dylan Whichard, and contributors; (GPLv3) see LICENSE or doc.go
 
 import (
+	"code.google.com/p/go.crypto/openpgp"
+	"code.google.com/p/go.crypto/openpgp/armor"
+	"code.google.com/p/go.crypto/openpgp/packet"
 	"errors"
+	"io/ioutil"
 	"net"
+	"net/http"
 	"net/smtp"
+	"strings"
 	"time"
 )
 
@@ -60,6 +66,34 @@ func ConnectSMTP() (c *smtp.Client, err error) {
 	return
 }
 
+// LookupKey uses http to pull a user's pgp key (ASCII armored) from
+// a keyserver. In this case it uses keyserver.ubuntu.com but this could
+// be replaced. It returns a pointer to an initialized openpgp.Entity.
+func LookupKey(pgpsig string) (recipient *openpgp.Entity, err error) {
+	resp, err := http.Get(Conf.PGP.Keyserver + "0x" + pgpsig)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	beginning := strings.Index(string(body), "<pre>")
+	end := strings.Index(string(body), "</pre>")
+
+	if beginning < 0 || end < 0 {
+		return nil, errors.New("Error: Key not found.")
+	}
+
+	keyBody, err := armor.Decode(strings.NewReader(string(body[beginning+6 : end])))
+	if err != nil {
+		return nil, err
+	}
+	return openpgp.ReadEntity(packet.NewReader(keyBody.Body))
+}
+
 // PrepareEmail connects to the SMTP server configured in the Conf and
 // prepares an email with the given fields. The caller should call the
 // Data() method on the *smtp.Client and write the body directly to
@@ -105,7 +139,17 @@ type Email struct {
 	}
 }
 
-func (e *Email) Send(templateName string) (err error) {
+func (e *Email) Send(templateName string, PGPsig PGPID) (err error) {
+	var encrypted bool
+	var PGPkey *openpgp.Entity
+	if PGPsig.String() != "" && !Conf.PGP.Disabled {
+		PGPkey, err = LookupKey(PGPsig.String())
+		if err == nil {
+			encrypted = true
+		} else {
+			encrypted = false
+		}
+	}
 	c, err := PrepareEmail(Conf.SMTP.EmailAddress, e.To)
 	if err != nil {
 		return
@@ -122,5 +166,21 @@ func (e *Email) Send(templateName string) (err error) {
 
 	// Execute the template verification.txt and write directly to the
 	// connection.
-	return t.ExecuteTemplate(w, templateName, e)
+	if encrypted {
+		recipients := []*openpgp.Entity{PGPkey}
+		armored, err := armor.Encode(w, "PGP MESSAGE", nil)
+		if err != nil {
+			return err
+		}
+		plaintext, err := openpgp.Encrypt(armored, recipients, nil, nil, nil)
+		err = t.ExecuteTemplate(plaintext, templateName, e)
+		if err != nil {
+			return err
+		}
+		plaintext.Close()
+		armored.Close()
+		return err
+	} else {
+		return t.ExecuteTemplate(w, templateName, e)
+	}
 }
