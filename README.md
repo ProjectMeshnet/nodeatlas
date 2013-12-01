@@ -1,6 +1,8 @@
 # NodeAtlas
 ## Federated node mapping for mesh networks
 
+[![Build Status](https://travis-ci.org/ProjectMeshnet/nodeatlas.png?branch=master)](https://travis-ci.org/ProjectMeshnet/nodeatlas)
+
 *GPL 3+ Licensed, see LICENSE*  
 *© Alexander Bauer, Daniel Supernault, Dylan Whichard, Luke Evers,
 and contributors*
