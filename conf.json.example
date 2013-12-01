@@ -34,7 +34,7 @@
 		"ServerAddress": "mail.example.com:587"
 	},
 	"PGP": {
-	        "PGPDisabled": false,
+	        "Disabled": true,
 		"Keyserver": "http://keyserver.ubuntu.com/pks/lookup?op=get&search="
 	},
 	"Map": {

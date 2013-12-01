@@ -142,7 +142,7 @@ type Email struct {
 func (e *Email) Send(templateName string, PGPsig PGPID) (err error) {
 	var encrypted bool
 	var PGPkey *openpgp.Entity
-	if PGPsig.String() != "" {
+	if PGPsig.String() != "" && !Conf.PGP.Disabled {
 		PGPkey, err = LookupKey(PGPsig.String())
 		if err == nil {
 			encrypted = true
