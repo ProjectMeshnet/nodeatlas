@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-type PGP struct {
+type Test struct {
 	Key   string
 	Valid bool
 }
@@ -13,7 +13,7 @@ type PGP struct {
 func TestPGP(t *testing.T) {
 	fmt.Println("Testing PGP regex")
 	
-	testPGP := []PGP{
+	test := []Test{
 		{"CAFEBABE", true},
 		{"caFeD00d", true},
 		{"12345678", true},
@@ -26,7 +26,7 @@ func TestPGP(t *testing.T) {
 		{"ABC12CCAADD333X9", false},
 	}
 	
-	for i, p := range testPGP {
+	for i, p := range test {
 		fmt.Print(i)
 		fmt.Print(" - " + p.Key + " is valid? ")
 		fmt.Print(PGPRegexp.Match([]byte(p.Key)))
@@ -40,5 +40,26 @@ func TestPGP(t *testing.T) {
 }
 
 func TestEmail(t *testing.T) {
+	fmt.Println("Testing Email regex")
 
+	test := []Test{
+		{"nodeatlaszz323@example.com", true},
+		{"123@exle.ch", true},
+		{"abc+xyz@some.site.co.uk", true},
+		{"thisisanemail.com", false},
+		{"yooo@", false},
+	}
+
+	for i, e := range test {
+		fmt.Print(i)
+		fmt.Print(" - " + e.Key + " is valid? ")
+		fmt.Print(EmailRegexp.Match([]byte(e.Key)))
+		fmt.Print(" (should be ")
+		fmt.Print(e.Valid)
+		fmt.Println(")")
+		if EmailRegexp.Match([]byte(e.Key)) != e.Valid {
+			t.Errorf("%s returned %v when it should have returned %v!", e.Key, !e.Valid, e.Valid)
+		}
+	}
+	
 }
