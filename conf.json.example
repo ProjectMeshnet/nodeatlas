@@ -38,10 +38,6 @@
 		"NoAuthenticate": false,
 		"ServerAddress": "mail.example.com:587"
 	},
-	"PGP": {
-	        "Disabled": true,
-		"Keyserver": "http://keyserver.ubuntu.com/pks/lookup?op=get&search="
-	},
 	"Map": {
 		"Favicon": "nodeatlas.png",
 		"Tileserver": "http://{s}.tile.osm.org/{z}/{x}/{y}.png",

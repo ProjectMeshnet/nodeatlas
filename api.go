@@ -238,7 +238,7 @@ func (*Api) PostNode(ctx *jas.Context) {
 		id := rand.Int63() // Pseudo-random positive int64
 
 		emailsent := true
-		if err := SendVerificationEmail(id, node.OwnerEmail, node.PGP); err != nil {
+		if err := SendVerificationEmail(id, node.OwnerEmail); err != nil {
 			// If the sending of the email fails, set the internal
 			// error and log it, then set a bool so that email can be
 			// resent. If email continues failing to send, it will
@@ -601,7 +601,7 @@ func (*Api) PostMessage(ctx *jas.Context) {
 		"Boundary": rand.Int31(),
 	}
 
-	err = e.Send("message.txt", node.PGP)
+	err = e.Send("message.txt")
 	if err != nil {
 		ctx.Error = jas.NewInternalError(err)
 		l.Errf("Error messaging %q from %q: %s",
