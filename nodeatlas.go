@@ -256,14 +256,18 @@ func ListenSignal() {
 			if err != nil {
 				l.Errf("Error recompiling static directory: %s", err)
 				StaticDir = oldStaticDir
-				continue
 			}
-
 			// Remove the old one, and report if there's an error, but
 			// continue even if there's an error.
 			err = os.RemoveAll(oldStaticDir)
 			if err != nil {
 				l.Errf("Error removing old static directory: %s", err)
+			}
+
+			// Reload the email templates.
+			err = RegisterTemplates()
+			if err != nil {
+				l.Errf("Error reloading email templates: %s", err)
 			}
 
 			// Restart the heartbeat ticker.
