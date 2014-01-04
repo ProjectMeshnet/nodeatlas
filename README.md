@@ -3,10 +3,6 @@
 
 [![Build Status](https://travis-ci.org/ProjectMeshnet/nodeatlas.png?branch=master)](https://travis-ci.org/ProjectMeshnet/nodeatlas)
 
-*GPL 3+ Licensed, see LICENSE*  
-*© Alexander Bauer, Daniel Supernault, Dylan Whichard, Luke Evers,
-and contributors*
-
 NodeAtlas is a high-performance and very portable tool for
 geographically mapping mesh networks. It is used and designed by
 [Project Meshnet][Atlas].
@@ -39,3 +35,25 @@ displayed on the parent instance. This way, NodeAtlas is capable of
 acting as a regional map, incorporating nodes from multiple more
 localized instances. (More documentation on this behavior will be
 added in the future.)
+
+
+## Install
+
+TODO
+
+## Contributing
+
+If you see something that needs fixing, or you can think of something
+that could make NodeAtlas better, please feel free to open an issue or
+submit a pull request. Check the open issues before doing so! If there
+is already an issue open for what you want to help with, don't open
+another; one will suffice. All issues and pull requests are welcome,
+and encouraged.
+
+## Copyright & License
+
+© Alexander Bauer, Daniel Supernault, Dylan Whichard, Luke Evers, and
+contributors. NodeAtlas is licensed under GPLv3. See [LICENSE][] for
+full details.
+
+  [LICENSE]: ./LICENSE
