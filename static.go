@@ -12,14 +12,6 @@ import (
 	"strings"
 )
 
-// metaData is a convenience type which wraps a *Config, but adds
-// information such as Version.
-type metaData struct {
-	*Config
-
-	Version string
-}
-
 // CompileStatic traverses a directory, gathering a list of all
 // files. It then performs actions based on their filenames, and
 // copies them to a temporary directory. It returns the name of the
@@ -46,7 +38,7 @@ func CompileStatic(dir string, conf *Config) (tmpdir string, err error) {
 	// Now, process the files one at a time, writing the result to
 	// `<tmpdir>/path/to/file`. The path is the path to the file
 	// within the given dir.
-	err = processFiles(files, metaData{conf, Version}, tmpdir, dir)
+	err = processFiles(files, conf, tmpdir, dir)
 	if err != nil {
 		return
 	}
@@ -59,8 +51,14 @@ func CompileStatic(dir string, conf *Config) (tmpdir string, err error) {
 // prefix sliced off from the filename. Templates are executed with
 // conf as data.It will panic if any of the files are shorter than
 // len(prefix).
-func processFiles(files []string, data metaData,
+func processFiles(files []string, conf *Config,
 	outdir, prefix string) error {
+
+	tmpldata := struct {
+		*Config
+		Version string
+	}{conf, Version}
+
 	for _, filename := range files {
 		// Now, process based on file extension.
 		switch path.Ext(filename) {
@@ -81,7 +79,7 @@ func processFiles(files []string, data metaData,
 			}
 
 			// Finally, write it to the file using conf as data.
-			err = t.Execute(out, data)
+			err = t.Execute(out, tmpldata)
 			if err != nil {
 				return err
 			}
