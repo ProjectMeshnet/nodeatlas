@@ -64,11 +64,11 @@ func StartServer() (err error) {
 		return
 	}
 
-	// Change permissions for unix socket to be 777, so that web servers can
+	// Change permissions for unix socket to be 770, so that web servers can
 	// write to it
 	if parts[0] == "unix" {
-		l.Infof("Changing permissions for %q to 777\n", parts[1])
-		err = os.Chmod(parts[1], 0777)
+		l.Infof("Changing permissions for %q to 770\n", parts[1])
+		err = os.Chmod(parts[1], 0770)
 		if err != nil {
 			return
 		}
