@@ -64,3 +64,30 @@ WHERE expiration <= ?;`, time.Now())
 		l.Err("Error deleting expired CAPTCHAs:", err)
 	}
 }
+
+
+// VerifyCAPTCHA accepts a *http.Request and verifies that the given
+// 'captcha' form is valid. This is a string of the form
+// "id:solution". It will return IncorrectCAPTCHAError if the solution
+// or ID is invalid.
+func VerifyCAPTCHA(req *http.Request) error {
+	// Get the "captcha" form value.
+	solution := req.FormValue("captcha")
+	
+	// Find the point to split the form value at. If it's not found in
+	// the string, return the InvalidCAPTCHAFormat error.
+	index := strings.Index(solution, ":")
+	if index < 0 {
+		return InvalidCAPTCHAFormat
+	}
+	
+	// If that was successful, try to verify it. If it returns false,
+	// the ID or solution was invalid.
+	if !captcha.VerifyString(solution[:index], solution[index+1:]) {
+		return IncorrectCAPTCHA
+	}
+	
+	// If we get to this point, then it was successfully validated and
+	// we can return nil.
+	return nil
+}
