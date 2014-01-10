@@ -4,8 +4,10 @@ package main
 // Dylan Whichard, and contributors; (GPLv3) see LICENSE or doc.go
 
 import (
-	// "github.com/dchest/captcha"
+	"github.com/dchest/captcha"
 	"database/sql"
+	"net/http"
+	"strings"
 	"time"
 )
 
