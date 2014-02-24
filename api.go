@@ -340,17 +340,9 @@ func (*Api) PostUpdateNode(ctx *jas.Context) {
 	node.Latitude = ctx.RequireFloat("latitude")
 	node.Longitude = ctx.RequireFloat("longitude")
 	node.OwnerName = html.EscapeString(ctx.RequireString("name"))
-	node.Contact, err = ctx.FindString("contact")
-	if err != nil {
-		ctx.Error = jas.NewRequestError("someError")
-		return
-	}
+	node.Contact, _ = ctx.FindString("contact")
 	node.Contact = html.EscapeString(node.Contact)
-	node.Details, err = ctx.FindString("details")
-	if err != nil {
-		ctx.Error = jas.NewRequestError("someError")
-		return
-	}
+	node.Details, _ = ctx.FindString("details")
 	node.Details = html.EscapeString(node.Details)
 
 	// If Contact, Details, or OwnerName are too long to fit in
