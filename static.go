@@ -6,6 +6,8 @@ package main
 import (
 	"github.com/SashaCrofter/staticdir"
 	"io/ioutil"
+	"os"
+	"path"
 )
 
 // CompileStatic uses staticdir to translate a resource directory into
@@ -20,11 +22,28 @@ func CompileStatic(dir string, conf *Config) (tmpdir string, err error) {
 
 	// Create a translator via package staticdir.
 	t := staticdir.New(dir, tmpdir)
-	t.CopyFunc = staticdir.TemplateCopy
+	t.CopyFunc = TransformStatic
 	t.CopyData = struct {
 		*Config
 		Version string
 	}{conf, Version}
 
 	return tmpdir, t.Translate()
+}
+
+// TransformStatic implements staticdir's CopyFunc function identity,
+// and performs the following transformations.
+//
+//     .tmpl -> template engine
+//
+func TransformStatic(source, target string, fi os.FileInfo,
+	data interface{}) error {
+
+	switch path.Ext(source) {
+	// Add other cases here, such as ".js".
+	default:
+		staticdir.TemplateCopy(source, target, fi, data)
+	}
+
+	return nil
 }
