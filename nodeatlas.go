@@ -151,6 +151,9 @@ func main() {
 		return
 	}
 
+	// Generate a list of peers.
+	go PopulatePeers(Db)
+
 	// Listen for OS signals.
 	go ListenSignal()
 

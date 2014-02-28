@@ -23,14 +23,13 @@ type Config struct {
 	AdminContact struct {
 		// Name of the administrator
 		Name string
-		
+
 		// Email of the administrator
 		Email string
-		
+
 		// PGP key of the administrator
 		PGP string
 	}
-	
 
 	// AdminAddresses is a slice of addresses which are considered
 	// fully authenticated. Connections originating from those
@@ -204,6 +203,19 @@ type Config struct {
 		// /api/verify?id=<long_random_id>) to originate from the
 		// address of the node that is being verified.
 		FromNode bool
+	}
+
+	// NetworkAdmin is the set of configuration options which allows
+	// NodeAtlas to connect to the administration interface of the
+	// network device, if applicable. If it is not given, the feature
+	// is disabled.
+	NetworkAdmin *struct {
+		// Type is the string which identifies the network
+		// administration type to connect to. Currently, only "cjdns"
+		// is supported. See <https://github.com/cjdelisle/cjdns>.
+		Type string
+
+		Credentials map[string]interface{}
 	}
 }
 
