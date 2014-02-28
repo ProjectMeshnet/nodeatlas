@@ -207,6 +207,19 @@ type Config struct {
 		// address of the node that is being verified.
 		FromNode bool
 	}
+
+	// NetworkAdmin is the set of configuration options which allows
+	// NodeAtlas to connect to the administration interface of the
+	// network device, if applicable. If it is not given, the feature
+	// is disabled.
+	NetworkAdmin *struct {
+		// Type is the string which identifies the network
+		// administration type to connect to. Currently, only "cjdns"
+		// is supported. See <https://github.com/cjdelisle/cjdns>.
+		Type string
+
+		Credentials map[string]interface{}
+	}
 }
 
 // ReadConfig uses os and encoding/json to read a configuration from
