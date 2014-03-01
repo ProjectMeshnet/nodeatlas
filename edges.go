@@ -11,6 +11,13 @@ var NetworkAdminNotConnectedError = errors.New("Network admin interface not conn
 var NetworkAdminCredentialsMissingError = errors.New("Network admin credentials missing")
 var NetworkAdminCredentialsInvalidError = errors.New("Network admin credentials invalid")
 
+var KnownPeers []*Peers
+
+type Peers struct {
+	Source       IP
+	Destinations []IP
+}
+
 type Network interface {
 	// Connect initializes the object and connects to whatever
 	// administration interfaces necessary.
@@ -21,13 +28,13 @@ type Network interface {
 	Close() error
 
 	// PeersOf retrieves all IP addresses known to be connected to the
-	// given IP. It can return a nil slice.
-	PeersOf(IP) ([]IP, error)
+	// given IP. It can return nil.
+	PeersOf(IP) (*Peers, error)
 
 	// PeersOfAll functions similarly to PeersOf, but gives connected
 	// IPs for all given IPs, in the order they are given. Slices can
 	// be nil.
-	PeersOfAll([]IP) ([][]IP, error)
+	PeersOfAll([]IP) ([]*Peers, error)
 }
 
 // PopulateRoutes finds the peers of every known node in the
@@ -70,7 +77,8 @@ func PopulatePeers(db DB) {
 		l.Errf("Error listing peers: %s", err)
 		return
 	}
-	l.Debugf("IPs: %v\nPeers: %v\n", ips, peers)
+	l.Infof("Peering data refreshed")
+	KnownPeers = peers
 }
 
 type CJDNSNetwork struct {
@@ -116,7 +124,7 @@ func (n *CJDNSNetwork) Close() error {
 	return n.conn.Conn.Close()
 }
 
-func (n *CJDNSNetwork) PeersOf(ip IP) (peers []IP, err error) {
+func (n *CJDNSNetwork) PeersOf(ip IP) (peers *Peers, err error) {
 	// First, ensure that the Network is connected. If not, return the
 	// appropriate error.
 	if !n.connected {
@@ -137,16 +145,19 @@ func (n *CJDNSNetwork) PeersOf(ip IP) (peers []IP, err error) {
 		return
 	}
 
-	peers = make([]IP, len(peerRoutes))
+	peers = &Peers{
+		Source:       ip,
+		Destinations: make([]IP, len(peerRoutes)),
+	}
 
 	for i, route := range peerRoutes {
-		peers[i] = IP(*route.IP)
+		peers.Destinations[i] = IP(*route.IP)
 	}
 	return
 }
 
-func (n *CJDNSNetwork) PeersOfAll(ips []IP) (peers [][]IP, err error) {
-	peers = make([][]IP, len(ips))
+func (n *CJDNSNetwork) PeersOfAll(ips []IP) (peers []*Peers, err error) {
+	peers = make([]*Peers, len(ips))
 	for i, ip := range ips {
 		peers[i], err = n.PeersOf(ip)
 		if err != nil {
