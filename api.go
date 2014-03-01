@@ -523,6 +523,10 @@ func (*Api) GetAll(ctx *jas.Context) {
 	}
 }
 
+func (*Api) GetAllPeers(ctx *jas.Context) {
+	ctx.Data = KnownPeers
+}
+
 // PostMessage emails the given message to the email address owned by
 // the node with the given IP. It requires a correct and non-expired
 // CAPTCHA pair be given.
