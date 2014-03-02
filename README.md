@@ -60,6 +60,10 @@ file does, see [CONFIGURATION][] in the `doc` folder.
 
   [CONFIGURATION]: ./doc/CONFIGURATION.md
 
+## API
+
+TODO
+
 ## Contributing
 
 If you see something that needs fixing, or you can think of something
