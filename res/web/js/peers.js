@@ -4,16 +4,13 @@ function getConnections() {
     });
 }
 
-function drawMeshLink(points, distance) {
+function drawMeshLink(points) {
     var line = new L.Polyline(points, {
         color: '#008',
         weight: 2,
         opacity: 0.2,
-        smoothFactor: 1
-    });
-
-    line.on('click', function() {
-        map.removeLayer(this);
+        smoothFactor: 1,
+		clickable: false
     });
 
     line.addTo(map);
@@ -37,9 +34,7 @@ function drawConnections(connections) {
 				[L.latLng(nodeA.geometry.coordinates[1],
 						  nodeA.geometry.coordinates[0]),
 				 L.latLng(nodeB.geometry.coordinates[1],
-						  nodeB.geometry.coordinates[0])],
-				0
-			);
+						  nodeB.geometry.coordinates[0])]);
 		}
     }
 }
