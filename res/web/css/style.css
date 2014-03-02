@@ -70,7 +70,12 @@ li a.disabled, .disabled {
     font-size: 10px;
 }
 
-#two, #three, #four {
+label {
+  margin-bottom: 0;
+  padding: 5px 0;
+}
+
+#two, #three, #four, #five {
     display: none;
 }
 
