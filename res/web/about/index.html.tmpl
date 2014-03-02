@@ -14,44 +14,62 @@
     {{.Web.HeaderSnippet}}
   </head>
   <body>
-    <div id="wrap">
-      <nav class="navbar navbar-default" role="navigation">
-	<div class="container">
-	  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-	    <span class="icon-bar"></span>
-	    <span class="icon-bar"></span>
-	    <span class="icon-bar"></span>
-	  </button>
-	  <a class="navbar-brand" href="/">{{.Name}}</a>
-	  <div class="collapse navbar-collapse navbar-responsive-collapse">
-	    <ul class="nav navbar-nav">
-	      <li><a href="/">Map</a></li>
-	      <li class="active"><a href="/about/">About</a></li>
-	    </ul>
-	  </div> 
-	</div> 
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-all">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">{{.Name}}</a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-all">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active"><a href="/about/">About</a></li>
+            <li><a href="/">Map</a></li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+      <div class="container-fluid padding">
+        <div class="row padding">
+          <div class="col-xs-12 col-sm-6">
+            <h1>About NodeAtlas</h1>
+            <div class="row">
+              <div class="col-xs-12">
+                <p class="lead">How do you make sense of a meshnet? You map it.</p>
+                <p>This is an early release of the <a href="https://github.com/ProjectMeshnet/nodeatlas">NodeAtlas</a> meshnet map, proudly built with Go, Leaflet.js, and Bootstrap</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6">
+            <h1>Admin Contact</h1>
+            <div class="row">
+              <div class="col-xs-12">
+                <div class="alert alert-info">
+                  <p>{{.AdminContact.Name}} &lt;<a href="mailto:{{.AdminContact.Email}}">{{.AdminContact.Email}}</a>&gt; {{.AdminContact.PGP}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            {{.Web.AboutSnippet}}
+          </div>
+        </div>
+        <div class="row padding">
+          <div class="col-xs-12">
+            {{if .ChildMaps}}
+            <h4>Child Maps loaded:</h4>
+            {{end}}
+            {{range $i := .ChildMaps}}
+            <a href="{{$i}}">{{$i}}</a><br/>
+            {{end}}
+          </div>
+        </div>
       </div>
-      <noscript><div class="alert alert-warning"><h1>Please enable Javascript</h1><p>This website requires javascript to be viewed properly.</p></noscript>
-      <div class="container padding">
-	<div class="page-header">
-	  <h1>About NodeAtlas</h1>
-	</div>		<div class="col col-lg-5 pull-right">
-	  <div class="alert alert-info">
-	    <p>Admin Contact: {{.AdminContact.Name}} &lt;<a href="mailto:{{.AdminContact.Email}}">{{.AdminContact.Email}}</a>&gt; {{.AdminContact.PGP}}
-	  </div>
-	</div>
-	<p class="lead">How do you make sense of a meshnet? You map it.</p>
-	<h4>This is an early release of the <a href="https://github.com/ProjectMeshnet/nodeatlas">NodeAtlas</a> meshnet map, proudly built with Bootstrap, Go, and Leaflet.js.</h4>
-	{{.Web.AboutSnippet}}
-
-	{{if .ChildMaps}}
-	  <h4>Child Maps loaded:</h4>
-	{{end}}
-	{{range $i := .ChildMaps}}
-	  <h4><a href="{{$i}}">{{$i}}</a></h4>
-	{{end}}
-      </div>
-      </nav>
-    </div>	
   </body>
 </html>
