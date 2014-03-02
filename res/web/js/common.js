@@ -3,13 +3,13 @@
 // here so we don't reuse the same code over and over.
 
 $(document).ready(function() {
-    
-    fixNavbarBrand();
+
+    //fixNavbarBrand();
     if (readonly) {
 	addDBWarning();
 	$('#addme').remove();
     }
-    
+
 });
 
 function fixNavbarBrand() {
@@ -24,7 +24,7 @@ function fixNavbarBrand() {
 	if (correct >= wrong) return;
 	var size = $('.navbar-brand').css('font-size');
 	size = parseFloat(size.substring(0, size.length-2));
-	$('.navbar-brand').css('font-size', (--size) + 'px');		
+	$('.navbar-brand').css('font-size', (--size) + 'px');
     }
 }
 
