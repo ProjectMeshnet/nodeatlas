@@ -41,6 +41,10 @@ added in the future.)
 
 TODO
 
+## Configuration
+
+TODO
+
 ## Contributing
 
 If you see something that needs fixing, or you can think of something
