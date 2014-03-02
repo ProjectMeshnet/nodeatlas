@@ -38,6 +38,7 @@ $(document).ready(function() {
 
 $(window).resize(function () {
     $('#map').css('height', ($(window).height()));
+    FixNavbar();
 }).resize();
 
 function geoLocate() {
@@ -117,6 +118,16 @@ function hide(x) {
   });
 }
 
+function FixNavbar() {
+  if ($('.navbar').css('height').replace(/px/g, '') > 52) {
+    for (;;) {
+      var wrong = $('.navbar').css('height').replace(/px/g, '');
+      if (52 >= wrong) return;
+      var size = $('.navbar-brand').css('font-size').replace(/px/g, '');
+      $('.navbar-brand').css('font-size', (--size) + 'px');
+    }
+  }
+}
 
 function onHashChange(e) {
     var fragment = location.hash.slice(1);
