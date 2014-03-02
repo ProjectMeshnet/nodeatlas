@@ -1,4 +1,5 @@
 var nodes = [];
+var nodesById = {};
 var statuses = [];
 
 function addNodes() {
@@ -23,6 +24,7 @@ function addLayers(response) {
     // statuses for each corrisponding node.
     for (i in response.data.features) {
 	nodes[i] = jQuery.extend(true, {}, response.data.features[i]);
+	nodesById[nodes[i].id] = nodes[i];
 	statuses[i] = nodes[i].properties.Status;
     }
 }
