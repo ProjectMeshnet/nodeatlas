@@ -52,8 +52,8 @@ and encouraged.
 
 ## Copyright & License
 
-© Alexander Bauer, Daniel Supernault, Dylan Whichard, Luke Evers, and
+&copy; Alexander Bauer, Luke Evers, Dylan Whichard, and
 contributors. NodeAtlas is licensed under GPLv3. See [LICENSE][] for
-full details.
+full detials.
 
   [LICENSE]: ./LICENSE
