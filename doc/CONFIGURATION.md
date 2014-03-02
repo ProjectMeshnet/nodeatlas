@@ -1,6 +1,18 @@
 # Configuration
 
-Some text about what this is here.
+NodeAtlas needs a configuration file. By default, NodeAtlas looks for
+`conf.json` in the current directory. There is a file called
+`conf.json.example` in the repository, which is a template for what
+the configuration file should look like.
+
+You can tell NodeAtlas to use a configuration file from anywhere else
+by using the `--conf` flag. For example:
+
+```
+nodeatlas --res res/ --conf /etc/nodeatlas.json
+```
+
+Below is a list of every config variable and what it is for.
 
 ### Name
 
