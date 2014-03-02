@@ -1,29 +1,29 @@
 $(document).ready(function() {
-    
+
     addJSFiles();
-    
+
     $.ajaxSetup({cache:true});
-    
+
     $('#addme').tooltip();
     $('#distance').tooltip();
     $('#legend').popover({'content':'<img src="/img/node.png" width="16px"/>&nbsp;Active Residential Node<hr><img src="/img/vps.png" width="16px">&nbsp;Active Hosted/Virtual Node<hr><img src="/img/inactive.png" width="16px">&nbsp;Inactive Node', 'html': true});
-    
+
     // this handles loading the child nodes now
     loadChildMaps();
-    
+
     $('#search').keyup(function() {
 	// TODO display these in some fashion
 	var searchResults = search(nodes, $(this).val());
     });
-    
+
     map.addControl(new L.Control.Scale());
-    
+
     // If you're at /verify/xxx
     var key = verifying();
     if (key != '') {
 	verifyNode(key);
     }
-    
+
     $(window).bind('hashchange', onHashChange);
     $(window).trigger('hashchange');
     map.on('moveend', function() {
@@ -99,7 +99,7 @@ function onMapClick(e) {
 
 function onHashChange(e) {
     var fragment = location.hash.slice(1);
-    
+
     // Try to parse the fragment as a map view.
     var view = fragment.split('/');
     if (view.length == 3) {
