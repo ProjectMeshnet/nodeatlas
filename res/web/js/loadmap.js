@@ -21,7 +21,12 @@ $(document).ready(function() {
     // If you're at /verify/xxx
     var key = verifying();
     if (key != '') {
-	verifyNode(key);
+	     verifyNode(key);
+    }
+
+    if (readonly) {
+      addDBWarning();
+      $('#addme').remove();
     }
 
     $(window).bind('hashchange', onHashChange);
@@ -97,6 +102,22 @@ function onMapClick(e) {
     });
 }
 
+
+function hide(x) {
+  $('#bringnavbarback').remove();
+    $('.navbar').fadeOut(500, function() {
+      $('#wrap').append('<div id="bringnavbarback">Show</div>');
+      $('#bringnavbarback').fadeIn(500, function() {
+          $('#bringnavbarback').bind('click', function() {
+            $('#bringnavbarback').fadeOut(500, function() {
+                $('.navbar').fadeIn(500);
+        });
+      });
+    });
+  });
+}
+
+
 function onHashChange(e) {
     var fragment = location.hash.slice(1);
 
@@ -107,11 +128,17 @@ function onHashChange(e) {
     }
 }
 
+// If `.Database.VerifyDisabled` is set to true then we want to add a
+// warning at the top
+function addDBWarning() {
+    var warning = '<div class="alert alert-danger" id="alert-left">Database is in read only mode.</div>';
+    $('#wrap').append(warning);
+}
+
 function addJSFiles() {
     var html = '<script type="text/javascript" src="/js/distance.js"></script>';
     html += '<script type="text/javascript" src="/js/icon.js"></script>';
     html += '<script type="text/javascript" src="/js/status.js"></script>';
-    html += '<script type="text/javascript" src="/js/common.js"></script>';
     html += '<script type="text/javascript" src="/js/search.js"></script>';
     html += '<script type="text/javascript" src="/js/captcha.js"></script>';
     html += '<script type="text/javascript" src="/js/node.js"></script>';
