@@ -20,32 +20,26 @@ function drawMeshLink(points, distance) {
 }
 
 function drawConnections(connections) {
-    var peerConns = [];
-    for (var i = 0; i < connections["data"].length; i++) {
-	var peerData = connections["data"][i];
-	var peerA = peerData["Source"];
-	for (var j = 0; j < peerData["Destinations"].length; j++) {
-	    var peerB = peerData["Destinations"][j];
-	    var cmp = peerA.localeCompare(peerB);
-	    if (cmp < 0 && $.inArray([peerA, peerB], peerConns) < 0) {
-		peerConns.push([peerA, peerB]);
-	    } else if (cmp > 0 && $.inArray([peerB, peerA], peerConns) < 0) {
-		peerConns.push([peerB, peerA]);
-	    } // otherwise they're already connected or they're the same node
-	}
-    }
+	// Get only the data section from the API call.
+    var peerConns = connections["data"];
 
+	// Loop through each item in the list of connections.
     for (var i = 0; i < peerConns.length; i++) {
-	var nodeA = nodesById[peerConns[i][0]];
-	var nodeB = nodesById[peerConns[i][1]];
-	if (nodeA && nodeB) {
-	    drawMeshLink(
-		[L.latLng(nodeA.geometry.coordinates[1],
-			  nodeA.geometry.coordinates[0]),
-		 L.latLng(nodeB.geometry.coordinates[1],
-			  nodeB.geometry.coordinates[0])],
-		0
-	    );
-	}
+		// Get nodeA and nodeB explicitly, to minimize the number of
+		// lookups.
+		var nodeA = nodesById[peerConns[i]["A"]];
+		var nodeB = nodesById[peerConns[i]["B"]];
+
+		// If both nodes are present, then pass their parameters to
+		// drawMeshLink.
+		if (nodeA && nodeB) {
+			drawMeshLink(
+				[L.latLng(nodeA.geometry.coordinates[1],
+						  nodeA.geometry.coordinates[0]),
+				 L.latLng(nodeB.geometry.coordinates[1],
+						  nodeB.geometry.coordinates[0])],
+				0
+			);
+		}
     }
 }

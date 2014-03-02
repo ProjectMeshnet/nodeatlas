@@ -11,7 +11,12 @@ var NetworkAdminNotConnectedError = errors.New("Network admin interface not conn
 var NetworkAdminCredentialsMissingError = errors.New("Network admin credentials missing")
 var NetworkAdminCredentialsInvalidError = errors.New("Network admin credentials invalid")
 
-var KnownPeers []*Peers
+var KnownPeers []Pair
+
+type Pair struct {
+	A IP
+	B IP
+}
 
 type Peers struct {
 	Source       IP
@@ -77,8 +82,29 @@ func PopulatePeers(db DB) {
 		l.Errf("Error listing peers: %s", err)
 		return
 	}
+
+	// Allocate a set of pairs with enough capacity to hold the entire
+	// list of peers, assuming each one has two connections.
+	pairs := make([]Pair, 0, len(peers))
+
+	// Flatten the peer network. Remove duplicates by only adding a
+	// connection between nodes if they are already sorted such that
+	// the node with the lesser IP is first.
+	// TODO(DuoNoxSol): Only discard them in this way if both nodes
+	// are in the map
+	for _, peer := range peers {
+		for _, destinationIP := range peer.Destinations {
+			if peer.Source.LessThan(destinationIP) {
+				pairs = append(pairs, Pair{
+					A: peer.Source,
+					B: destinationIP,
+				})
+			}
+		}
+	}
+
 	l.Infof("Peering data refreshed")
-	KnownPeers = peers
+	KnownPeers = pairs
 }
 
 type CJDNSNetwork struct {
