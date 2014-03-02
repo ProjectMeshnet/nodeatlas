@@ -39,7 +39,26 @@ added in the future.)
 
 ## Install
 
-TODO
+Currently the only option to install NodeAtlas is to compile from
+source. In the future it will be packaged for ease.
+
+Clone the repository:
+
+```
+git clone https://github.com/ProjectMeshnet/nodeatlas.git
+```
+Get go packages needed to build:
+```
+go get
+```
+Build the binary
+```
+make
+```
+Install on system:
+```
+sudo make install
+```
 
 ## Configuration
 
