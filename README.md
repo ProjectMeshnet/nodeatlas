@@ -56,13 +56,16 @@ nodeatlas --res res/ --conf /etc/nodeatlas.json
 ```
 
 For documentation on what exactly every line in your configuration
-file does, see [CONFIGURATION][] in the `doc` folder.
+file does, see [CONFIGURATION.md][] in the `doc` folder.
 
-  [CONFIGURATION]: ./doc/CONFIGURATION.md
+  [CONFIGURATION.md]: ./doc/CONFIGURATION.md
 
 ## API
 
-TODO
+NodeAtlas has a RESTful JSON API. For documentation on the NodeAtlas
+API, see [API.md][] in the `doc` folder.
+
+  [API.md]: ./doc/API.md
 
 ## Contributing
 
