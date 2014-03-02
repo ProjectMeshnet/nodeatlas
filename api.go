@@ -7,7 +7,6 @@ import (
 	"database/sql"
 	"github.com/coocood/jas"
 	"github.com/dchest/captcha"
-	"github.com/lukevers/goip"
 	"html"
 	"html/template"
 	"math/rand"
@@ -15,7 +14,6 @@ import (
 	"net/http"
 	"path"
 	"regexp"
-	"strings"
 	"time"
 )
 
@@ -75,21 +73,9 @@ func (*Api) Get(ctx *jas.Context) {
 // GetEcho responds with the remote address of the user
 func (*Api) GetEcho(ctx *jas.Context) {
 	if Conf.Verify.Netmask != nil {
-		s := ctx.RemoteAddr
-		// Sometimes it's setup like [fc19:728d:b331:a475:c95a:76c3:e612:babe]:63194
-		// and that's not in our netmask because there should just be what's inside
-		// the brackets. Let's check if there are brackets.
-		if strings.HasPrefix(s, "[") {
-			i := strings.Index(s, "]")
-			// If there are brackets, we want to get the inside, so we take a slice of
-			// the first one to the last one.
-			if i > 0 {
-					s = s[1:i]
-			}
-		}
-		// Now we can go ahead and continue like normal.
-		if goip.HasNetmaskString((*net.IPNet)(Conf.Verify.Netmask), s) {
-			ctx.Data = s
+		i := net.ParseIP(ctx.RemoteAddr)
+		if (*net.IPNet)(Conf.Verify.Netmask).Contains(i) {
+			ctx.Data = ctx.RemoteAddr
 		} else {
 			ctx.Error = jas.NewRequestError("remote address not in subnet")
 		}
