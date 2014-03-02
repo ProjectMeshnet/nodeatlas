@@ -139,7 +139,7 @@ li.active a, li.open a {
 }
 
 #search {
-    margin-top: 6px;	
+    margin-top: 6px;
 }
 
 .node, #messageCreate {
@@ -173,7 +173,7 @@ li.active a, li.open a {
 }
 
 .btn-mini {
-    padding: 0px 2px;
+    padding: 2px 4px 0px;
     font-size: 10px;
 }
 
@@ -228,7 +228,7 @@ li.active a, li.open a {
     line-height: 30px;
 }
 
-.leaflet-cluster-anim .leaflet-marker-icon, 
+.leaflet-cluster-anim .leaflet-marker-icon,
 .leaflet-cluster-anim .leaflet-marker-shadow {
     -webkit-transition: -webkit-transform 0.25s ease-out, opacity 0.25s ease-in;
     -moz-transition: -moz-transform 0.25s ease-out, opacity 0.25s esae-in;
