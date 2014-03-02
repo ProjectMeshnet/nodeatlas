@@ -30,29 +30,26 @@
       	  </button>
       	  <a class="navbar-brand" href="/">{{.Name}}</a>
       	  <div class="collapse navbar-collapse navbar-responsive-collapse">
-      	    <ul class="nav navbar-nav">
-      	      <li class="active"><a href="/">Map</a></li>
-      	      <li><a href="/about/">About</a></li>
-      	    </ul>
       	    <div class="hidden-sm">
       	      <ul class="nav navbar-nav pull-right">
+                <li><a href="/about/">About</a></li>
+                <li class="dropdown active">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    Map
+                    <b class="caret"></b>
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu" role="menu">
+                    <li><a href="#" onclick="map.zoomIn(1); return false;">Zoom In</a></li>
+                    <li><a href="#" onclick="map.zoomOut(1); return false;">Zoom Out</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#" onclick="hide(); return false;">Hide Navbar</a></li>
+                  </ul>
+                </li>
       		<li class="dropdown">
       		  <a href="#" id="legend" data-toggle="popover" data-placement="bottom" title="Legend">
       		    Legend
       		    <b class="caret"></b>
       		  </a>
-      		</li>
-      		<li class="dropdown">
-      		  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-      		    Map
-      		    <b class="caret"></b>
-      		  </a>
-      		  <ul class="dropdown-menu" aria-labelledby="dropdownMenu" role="menu">
-      		    <li><a href="#" onclick="map.zoomIn(1); return false;">Zoom In</a></li>
-      		    <li><a href="#" onclick="map.zoomOut(1); return false;">Zoom Out</a></li>
-      		    <li class="divider"></li>
-      		    <li><a href="#" onclick="hide(); return false;">Hide Navbar</a></li>
-      		  </ul>
       		</li>
       		<li class="dropdown">
       		  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
