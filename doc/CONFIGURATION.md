@@ -54,19 +54,19 @@ backend of the HTTP webserver.
 
 Hostname is the address which NodeAtlas should identify itself as. For
 example, in a verification email, NodeAtlas would give the
-verification link as http://<hostname><prefix>/verify/<long-random-id>
+verification link as `http://<hostname><prefix>/verify/<long-random-id>`
 
 #### Prefix
 
 Prefix is the URL prefix which is required to access the front
-end. For example, with a prefix of "/nodeatlas", NodeAtlas would be
-able to respond to http://example.com/nodeatlas.
+end. For example, with a prefix of `/nodeatlas`, NodeAtlas would be
+able to respond to `http://example.com/nodeatlas`.
 
 #### Addr
 
 Addr is the network protocol, interface, and port to which NodeAtlas
-should bind. For example, "tcp://0.0.0.0:8077" will bind globally to
-the 8077 TCP port, and "unix://nodeatlas.sock" will create a UNIX
+should bind. For example, `tcp://0.0.0.0:8077` will bind globally to
+the 8077 TCP port, and `unix://nodeatlas.sock` will create a UNIX
 socket at nodeatlas.sock.
 
 #### DeproxyHeaderFields
@@ -102,7 +102,7 @@ should no longer populate the feed.
 ChildMaps is a list of addresses from which to pull lists of nodes
 every heartbeat. Please note that these maps are trusted fully, and
 they could easily introduce false nodes to the database temporarily
-(until cleared by the CacheExpiration.
+(until cleared by the CacheExpiration).
 
 ### Database
 
@@ -190,7 +190,7 @@ map. It is a filename to be loaded from `<*fRes>/icon/`.
 #### Tileserver
 
 Tileserver is the URL used for loading tiles. It is of the form
-"http://{s}.tile.osm.org/{z}/{x}/{y}.png", so that Leaflet.js can use
+`http://{s}.tile.osm.org/{z}/{x}/{y}.png`, so that Leaflet.js can use
 it.
 
 #### Center
@@ -236,12 +236,12 @@ one's needs.
 
 Netmask, if not nil, is a CIDR-form network mask which requires that
 nodes registered have an Addr which matches it. For example,
-"fc00::/8" would only allow IPv6 addresses in which the first two
-digits are "fc", and "192.168.0.0/16" would only allow IPv4 addresses
-in which the first two bytes are "192.168".
+`fc00::/8` would only allow IPv6 addresses in which the first two
+digits are "fc", and `192.168.0.0/16` would only allow IPv4 addresses
+in which the first two bytes are `192.168`.
 
 #### FromNode
 
-FromNode requires the verification request (GET
-/api/verify?id=<long_random_id>) to originate from the address of the
+FromNode requires the verification request (`GET
+/api/verify?id=<long_random_id>`) to originate from the address of the
 node that is being verified.
