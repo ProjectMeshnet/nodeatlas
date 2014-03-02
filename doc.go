@@ -1,8 +1,8 @@
 /*
 NodeAtlas - Federated mapping for mesh networks
 
-Copyright (C) 2013 Alexander Bauer, Luke Evers, Daniel Supernault,
-Dylan Whichard, and contributors
+Copyright (C) 2013 Alexander Bauer, Luke Evers, Dylan Whichard,
+and contributors
 
 This program is free software: you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -19,6 +19,6 @@ along with this program. If not, see http://www.gnu.org/licenses/
 */
 package main
 
-// Copyright (C) 2013 Alexander Bauer, Luke Evers, Daniel Supernault,
-// Dylan Whichard, and contributors; (GPLv3) see LICENSE or doc.go
+// Copyright (C) 2013 Alexander Bauer, Luke Evers, Dylan Whichard,
+// and contributors; (GPLv3) see LICENSE or doc.go
 // Copyright (C) 2013 Developers - see LICENSE or doc.go

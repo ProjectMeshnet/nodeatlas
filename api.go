@@ -1,7 +1,7 @@
 package main
 
-// Copyright (C) 2013 Alexander Bauer, Luke Evers, Daniel Supernault,
-// Dylan Whichard, and contributors; (GPLv3) see LICENSE or doc.go
+// Copyright (C) 2013 Alexander Bauer, Luke Evers, Dylan Whichard,
+// and contributors; (GPLv3) see LICENSE or doc.go
 
 import (
 	"database/sql"
@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	APIDocs = "https://github.com/ProjectMeshnet/nodeatlas/blob/master/API.md"
+	APIDocs = "https://github.com/ProjectMeshnet/nodeatlas/blob/master/doc/API.md"
 )
 
 var (

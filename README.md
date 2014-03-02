@@ -3,10 +3,6 @@
 
 [![Build Status](https://travis-ci.org/ProjectMeshnet/nodeatlas.png?branch=master)](https://travis-ci.org/ProjectMeshnet/nodeatlas)
 
-*GPL 3+ Licensed, see LICENSE*  
-*© Alexander Bauer, Daniel Supernault, Dylan Whichard, Luke Evers,
-and contributors*
-
 NodeAtlas is a high-performance and very portable tool for
 geographically mapping mesh networks. It is used and designed by
 [Project Meshnet][Atlas].
@@ -39,3 +35,70 @@ displayed on the parent instance. This way, NodeAtlas is capable of
 acting as a regional map, incorporating nodes from multiple more
 localized instances. (More documentation on this behavior will be
 added in the future.)
+
+
+## Install
+
+Currently the only option to install NodeAtlas is to compile from
+source. In the future it will be packaged for ease.
+
+Clone the repository:
+
+```
+git clone https://github.com/ProjectMeshnet/nodeatlas.git
+```
+Get go packages needed to build:
+```
+go get
+```
+Build the binary
+```
+make
+```
+Install on system:
+```
+sudo make install
+```
+
+## Configuration
+
+NodeAtlas needs a configuration file. By default, NodeAtlas looks for
+`conf.json` in the current directory. There is a file called
+`conf.json.example` in the repository, which is a template for what
+the configuration file should look like.
+
+You can tell NodeAtlas to use a configuration file from anywhere else
+by using the `--conf` flag. For example:
+
+```
+nodeatlas --res res/ --conf /etc/nodeatlas.json
+```
+
+For documentation on what exactly every line in your configuration
+file does, see [CONFIGURATION.md][] in the `doc` folder.
+
+  [CONFIGURATION.md]: ./doc/CONFIGURATION.md
+
+## API
+
+NodeAtlas has a RESTful JSON API. For documentation on the NodeAtlas
+API, see [API.md][] in the `doc` folder.
+
+  [API.md]: ./doc/API.md
+
+## Contributing
+
+If you see something that needs fixing, or you can think of something
+that could make NodeAtlas better, please feel free to open an issue or
+submit a pull request. Check the open issues before doing so! If there
+is already an issue open for what you want to help with, don't open
+another; one will suffice. All issues and pull requests are welcome,
+and encouraged.
+
+## Copyright & License
+
+&copy; Alexander Bauer, Luke Evers, Dylan Whichard, and
+contributors. NodeAtlas is licensed under GPLv3. See [LICENSE][] for
+full detials.
+
+  [LICENSE]: ./LICENSE
