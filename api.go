@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	APIDocs = "https://github.com/ProjectMeshnet/nodeatlas/blob/master/API.md"
+	APIDocs = "https://github.com/ProjectMeshnet/nodeatlas/blob/master/doc/API.md"
 )
 
 var (

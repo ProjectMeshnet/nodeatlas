@@ -54,7 +54,7 @@ to do so, but also gives the URL in the `data` field.
 ```json
 // curl -s "http://localhost:8077/api/"
 {
-    "data": "See Other: https://github.com/ProjectMeshnet/nodeatlas/blob/master/API.md", 
+    "data": "See Other: https://github.com/ProjectMeshnet/nodeatlas/blob/master/doc/API.md", 
     "error": null
 }
 ```
