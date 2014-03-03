@@ -25,26 +25,50 @@ function addError(fadewhat, err) {
     });
 }
 
-function insertUser() {    
+function updateData(cmd) {
+
+  var c = (cmd == 'wget') ? 'wget -qO-' : 'curl -s';
+  var d = (cmd == 'wget') ? ' --post-data ' : ' -d ';
+
+  var address = $("#address").val();
+  var lat = $("#latitude").val();
+  var lon = $("#longitude").val();
+  var name = $("#name").val();
+  var email = $("#email").val();
+  var contact = $("#contact").val();
+  var details = $("#details").val()
+  var pgp = $("#pgp").val()
+  var status = getSTATUS();
+
+  var data = c + d + '"address=' + address + '"' + d + '"latitude=' + lat + '"' +
+             d + '"longitude=' + lon + '"' + d + '"name=' + name + '"' + d + '"email=' + email + '"' +
+             d + '"contact=' + contact + '"' + d + '"details=' + details + '"' +
+             d + '"pgp=' + pgp + '"' + d + '"status=' + status + '"' + ' "' +
+             window.location.protocol + '//' + window.location.host + '/api/node"';
+
+  $('#'+cmd).val(data);
+}
+
+function insertUser() {
     var address = $("#address").val();
     var name = $("#name").val();
     var email = $("#email").val();
-    
+
     if (name.length == 0) {
 	addError('#inputform', 'a name is required');
 	return false;
     }
-    
+
     if (email.length == 0) {
 	addError('#inputform', 'an email is required');
 	return false;
     }
-    
+
     if (address.length == 0) {
 	addError('#inputform', 'an address is required');
 	return false;
     }
-    
+
     $('#inputform').fadeOut(500, function() {
 	$.getJSON('/api/token', function(token){
 	    var dataObject = {
@@ -107,12 +131,12 @@ function nodeInfoClick(e, on) {
     if (on) html = e;
     else html = e.layer._popup._content;
     $('#wrap').append(html);
-    $('.node').hide(); 
+    $('.node').hide();
     $('.node').fadeIn(500);
     var name = html.substring(html.indexOf('<h4>')+4, html.indexOf('</h4>'));
     ipv6 = html.substring(html.indexOf('a href')+14);
     ipv6 = ipv6.substring(0, ipv6.indexOf('"'));
-    
+
     // CLOSE NODE
     $('#closeNode').bind('click', function() {
 	$('.node').fadeOut(500, function() {
@@ -124,7 +148,7 @@ function nodeInfoClick(e, on) {
     $('#edit').bind('click', function() {
 	edit(e, ipv6, m);
     });
-    
+
     // SEND MESSAGE
     $('#sendMessage').bind('click', function() {
 	message(name, ipv6);
@@ -133,13 +157,13 @@ function nodeInfoClick(e, on) {
 
 function getSTATUS() {
     var active = 0, residential = 0, internet = 0, wireless = 0, wired = 0;
-    
-    if ($("#active").is(':checked')) active = STATUS_ACTIVE;	
+
+    if ($("#active").is(':checked')) active = STATUS_ACTIVE;
     if ($("#residential").is(':checked')) residential = STATUS_PHYSICAL;
     if ($("#internet").is(':checked')) internet = STATUS_INTERNET;
     if ($("#wireless").is(':checked')) wireless = STATUS_WIRELESS;
     if ($("#wired").is(':checked')) wired = STATUS_WIRED;
-    
+
     return (active|residential|internet|wireless|wired);
 }
 
@@ -221,7 +245,7 @@ function edit(e, ipv6, m) {
 	$('.node').remove();
 	$('#wrap').append(getForm(e.layer.getLatLng().lat, e.layer.getLatLng().lng));
 	$('#submitatlas').prop('onclick', '');
-	
+
 	// Now we want to set shit that is already there.
 	$.getJSON('/api/node?address='+ipv6, function(response) {
 	    $('#name').val(response.data.OwnerName);
@@ -232,24 +256,24 @@ function edit(e, ipv6, m) {
 	    $('#details').val(response.data.Details);
 	    $('#pgp').val(response.data.PGP);
 	    $('#contact').val(response.data.Contact);
-	    
+
 	    var STATUS = response.data.Status;
-	    
+
 	    if ((STATUS&STATUS_ACTIVE) > 0) $('#active').prop('checked', true);
 	    else $('#active').prop('checked', false);
-	    
+
 	    if ((STATUS&STATUS_PHYSICAL) > 0) $('#residential').prop('checked', true);
 	    else $('#residential').prop('checked', false);
-	    
+
 	    if ((STATUS&STATUS_INTERNET) > 0) $('#internet').prop('checked', true);
 	    else $('#internet').prop('checked', false);
-	    
+
 	    if ((STATUS&STATUS_WIRELESS) > 0) $('#wireless').prop('checked', true);
 	    else $('#wireless').prop('checked', false);
-	    
+
 	    if ((STATUS&STATUS_WIRED) > 0) $('#wired').prop('checked', true);
 	    else $('#wired').prop('checked', false);
-	    
+
 	    // Click submit
 	    $('#submitatlas').bind('click', function() {
 		$('#inputform').fadeOut(500);
@@ -299,12 +323,12 @@ function edit(e, ipv6, m) {
 	});
 	$('#inputform').fadeIn(500);
 	$('#name').focus();
-	
+
 	// DELETE NODE
         $('#delete').bind('click', function() {
             deleteNode(ipv6);
         });
-	
+
 	// REPOSITON NODE
 	$('#reposition').bind('click', function() {
 	    repositionNode(m);

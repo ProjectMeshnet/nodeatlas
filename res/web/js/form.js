@@ -90,9 +90,9 @@ function getForm(lat, lng) {
     form += '<button class="btn btn-small btn-primary" href="#" onclick="next(5); return false;">Next</button></div></div></div>';
     form += '<div class="tab" id="five"><div class="row">';
     form += '<div class="col col-xs-12">';
-    form += '<label>Submit via curl</label>';
+    form += '<label>Submit via curl&nbsp;<button class="btn btn-mini btn-success" href="#" onclick="updateData(\'curl\'); return false;">Update</button></label>';
     form += '<input type="text" class="form-control" placeholder="Curl Data" id="curl">';
-    form += '<label>Submit via wget</label>';
+    form += '<label>Submit via wget&nbsp;<button class="btn btn-mini btn-success" href="#" onclick="updateData(\'wget\'); return false;">Update</button></label>';
     form += '<br/><input type="text" class="form-control" placeholder="Wget Data" id="wget">';
     form += '<br/></div></div>';
     form += '<div class="row"><div class="col col-xs-6 text-center">';
