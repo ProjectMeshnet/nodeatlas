@@ -46,6 +46,7 @@
 			"Longitude": -100
 		},
 		"Zoom": 4,
+		"MaxZoom": 16,
 		"ClusterRadius": 50,
 		"Attribution": "© <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
 		"AddressType": "Network-specific IP"

@@ -27,7 +27,7 @@ var map = new L.Map('map', {
     center: options.center,
     zoom: options.zoom,
     zoomControl: false,
-    maxZoom: 16,
+    maxZoom: {{.Map.MaxZoom}},
     minZoom: 2,
     layers: [tilelayer, all, temp, newUser]
 });

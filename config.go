@@ -31,7 +31,6 @@ type Config struct {
 		PGP string
 	}
 
-
 	// AdminAddresses is a slice of addresses which are considered
 	// fully authenticated. Connections originating from those
 	// addresses will not be required to verify or perform any sort of
@@ -169,6 +168,9 @@ type Config struct {
 
 		// Zoom is the Leaflet.js zoom level to start the map at.
 		Zoom int
+
+		// MaxZoom is the maximum zoom level to allow Leaflet.js.
+		MaxZoom int
 
 		// ClusterRadius is the range (in pixels) at which markers on
 		// the map will cluster together.
