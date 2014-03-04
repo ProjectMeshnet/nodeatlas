@@ -54,5 +54,14 @@
 	"Verify": {
 		"Netmask": "fc00::/8",
 		"FromNode": true
+	},
+	"NetworkAdmin": {
+		"Type": "cjdns",
+		"Credentials": {
+			"addr": "127.0.0.1",
+			"port": 11234,
+			"password": "adminpassword",
+			"config": "/etc/cjdroute.conf"
+		}
 	}
 }
