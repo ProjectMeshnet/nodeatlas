@@ -4,6 +4,7 @@ package main
 // and contributors; (GPLv3) see LICENSE or doc.go
 
 import (
+	"bytes"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -158,6 +159,12 @@ func (ip *IP) UnmarshalJSON(b []byte) error {
 	// Don't think too hard about this part.
 	*ip = *(*IP)(&tip)
 	return nil
+}
+
+// LessThan returns whether the called IP is less than the given IP
+// lexiographically.
+func (ip IP) LessThan(other IP) bool {
+	return bytes.Compare(ip, other) < 0
 }
 
 func (ip IP) String() string {

@@ -151,6 +151,11 @@ func main() {
 		return
 	}
 
+	// Refresh peering data. This is also done on heartbeat, but it
+	// should be done at startup until information is stored in the
+	// database.
+	go PopulatePeers(Db)
+
 	// Listen for OS signals.
 	go ListenSignal()
 
@@ -216,6 +221,7 @@ func doHeartbeatTasks() {
 	l.Debug("Heartbeat\n")
 	Db.DeleteExpiredFromQueue()
 	UpdateMapCache()
+	PopulatePeers(Db)
 	ClearExpiredCAPTCHA()
 	ResendVerificationEmails()
 	CleanNodeRSS()

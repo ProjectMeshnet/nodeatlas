@@ -65,6 +65,7 @@ function loadChildMaps() {
 	    }
 	}
 	addNodes();
+	getConnections();
     });
 }
 
@@ -156,5 +157,6 @@ function addJSFiles() {
     html += '<script type="text/javascript" src="/js/verify.js"></script>';
     html += '<script type="text/javascript" src="/js/form.js"></script>';
     html += '<script type="text/javascript" src="/js/layers.js"></script>';
+    html += '<script type="text/javascript" src="/js/peers.js"></script>';
     $('head').append(html);
 }
