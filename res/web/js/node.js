@@ -30,23 +30,26 @@ function updateData(cmd) {
   var c = (cmd == 'wget') ? 'wget -qO-' : 'curl -s';
   var d = (cmd == 'wget') ? ' --post-data ' : ' -d ';
 
-  var address = $("#address").val();
-  var lat = $("#latitude").val();
-  var lon = $("#longitude").val();
-  var name = $("#name").val();
-  var email = $("#email").val();
-  var contact = $("#contact").val();
-  var details = $("#details").val()
-  var pgp = $("#pgp").val()
-  var status = getSTATUS();
+  $.getJSON('/api/token', function(token){
+      var address = $("#address").val();
+      var lat = $("#latitude").val();
+      var lon = $("#longitude").val();
+      var name = $("#name").val();
+      var email = $("#email").val();
+      var contact = $("#contact").val();
+      var details = $("#details").val()
+      var pgp = $("#pgp").val()
+      var status = getSTATUS();
+      token = token.data;
 
-  var data = c + d + '"address=' + address + '"' + d + '"latitude=' + lat + '"' +
-             d + '"longitude=' + lon + '"' + d + '"name=' + name + '"' + d + '"email=' + email + '"' +
-             d + '"contact=' + contact + '"' + d + '"details=' + details + '"' +
-             d + '"pgp=' + pgp + '"' + d + '"status=' + status + '"' + ' "' +
-             window.location.protocol + '//' + window.location.host + '/api/node"';
+      var data = c + d + '"address=' + address + '"' + d + '"latitude=' + lat + '"' +
+                 d + '"longitude=' + lon + '"' + d + '"name=' + name + '"' + d + '"email=' + email + '"' +
+                 d + '"contact=' + contact + '"' + d + '"details=' + details + '"' +
+                 d + '"pgp=' + pgp + '"' + d + '"status=' + status + '"' + d + '"token=' + token + '"' + ' "' +
+                 window.location.protocol + '//' + window.location.host + '/api/node"';
 
-  $('#'+cmd).val(data);
+      $('#'+cmd).val(data);
+  });
 }
 
 function insertUser() {
