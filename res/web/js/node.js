@@ -27,7 +27,9 @@ function addError(fadewhat, err) {
 
 function updateData(cmd) {
 
-  var c = (cmd == 'wget') ? 'wget -qO-' : 'curl -s';
+  var g = (window.location.host.indexOf('[') > -1 || window.location.host.indexOf(']') > -1) ? ' -g' : '';
+
+  var c = (cmd == 'wget') ? 'wget -qO-' : 'curl -s' + g;
   var d = (cmd == 'wget') ? ' --post-data ' : ' -d ';
 
   $.getJSON('/api/token', function(token){
