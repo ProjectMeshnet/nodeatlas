@@ -45,3 +45,5 @@ install: all
 
 clean:
 	@- $(RM) $(PROGRAM_NAME) $(DEPS)
+
+# vim: set noexpandtab:
