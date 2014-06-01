@@ -15,7 +15,7 @@ prefix = usr/local
 endif
 
 GOFLAGS	+= -ldflags "-X main.Version $(VERSION) \
-	-X main.defaultResLocation $(DESTDIR)$(prefix)/share/nodeatlas/ \
+	-X main.defaultResLocation $(DESTDIR)/$(prefix)/share/nodeatlas/ \
 	-X main.defaultConfLocation $(DESTDIR)etc/nodeatlas.conf"
 
 .PHONY: all install clean deps
@@ -39,13 +39,13 @@ $(DEPS): $(DEPSFILE)
 	- ./getdeps.sh
 
 install: all
-	test -d $(DESTDIR)$(prefix)/bin || mkdir -p $(DESTDIR)$(prefix)/bin
-	test -d $(DESTDIR)$(prefix)/share/nodeatlas || \
-		mkdir -p $(DESTDIR)$(prefix)/share/nodeatlas
+	test -d $(DESTDIR)/$(prefix)/bin || mkdir -p $(DESTDIR)/$(prefix)/bin
+	test -d $(DESTDIR)/$(prefix)/share/nodeatlas || \
+		mkdir -p $(DESTDIR)/$(prefix)/share/nodeatlas
 
-	install -m 0755 $(PROGRAM_NAME) $(DESTDIR)$(prefix)/bin/nodeatlas
-	rm -rf $(DESTDIR)$(prefix)/share/nodeatlas
-	cp --no-preserve=all -r res $(DESTDIR)$(prefix)/share/nodeatlas
+	install -m 0755 $(PROGRAM_NAME) $(DESTDIR)/$(prefix)/bin/nodeatlas
+	rm -rf $(DESTDIR)/$(prefix)/share/nodeatlas
+	cp --no-preserve=all -r res $(DESTDIR)/$(prefix)/share/nodeatlas
 
 clean:
 	@- $(RM) $(PROGRAM_NAME) $(DEPS)

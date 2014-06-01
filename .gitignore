@@ -4,6 +4,9 @@ nodeatlas
 # Configuration files
 conf.json
 
+# Ignore build files
+build/
+
 # Logs
 *.log
 
@@ -15,8 +18,8 @@ res/icon/*
 
 # Editor temporary files
 *~
-\#*
-.\#*
+*#*
+*.swp
 
 # Extra files on OS X
 .DS_Store
