@@ -5,14 +5,18 @@ ifndef GOCOMPILER
 GOCOMPILER = go build $(GOFLAGS)
 endif
 
-# If the prefix is not yet defined, define it here.
+# If the root and prefix are not yet defined, define them here.
+ifndef DESTDIR
+DESTDIR = /
+endif
+
 ifndef prefix
-prefix = /usr/local
+prefix = usr/local
 endif
 
 GOFLAGS	+= -ldflags "-X main.Version $(VERSION) \
-	-X main.defaultResLocation $(prefix)/share/$(PROGRAM_NAME)/ \
-	-X main.defaultConfLocation /etc/$(PROGRAM_NAME).conf"
+	-X main.defaultResLocation $(DESTDIR)$(prefix)/share/$(PROGRAM_NAME)/ \
+	-X main.defaultConfLocation $(DESTDIR)etc/$(PROGRAM_NAME).conf"
 
 .PHONY: all install clean deps
 
@@ -45,5 +49,12 @@ install: all
 
 clean:
 	@- $(RM) $(PROGRAM_NAME) $(DEPS)
+
+pkg_arch:
+	mkdir -p build
+	cp Makefile build/Makefile
+	sed "s/pkgver=.*/pkgver=$(shell git describe --dirty=+ | sed \
+'s/-/_/g')/" < packaging/PKGBUILD > build/PKGBUILD
+	updpkgsums build/PKGBUILD
 
 # vim: set noexpandtab:
