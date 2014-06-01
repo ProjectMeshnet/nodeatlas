@@ -1,4 +1,4 @@
-PROGRAM_NAME := nodeatlas
+PROGRAM_NAME := $(shell basename $(shell pwd))
 VERSION := $(shell git describe --dirty=+)
 
 ifndef GOCOMPILER
@@ -15,8 +15,8 @@ prefix = usr/local
 endif
 
 GOFLAGS	+= -ldflags "-X main.Version $(VERSION) \
-	-X main.defaultResLocation $(DESTDIR)$(prefix)/share/$(PROGRAM_NAME)/ \
-	-X main.defaultConfLocation $(DESTDIR)etc/$(PROGRAM_NAME).conf"
+	-X main.defaultResLocation $(DESTDIR)$(prefix)/share/nodeatlas/ \
+	-X main.defaultConfLocation $(DESTDIR)etc/nodeatlas.conf"
 
 .PHONY: all install clean deps
 
@@ -39,13 +39,13 @@ $(DEPS): $(DEPSFILE)
 	- ./getdeps.sh
 
 install: all
-	test -d $(prefix)/bin || mkdir -p $(prefix)/bin
-	test -d $(prefix)/share/$(PROGRAM_NAME) || \
-		mkdir -p $(prefix)/share/$(PROGRAM_NAME)
+	test -d $(DESTDIR)$(prefix)/bin || mkdir -p $(DESTDIR)$(prefix)/bin
+	test -d $(DESTDIR)$(prefix)/share/nodeatlas || \
+		mkdir -p $(DESTDIR)$(prefix)/share/nodeatlas
 
-	install -m 0755 $(PROGRAM_NAME) $(prefix)/bin
-	rm -rf $(prefix)/share/$(PROGRAM_NAME)
-	cp --no-preserve=all -r res $(prefix)/share/$(PROGRAM_NAME)
+	install -m 0755 $(PROGRAM_NAME) $(DESTDIR)$(prefix)/bin/nodeatlas
+	rm -rf $(DESTDIR)$(prefix)/share/nodeatlas
+	cp --no-preserve=all -r res $(DESTDIR)$(prefix)/share/nodeatlas
 
 clean:
 	@- $(RM) $(PROGRAM_NAME) $(DEPS)
