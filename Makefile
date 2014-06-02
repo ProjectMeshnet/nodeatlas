@@ -52,10 +52,9 @@ clean:
 
 pkg_arch:
 	mkdir -p build
-	cp Makefile build/Makefile
 	sed "s/pkgver=.*/pkgver=$(shell git describe | sed \
-'s/-/_/g')/" < packaging/PKGBUILD | sed "s/_gitver=.*/_gitver=\
-$(shell git rev-parse HEAD)/" > build/PKGBUILD
+'s/-/_/g')/" < packaging/PKGBUILD \
+| sed 's/$${_gitver}/'$(shell git rev-parse HEAD)/g > build/PKGBUILD
 	updpkgsums build/PKGBUILD
 
 # vim: set noexpandtab:

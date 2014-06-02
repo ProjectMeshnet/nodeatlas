@@ -13,10 +13,6 @@ makedepends=('go>=1.2')
 conflicts=()
 replaces=()
 backup=()
-install='Makefile'
-
-# Set the git version here so that it's easy to get to.
-_gitver=$(git rev-parse HEAD)
 
 source=("${url}/archive/${_gitver}.tar.gz")
 
@@ -31,7 +27,6 @@ build() {
 package() {
   cd "${srcdir}/${pkgname}-${_gitver}"
   DESTDIR="${pkgdir}" prefix="/usr" make install
-  #install -Dm644 COPYING "$pkgdir/usr/share/licenses/$pkgname/COPYING"
 }
 
 # vim:set ts=2 sw=2 et:
