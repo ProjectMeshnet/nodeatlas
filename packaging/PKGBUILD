@@ -2,13 +2,11 @@
 pkgname=nodeatlas
 pkgver=0.0.0
 pkgrel=1
-pkgdir='/'
 pkgdesc="Federated node mapping for mesh networks"
 url="https://github.com/ProjectMeshnet/nodeatlas"
 arch=('x86_64' 'i686')
-license=('GPLv3')
-depends=()
-optdepends=()
+license=('GPL3')
+depends=('glibc')
 makedepends=('go>=1.2')
 conflicts=()
 replaces=()
